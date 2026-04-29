@@ -7,10 +7,12 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QResizeEvent>
 #include <QVector>
 
 // Forward declaration — MainWindow only needs to know that Screen exists.
 class Screen;
+class FallingLeafOverlay;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MainWindow — top-level application window
@@ -27,6 +29,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private slots:
     void switchScreen(int index);
 
@@ -38,6 +43,7 @@ private:
     QHBoxLayout    *mainLayout;
     QWidget        *sidebar;
     QStackedWidget *stack;
+    FallingLeafOverlay *leafOverlay;
 
     QVector<QPushButton*> navButtons;
     QVector<Screen*>      screens;    // polymorphic ownership list

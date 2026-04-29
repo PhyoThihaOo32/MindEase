@@ -1,30 +1,59 @@
-const OpenAI = require("openai");
 const { MINDEASE_SYSTEM_PROMPT } = require("../prompts/mindeaseSystem");
 
 const DEFAULT_CHAT_MODEL = "gpt-4.1-mini";
 const DEFAULT_MODERATION_MODEL = "omni-moderation-latest";
+const OPENAI_BASE_URL = "https://api.openai.com/v1";
+const REQUEST_TIMEOUT_MS = 30000;
 
-let cachedClient = null;
+function getApiKey() {
+  const apiKey = process.env.OPENAI_API_KEY;
 
-function getOpenAIClient() {
-  if (!process.env.OPENAI_API_KEY) {
+  if (!apiKey) {
     const error = new Error("OPENAI_API_KEY is not configured. Copy .env.example to .env and add your key.");
     error.statusCode = 500;
     error.expose = true;
     throw error;
   }
 
-  if (!cachedClient) {
-    cachedClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return apiKey;
+}
+
+async function postOpenAIJson(path, payload) {
+  const response = await fetch(`${OPENAI_BASE_URL}${path}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${getApiKey()}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  });
+
+  const rawText = await response.text();
+  let data = {};
+
+  try {
+    data = rawText ? JSON.parse(rawText) : {};
+  } catch {
+    data = { rawText };
   }
 
-  return cachedClient;
+  if (!response.ok) {
+    const error = new Error(
+      data.error && data.error.message
+        ? data.error.message
+        : `OpenAI request failed with status ${response.status}.`
+    );
+    error.statusCode = response.status >= 400 && response.status < 500 ? 502 : 500;
+    error.expose = true;
+    throw error;
+  }
+
+  return data;
 }
 
 async function moderateMessage(message) {
-  const client = getOpenAIClient();
-
-  const moderation = await client.moderations.create({
+  const moderation = await postOpenAIJson("/moderations", {
     model: process.env.OPENAI_MODERATION_MODEL || DEFAULT_MODERATION_MODEL,
     input: message
   });
@@ -64,14 +93,35 @@ function detectBackendRisk(message) {
   return dangerPatterns.some((pattern) => pattern.test(text));
 }
 
-async function createSupportiveResponse(message) {
-  const client = getOpenAIClient();
+function buildConversationInput(message, history = []) {
+  const turns = Array.isArray(history) ? history : [];
+
+  if (!turns.length) {
+    return message;
+  }
+
+  const transcript = turns
+    .map((turn) => `${turn.role === "assistant" ? "Assistant" : "Student"}: ${turn.text}`)
+    .join("\n\n");
+
+  return [
+    "Continue this same conversation.",
+    "Use the recent context so short follow-ups like yes, no, okay, or that one make sense.",
+    "",
+    "Recent conversation:",
+    transcript,
+    "",
+    `Student: ${message}`
+  ].join("\n");
+}
+
+async function createSupportiveResponse(message, history = []) {
   const maxOutputTokens = Number(process.env.MINDEASE_MAX_OUTPUT_TOKENS || 420);
 
-  const response = await client.responses.create({
+  const response = await postOpenAIJson("/responses", {
     model: process.env.OPENAI_MODEL || DEFAULT_CHAT_MODEL,
     instructions: MINDEASE_SYSTEM_PROMPT,
-    input: message,
+    input: buildConversationInput(message, history),
     max_output_tokens: maxOutputTokens,
     temperature: 0.45
   });

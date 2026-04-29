@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QGraphicsDropShadowEffect>
 #include <QHBoxLayout>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QNetworkReply>
@@ -14,7 +15,7 @@
 static void applyAssistantGlow(QWidget *widget,
                                int blur = 32,
                                int yOffset = 8,
-                               const QColor &color = QColor(139, 223, 242, 36)) {
+                               const QColor &color = QColor(126, 170, 124, 28)) {
     auto *shadow = new QGraphicsDropShadowEffect(widget);
     shadow->setBlurRadius(blur);
     shadow->setOffset(0, yOffset);
@@ -35,68 +36,68 @@ AssistantChat::AssistantChat(QWidget *parent)
 
     setStyleSheet(R"(
         QLabel#assistantIntro {
-            color: #dffcf5;
+            color: #51685b;
             font-size: 16px;
             font-weight: 500;
             line-height: 1.35;
         }
         QFrame#assistantPanel,
         QFrame#assistantSidePanel {
-            border: 1px solid rgba(139, 223, 242, 0.72);
+            border: 1px solid rgba(159, 185, 150, 0.64);
             border-radius: 32px;
             background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                                        stop:0 rgba(224, 247, 255, 170),
-                                        stop:0.44 rgba(245, 252, 255, 188),
-                                        stop:1 rgba(225, 248, 239, 160));
+                                        stop:0 rgba(249, 244, 232, 216),
+                                        stop:0.52 rgba(250, 248, 240, 228),
+                                        stop:1 rgba(232, 240, 229, 208));
         }
         QLabel#assistantPanelTitle,
         QLabel#assistantSideTitle {
-            color: #082f49;
+            color: #274334;
             font-size: 22px;
             font-weight: 850;
         }
         QLabel#assistantSmallCopy {
-            color: #355d59;
+            color: #6c8170;
             font-size: 11px;
             line-height: 1.35;
         }
         QLabel#assistantStatus {
-            color: #4e706b;
+            color: #738573;
             font-size: 12px;
             border: none;
             background: transparent;
         }
         QFrame#assistantComposer {
-            background: rgba(255, 255, 255, 0.42);
-            border: 1px solid rgba(139, 223, 242, 0.36);
+            background: rgba(255, 255, 255, 0.46);
+            border: 1px solid rgba(177, 196, 166, 0.58);
             border-radius: 26px;
         }
         QPushButton#linkPillBtn {
-            background: #eefdf4;
-            color: #087a5d;
-            border: 1px solid #b8f4cf;
+            background: #f2f7ee;
+            color: #315143;
+            border: 1px solid #c7d8c1;
             border-radius: 12px;
             padding: 7px 10px;
             font-size: 11px;
             font-weight: 800;
         }
         QPushButton#linkPillBtn:hover {
-            background: #dff6ff;
-            border-color: #8bdff2;
-            color: #064d5f;
+            background: #e8f1e4;
+            border-color: #a8c09f;
+            color: #274334;
         }
         QLineEdit#assistantInput {
-            background: rgba(255, 255, 255, 0.82);
-            color: #082f49;
-            border: 1px solid rgba(139, 223, 242, 0.64);
+            background: rgba(255, 255, 255, 0.86);
+            color: #264033;
+            border: 1px solid rgba(159, 185, 150, 0.72);
             border-radius: 18px;
             padding: 15px 18px;
             font-size: 15px;
-            selection-background-color: #8ee2a8;
+            selection-background-color: #cfe3c8;
         }
         QLineEdit#assistantInput:focus {
-            border: 1px solid #8ee2a8;
-            background: rgba(248, 255, 255, 0.92);
+            border: 1px solid #9fbb94;
+            background: rgba(255, 253, 247, 0.94);
         }
     )");
 
@@ -114,7 +115,7 @@ AssistantChat::AssistantChat(QWidget *parent)
 
     QFrame *chatPanel = new QFrame();
     chatPanel->setObjectName("assistantPanel");
-    applyAssistantGlow(chatPanel, 42, 10, QColor(139, 223, 242, 48));
+    applyAssistantGlow(chatPanel, 40, 8, QColor(126, 170, 124, 34));
     QVBoxLayout *chatLay = new QVBoxLayout(chatPanel);
     chatLay->setContentsMargins(36, 32, 36, 30);
     chatLay->setSpacing(18);
@@ -127,6 +128,7 @@ AssistantChat::AssistantChat(QWidget *parent)
     m_statusLbl->setObjectName("assistantStatus");
     m_statusLbl->setWordWrap(true);
     m_statusLbl->setVisible(false);
+    chatLay->addWidget(m_statusLbl);
 
     m_scroll = new QScrollArea();
     m_scroll->setWidgetResizable(true);
@@ -164,9 +166,10 @@ AssistantChat::AssistantChat(QWidget *parent)
 
     root->addWidget(chatPanel, 1);
 
-    addMessage(
-        "Hi, I am MindEase. Tell me what feels heavy right now, and I will help you choose one small, realistic next step.",
-        false);
+    const QString openingMessage =
+        "Hi, I am MindEase. Tell me what feels heavy right now, and I will help you choose one small, realistic next step.";
+    addMessage(openingMessage, false);
+    appendConversationTurn("assistant", openingMessage);
 }
 
 QWidget *AssistantChat::makeMessageRow(const QString &text, bool fromUser, bool crisis) const {
@@ -186,9 +189,9 @@ QWidget *AssistantChat::makeMessageRow(const QString &text, bool fromUser, bool 
         ? "QFrame { background:#fff8f3; border:1px solid #f5b8a8; border-radius:20px; }"
         : fromUser
             ? "QFrame { background:#dff6ff; border:1px solid #8bdff2; border-radius:20px; }"
-            : "QFrame { background:qlineargradient(x1:0,y1:0,x2:1,y2:1, stop:0 #f8ffff, stop:1 #e9fff3); border:1px solid #b8f4cf; border-radius:20px; }");
+            : "QFrame { background:qlineargradient(x1:0,y1:0,x2:1,y2:1, stop:0 #f9f5e8, stop:1 #edf4e8); border:1px solid #c7d8c1; border-radius:20px; }");
     if (fromUser) {
-        applyAssistantGlow(bubble, 20, 3, QColor(139, 223, 242, 46));
+        applyAssistantGlow(bubble, 18, 3, QColor(139, 223, 242, 30));
     }
 
     QVBoxLayout *bubbleLay = new QVBoxLayout(bubble);
@@ -203,7 +206,7 @@ QWidget *AssistantChat::makeMessageRow(const QString &text, bool fromUser, bool 
         ? "color:#7c2d12; font-size:14px; line-height:1.35; border:none; background:transparent;"
         : fromUser
             ? "color:#082f49; font-size:14px; line-height:1.35; border:none; background:transparent;"
-            : "color:#082f49; font-size:14px; line-height:1.35; border:none; background:transparent;");
+            : "color:#274334; font-size:14px; line-height:1.35; border:none; background:transparent;");
     bubbleLay->addWidget(msg);
 
     if (fromUser) {
@@ -231,13 +234,19 @@ void AssistantChat::sendMessage() {
     const QString message = m_input->text().trimmed();
     if (message.isEmpty()) return;
 
+    const QJsonArray history = recentHistoryPayload();
+
     addMessage(message, true);
+    appendConversationTurn("user", message);
     m_input->clear();
     setBusy(true);
+    m_statusLbl->setText("MindEase is thinking...");
+    m_statusLbl->setVisible(true);
     scrollToBottom();
 
     QJsonObject payload;
     payload["message"] = message;
+    payload["history"] = history;
 
     QNetworkRequest request((QUrl(backendUrl())));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -265,35 +274,78 @@ void AssistantChat::handleReply(QNetworkReply *reply) {
     const QJsonObject obj = doc.isObject() ? doc.object() : QJsonObject{};
 
     if (networkError) {
-        addMessage(
+        const QString backendHelp =
             "I could not reach the MindEase backend.\n\n"
             "Start it with: cd backend && npm install && npm run dev\n\n"
-            "Details: " + errorText,
-            false);
+            "Details: " + errorText;
+        m_statusLbl->setText("Backend unavailable.");
+        m_statusLbl->setVisible(true);
+        addMessage(backendHelp, false);
         return;
     }
 
     if (statusCode >= 400) {
         const QString serverError = obj.value("error").toString("The backend returned an error.");
+        m_statusLbl->setText("MindEase could not finish that reply.");
+        m_statusLbl->setVisible(true);
         addMessage(serverError, false);
         return;
     }
 
     if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        m_statusLbl->setText("MindEase returned an unreadable reply.");
+        m_statusLbl->setVisible(true);
         addMessage("The backend returned an unreadable response. Please try again.", false);
         return;
     }
 
     const QString botReply = obj.value("reply").toString().trimmed();
     const bool crisis = obj.value("crisis").toBool(false);
+    const QString replyText = botReply.isEmpty()
+        ? "I am here with you. Try naming the main stressor, then choose one small next step."
+        : botReply;
 
-    addMessage(
-        botReply.isEmpty()
-            ? "I am here with you. Try naming the main stressor, then choose one small next step."
-            : botReply,
-        false,
-        crisis);
+    addMessage(replyText, false, crisis);
+    appendConversationTurn("assistant", replyText);
+    m_statusLbl->setText(crisis ? "MindEase switched to crisis support guidance." : "MindEase is ready.");
+    m_statusLbl->setVisible(true);
     scrollToBottom();
+}
+
+void AssistantChat::appendConversationTurn(const QString &role, const QString &text) {
+    const QString cleanRole = role.trimmed().toLower();
+    const QString cleanText = text.trimmed();
+
+    if ((cleanRole != "user" && cleanRole != "assistant") || cleanText.isEmpty()) {
+        return;
+    }
+
+    m_conversation.push_back({ cleanRole, cleanText });
+
+    constexpr int maxStoredTurns = 20;
+    while (m_conversation.size() > maxStoredTurns) {
+        m_conversation.removeFirst();
+    }
+}
+
+QJsonArray AssistantChat::recentHistoryPayload() const {
+    constexpr int maxHistoryTurns = 12;
+    QJsonArray history;
+    const int startIndex = qMax(0, m_conversation.size() - maxHistoryTurns);
+
+    for (int i = startIndex; i < m_conversation.size(); ++i) {
+        const ChatTurn &turn = m_conversation.at(i);
+        if (turn.text.trimmed().isEmpty()) {
+            continue;
+        }
+
+        QJsonObject item;
+        item["role"] = turn.role;
+        item["text"] = turn.text;
+        history.append(item);
+    }
+
+    return history;
 }
 
 void AssistantChat::scrollToBottom() {

@@ -26,6 +26,6 @@ void Screen::buildHeader(QVBoxLayout *root) {
 
     QFrame *div = new QFrame();
     div->setFrameShape(QFrame::HLine);
-    div->setStyleSheet("color: #dfece1; background: #dfece1; max-height: 1px;");
+    div->setStyleSheet("color: #d5e0cf; background: #d5e0cf; max-height: 1px;");
     root->addWidget(div);
 }

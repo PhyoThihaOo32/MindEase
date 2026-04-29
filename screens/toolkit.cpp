@@ -297,9 +297,9 @@ static const QList<FolderDef> FOLDERS = {
 };
 
 static QLabel* makeToolkitChip(const QString &text,
-                               const QString &bg = "#082f49",
-                               const QString &fg = "#f1e8ad",
-                               const QString &border = "#8bdff2") {
+                               const QString &bg = "#f5f0e2",
+                               const QString &fg = "#3b5645",
+                               const QString &border = "#c9d7c2") {
     QLabel *chip = new QLabel(text);
     chip->setStyleSheet(
         QString("font-size:11px; font-weight:600; color:%1; background:%2; "
@@ -311,7 +311,7 @@ static QLabel* makeToolkitChip(const QString &text,
 static void applyToolkitShadow(QWidget *widget,
                                int blur = 24,
                                int yOffset = 6,
-                               const QColor &color = QColor(142, 226, 168, 28)) {
+                               const QColor &color = QColor(121, 154, 112, 20)) {
     auto *shadow = new QGraphicsDropShadowEffect(widget);
     shadow->setBlurRadius(blur);
     shadow->setOffset(0, yOffset);
@@ -335,7 +335,7 @@ static QWidget* makeToolItem(const ToolItem &item) {
     iconLbl->setFixedSize(40, 40);
     iconLbl->setAlignment(Qt::AlignCenter);
     iconLbl->setStyleSheet(
-        "font-size:19px; background:#e7fbff; border:1px solid #8bdff2; border-radius:12px;");
+        "font-size:19px; background:#edf4e8; border:1px solid #c7d8c1; border-radius:12px;");
 
     // Text block
     QWidget *textBlock = new QWidget();
@@ -375,12 +375,12 @@ static QWidget* makeToolItem(const ToolItem &item) {
                 QDesktopServices::openUrl(QUrl(u));
             });
             linkBtn->setStyleSheet(
-                "QPushButton { font-size:12px; font-weight:800; color:#06172a; "
+                "QPushButton { font-size:12px; font-weight:800; color:#2a4434; "
                 "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-                "                              stop:0 #8ee2a8, stop:0.55 #8bdff2, stop:1 #f1e8ad);"
-                "  border:1px solid #b8ffda; border-radius:11px; "
+                "                              stop:0 #e3efdc, stop:0.58 #d4e6cd, stop:1 #f7efdc);"
+                "  border:1px solid #c7d8c1; border-radius:11px; "
                 "  padding:6px 14px; margin-top:3px; }"
-                "QPushButton:hover { background:#8bdff2; color:#06172a; border-color:#f1e8ad; }");
+                "QPushButton:hover { background:#e8f1e4; color:#234030; border-color:#a8bf9d; }");
             linkBtn->setCursor(Qt::PointingHandCursor);
             linkBtn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             buttonLayout->addWidget(linkBtn);
@@ -434,9 +434,9 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
     QFrame *banner = new QFrame();
     banner->setStyleSheet(
         "QFrame { background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "                                  stop:0 #082f49, stop:0.58 #0f5a53, stop:1 #173f30);"
-        "         border:1px solid #8bdff2; border-radius:28px; }");
-    applyToolkitShadow(banner, 28, 8, QColor(142, 226, 168, 30));
+        "                                  stop:0 #f9f4e8, stop:0.56 #f6f1e5, stop:1 #ebf2e7);"
+        "         border:1px solid #c7d8c1; border-radius:28px; }");
+    applyToolkitShadow(banner, 28, 8, QColor(121, 154, 112, 20));
     QHBoxLayout *bannerLay = new QHBoxLayout(banner);
     bannerLay->setContentsMargins(32, 26, 32, 26);
     bannerLay->setSpacing(22);
@@ -447,7 +447,7 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
         "Click any folder below to explore tools, tips, and resources curated for BMCC students.");
     bannerText->setWordWrap(true);
     bannerText->setStyleSheet(
-        "font-size:15px; color:#d7fff1; border:none; background:transparent; "
+        "font-size:15px; color:#607565; border:none; background:transparent; "
         "line-height:170%;");
     bannerLay->addWidget(bannerIcon, 0, Qt::AlignTop);
     bannerLay->addWidget(bannerText, 1);
@@ -458,9 +458,9 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
     QHBoxLayout *metaLay = new QHBoxLayout(metaRow);
     metaLay->setContentsMargins(0, 0, 0, 0);
     metaLay->setSpacing(8);
-    metaLay->addWidget(makeToolkitChip("8 self-care folders", "#0b2a3c", "#f1e8ad", "#8bdff2"));
-    metaLay->addWidget(makeToolkitChip("Official BMCC-based content", "#0b2a3c", "#bdeee5", "#8ee2a8"));
-    metaLay->addWidget(makeToolkitChip("External links open in browser", "#0b2a3c", "#d7fff1", "#8bdff2"));
+    metaLay->addWidget(makeToolkitChip("8 self-care folders", "#f7f1df", "#355141", "#c7d8c1"));
+    metaLay->addWidget(makeToolkitChip("Official BMCC-based content", "#edf4e8", "#3c5b49", "#bfd0bb"));
+    metaLay->addWidget(makeToolkitChip("External links open in browser", "#f5f0e2", "#607565", "#d5e0cf"));
     metaLay->addStretch();
     main->addWidget(metaRow);
 
@@ -490,19 +490,19 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
         card->setCursor(Qt::PointingHandCursor);
         card->setStyleSheet(
             "QPushButton {"
-            "  border: 1px solid #8bdff2;"
+            "  border: 1px solid #c7d8c1;"
             "  border-radius: 24px;"
             "  background: qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
             "                              fx:0.18, fy:0.12,"
-            "                              stop:0 #dff8ff, stop:0.38 #ffffff,"
-            "                              stop:0.72 #f8ffff, stop:1 #e7fbff);"
+            "                              stop:0 #f8f3e8, stop:0.40 #ffffff,"
+            "                              stop:0.76 #f7faf4, stop:1 #eef4ea);"
             "  text-align: left;"
             "}"
             "QPushButton:hover {"
-            "  border: 1px solid #f1e8ad;"
-            "  background: #f1fffb;"
+            "  border: 1px solid #a8bf9d;"
+            "  background: #f5f8ef;"
             "}");
-        applyToolkitShadow(card, 22, 6, QColor(139, 223, 242, 22));
+        applyToolkitShadow(card, 22, 6, QColor(121, 154, 112, 16));
 
         QHBoxLayout *cardLay = new QHBoxLayout(card);
         cardLay->setContentsMargins(26, 14, 26, 14);
@@ -538,7 +538,7 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
         QLabel *chev = new QLabel("›");
         chev->setFixedWidth(20);
         chev->setAlignment(Qt::AlignCenter);
-        chev->setStyleSheet("font-size:28px; color:#8bdff2; border:none;");
+        chev->setStyleSheet("font-size:28px; color:#7b9777; border:none;");
         chev->setAttribute(Qt::WA_TransparentForMouseEvents);
 
         cardLay->addWidget(iconBadge);
@@ -554,8 +554,8 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
                     "  border-radius: 0 0 24px 24px;"
                     "  background: qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
                     "                              fx:0.18, fy:0.12,"
-                    "                              stop:0 #dff8ff, stop:0.38 #ffffff,"
-                    "                              stop:0.72 #f8ffff, stop:1 #e7fbff);"
+                    "                              stop:0 #f8f3e8, stop:0.40 #ffffff,"
+                    "                              stop:0.76 #f7faf4, stop:1 #eef4ea);"
                     "}").arg(fd.accentBorder));
         panel->setVisible(false);
 
@@ -566,14 +566,14 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
         // Intro box
         QFrame *introBox = new QFrame();
         introBox->setStyleSheet(
-            QString("QFrame { background:%1; border-radius:14px; border:1px solid #dfece1; }")
+            QString("QFrame { background:%1; border-radius:14px; border:1px solid #d5e0cf; }")
                 .arg(fd.accent));
         QVBoxLayout *introLay = new QVBoxLayout(introBox);
         introLay->setContentsMargins(16, 14, 16, 14);
         QLabel *introLbl = new QLabel(fd.intro);
         introLbl->setWordWrap(true);
         introLbl->setStyleSheet(
-            "font-size:13px; color:#0b2a3c; border:none; background:transparent; "
+            "font-size:13px; color:#365143; border:none; background:transparent; "
             "line-height:170%;");
         introLay->addWidget(introLbl);
         panelLay->addWidget(introBox);
@@ -620,17 +620,17 @@ void Toolkit::toggleFolder(const QString &id) {
         if (auto *btn = qobject_cast<QPushButton*>(it.value()))
             btn->setStyleSheet(
                 "QPushButton {"
-                "  border: 1px solid #8bdff2;"
+                "  border: 1px solid #c7d8c1;"
                 "  border-radius: 24px;"
                 "  background: qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
                 "                              fx:0.18, fy:0.12,"
-                "                              stop:0 #dff8ff, stop:0.38 #ffffff,"
-                "                              stop:0.72 #f8ffff, stop:1 #e7fbff);"
+                "                              stop:0 #f8f3e8, stop:0.40 #ffffff,"
+                "                              stop:0.76 #f7faf4, stop:1 #eef4ea);"
                 "  text-align: left;"
                 "}"
                 "QPushButton:hover {"
-                "  border: 1px solid #f1e8ad;"
-                "  background: #f1fffb;"
+                "  border: 1px solid #a8bf9d;"
+                "  background: #f5f8ef;"
                 "}");
     }
 
@@ -659,7 +659,7 @@ void Toolkit::toggleFolder(const QString &id) {
                     "  border-bottom: none;"
                     "  border-radius: 24px 24px 0 0;"
                     "  background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-                    "                              stop:0 %2, stop:1 #e7fbff);"
+                    "                              stop:0 %2, stop:1 #f3f6ee);"
                     "  text-align: left;"
                     "}").arg(accentBorder, accent));
 

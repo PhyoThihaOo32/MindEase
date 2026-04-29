@@ -20,6 +20,7 @@ INCLUDEPATH += \
 SOURCES += \
     app/main.cpp \
     app/mainwindow.cpp \
+    core/fallingleafoverlay.cpp \
     core/screen.cpp \
     screens/recommendations.cpp \
     screens/toolkit.cpp \
@@ -30,6 +31,7 @@ SOURCES += \
 
 HEADERS += \
     app/mainwindow.h \
+    core/fallingleafoverlay.h \
     core/screen.h \
     screens/recommendations.h \
     screens/toolkit.h \

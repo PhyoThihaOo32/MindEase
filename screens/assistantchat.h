@@ -3,6 +3,7 @@
 
 #include "core/screen.h"
 
+#include <QJsonArray>
 #include <QLabel>
 #include <QLineEdit>
 #include <QNetworkAccessManager>
@@ -10,6 +11,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QVBoxLayout>
+#include <QVector>
 
 class QNetworkReply;
 
@@ -25,10 +27,17 @@ private slots:
     void sendMessage();
 
 private:
+    struct ChatTurn {
+        QString role;
+        QString text;
+    };
+
     QWidget    *makeMessageRow(const QString &text, bool fromUser, bool crisis) const;
 
     void addMessage(const QString &text, bool fromUser, bool crisis = false);
     void handleReply(QNetworkReply *reply);
+    void appendConversationTurn(const QString &role, const QString &text);
+    QJsonArray recentHistoryPayload() const;
     void scrollToBottom();
     void setBusy(bool busy);
     QString backendUrl() const;
@@ -40,6 +49,7 @@ private:
     QLineEdit             *m_input;
     QPushButton           *m_sendBtn;
     QLabel                *m_statusLbl;
+    QVector<ChatTurn>       m_conversation;
     bool                   m_waitingForReply;
 };
 

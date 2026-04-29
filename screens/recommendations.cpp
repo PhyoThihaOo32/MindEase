@@ -297,9 +297,9 @@ static const QList<ResourceSubpageInfo> RESOURCE_SUBPAGES = {
 };
 
 static QLabel* makeInfoChip(const QString &text,
-                            const QString &bg = "#082f49",
-                            const QString &fg = "#f1e8ad",
-                            const QString &border = "#8bdff2") {
+                            const QString &bg = "#f5f0e2",
+                            const QString &fg = "#3b5645",
+                            const QString &border = "#c9d7c2") {
     QLabel *chip = new QLabel(text);
     chip->setStyleSheet(
         QString("font-size:11px; font-weight:600; color:%1; background:%2; "
@@ -311,7 +311,7 @@ static QLabel* makeInfoChip(const QString &text,
 static void applySoftShadow(QWidget *widget,
                             int blur = 24,
                             int yOffset = 7,
-                            const QColor &color = QColor(139, 223, 242, 28)) {
+                            const QColor &color = QColor(121, 154, 112, 20)) {
     auto *shadow = new QGraphicsDropShadowEffect(widget);
     shadow->setBlurRadius(blur);
     shadow->setOffset(0, yOffset);
@@ -522,8 +522,8 @@ static QWidget* makeResourceCard(const ResourceInfo &r,
         QFrame *detBox = new QFrame();
         detBox->setStyleSheet(
             "QFrame {"
-            "  background: #f7fff8;"
-            "  border: 1px solid #dfece1;"
+            "  background: #f8f4ea;"
+            "  border: 1px solid #d5e0cf;"
             "  border-radius: 12px;"
             "}");
         QVBoxLayout *dl = new QVBoxLayout(detBox);
@@ -550,9 +550,9 @@ static QWidget* makeResourceCard(const ResourceInfo &r,
     fl->setSpacing(6);
 
     static const QStringList tagStyles = {
-        "background:#073b4c; color:#8ee2a8; border:1px solid #8bdff2;",
-        "background:#102f38; color:#f1e8ad; border:1px solid #ddd99c;",
-        "background:#082f49; color:#9ee6f2; border:1px solid #8ee2a8;"
+        "background:#edf4e8; color:#355141; border:1px solid #bfd0bb;",
+        "background:#f7f1e3; color:#6a7054; border:1px solid #ddd2bb;",
+        "background:#eef1e6; color:#597062; border:1px solid #ccd9c8;"
     };
     for (int i = 0; i < r.tags.size(); i++) {
         QLabel *t = new QLabel(r.tags[i]);
@@ -602,11 +602,11 @@ static QWidget* makeResourceCard(const ResourceInfo &r,
                 });
             }
             btn->setStyleSheet(
-                "QPushButton { font-size:12px; font-weight:800; color:#06172a; "
+                "QPushButton { font-size:12px; font-weight:800; color:#2a4434; "
                 "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-                "                              stop:0 #8ee2a8, stop:0.55 #8bdff2, stop:1 #f1e8ad);"
-                "  border:1px solid #b8ffda; border-radius:11px; padding:7px 16px; }"
-                "QPushButton:hover { background:#8bdff2; color:#06172a; border-color:#f1e8ad; }");
+                "                              stop:0 #e3efdc, stop:0.58 #d4e6cd, stop:1 #f7efdc);"
+                "  border:1px solid #c7d8c1; border-radius:11px; padding:7px 16px; }"
+                "QPushButton:hover { background:#e8f1e4; color:#234030; border-color:#a8bf9d; }");
             btn->setCursor(Qt::PointingHandCursor);
             buttonGrid->addWidget(btn, row, column);
         };
@@ -630,23 +630,23 @@ static QWidget* makeTopicCard(const TopicInfo &t,
     card->setCursor(Qt::PointingHandCursor);
     card->setStyleSheet(
         "QPushButton {"
-        "  border: 1px solid #8bdff2;"
+        "  border: 1px solid #c7d8c1;"
         "  border-radius: 24px;"
         "  background: qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
         "                              fx:0.18, fy:0.12,"
-        "                              stop:0 #dff8ff, stop:0.38 #ffffff,"
-        "                              stop:0.72 #f8ffff, stop:1 #e7fbff);"
+        "                              stop:0 #f8f3e8, stop:0.40 #ffffff,"
+        "                              stop:0.76 #f7faf4, stop:1 #eef4ea);"
         "  text-align: left;"
         "}"
         "QPushButton:hover {"
-        "  border: 1px solid #f1e8ad;"
-        "  background: #f1fffb;"
+        "  border: 1px solid #a8bf9d;"
+        "  background: #f5f8ef;"
         "}"
         "QPushButton:pressed {"
-        "  background: #e7fbff;"
+        "  background: #edf4e8;"
         "}"
     );
-    applySoftShadow(card, 22, 6, QColor(139, 223, 242, 26));
+    applySoftShadow(card, 22, 6, QColor(121, 154, 112, 18));
 
     QHBoxLayout *hl = new QHBoxLayout(card);
     hl->setContentsMargins(26, 0, 26, 0);
@@ -682,7 +682,7 @@ static QWidget* makeTopicCard(const TopicInfo &t,
 
     // Arrow
     QLabel *arrow = new QLabel("→");
-    arrow->setStyleSheet("font-size:24px; color:#8bdff2; border:none;");
+    arrow->setStyleSheet("font-size:24px; color:#7b9777; border:none;");
     arrow->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     hl->addWidget(iconLbl);
@@ -730,10 +730,10 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
     QPushButton *backBtn = new QPushButton(
         QString("←  Back to %1").arg(TOPICS[subpage.parentTopicIndex].title));
     backBtn->setStyleSheet(
-        "QPushButton { font-size:13px; font-weight:600; color:#f1e8ad; "
-        "  background:#0b2a3c; border:1px solid #8bdff2; "
+        "QPushButton { font-size:13px; font-weight:600; color:#365143; "
+        "  background:#f6f1e5; border:1px solid #c7d8c1; "
         "  border-radius:12px; padding:8px 16px; }"
-        "QPushButton:hover { background:#123f46; border-color:#f1e8ad; }");
+        "QPushButton:hover { background:#edf4e8; border-color:#a8bf9d; }");
     backBtn->setCursor(Qt::PointingHandCursor);
     QObject::connect(backBtn, &QPushButton::clicked, [onBackToTopic, subpage]() {
         onBackToTopic(subpage.parentTopicIndex);
@@ -760,10 +760,10 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
     content->setStyleSheet(
         "QFrame { background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
         "                                  fx:0.18, fy:0.12,"
-        "                                  stop:0 #dff8ff, stop:0.38 #ffffff,"
-        "                                  stop:0.72 #f8ffff, stop:1 #e7fbff);"
-        "         border:1px solid #8bdff2; border-radius:24px; }");
-    applySoftShadow(content, 24, 7, QColor(142, 226, 168, 24));
+        "                                  stop:0 #f8f3e8, stop:0.40 #ffffff,"
+        "                                  stop:0.76 #f7faf4, stop:1 #eef4ea);"
+        "         border:1px solid #c7d8c1; border-radius:24px; }");
+    applySoftShadow(content, 24, 7, QColor(121, 154, 112, 18));
     QVBoxLayout *cl = new QVBoxLayout(content);
     cl->setContentsMargins(24, 22, 24, 22);
     cl->setSpacing(14);
@@ -771,12 +771,12 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
     QLabel *subtitle = new QLabel(subpage.subtitle);
     subtitle->setWordWrap(true);
     subtitle->setStyleSheet(
-        "font-size:15px; font-weight:600; color:#073b4c; border:none; line-height:165%;");
+        "font-size:15px; font-weight:600; color:#355141; border:none; line-height:165%;");
     cl->addWidget(subtitle);
 
     QFrame *detailsBox = new QFrame();
     detailsBox->setStyleSheet(
-        "QFrame { background:#f7fff8; border:1px solid #dfece1; border-radius:14px; }");
+        "QFrame { background:#f8f4ea; border:1px solid #d5e0cf; border-radius:14px; }");
     QVBoxLayout *dl = new QVBoxLayout(detailsBox);
     dl->setContentsMargins(16, 14, 16, 14);
     dl->setSpacing(6);
@@ -812,11 +812,11 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
             QPushButton *toolBtn = new QPushButton(label + " →");
             toolBtn->setCursor(Qt::PointingHandCursor);
             toolBtn->setStyleSheet(
-                "QPushButton { font-size:13px; font-weight:800; color:#06172a; "
+                "QPushButton { font-size:13px; font-weight:800; color:#2a4434; "
                 "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-                "                              stop:0 #8ee2a8, stop:0.6 #8bdff2, stop:1 #f1e8ad);"
-                "  border:1px solid #b8ffda; border-radius:14px; padding:12px 16px; }"
-                "QPushButton:hover { background:#8bdff2; color:#06172a; border-color:#f1e8ad; }");
+                "                              stop:0 #e3efdc, stop:0.6 #d4e6cd, stop:1 #f7efdc);"
+                "  border:1px solid #c7d8c1; border-radius:14px; padding:12px 16px; }"
+                "QPushButton:hover { background:#e8f1e4; color:#234030; border-color:#a8bf9d; }");
             QObject::connect(toolBtn, &QPushButton::clicked, [url]() {
                 openResourceTarget(url);
             });
@@ -833,7 +833,7 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
     tl->setContentsMargins(0, 0, 0, 0);
     tl->setSpacing(8);
     for (const QString &tag : subpage.tags)
-        tl->addWidget(makeInfoChip(tag, "#e7fbff", "#073b4c", "#8bdff2"));
+        tl->addWidget(makeInfoChip(tag, "#edf4e8", "#355141", "#bfd0bb"));
     tl->addStretch();
     cl->addWidget(tagRow);
 
@@ -845,11 +845,11 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
     openBtn->setCursor(Qt::PointingHandCursor);
     openBtn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     openBtn->setStyleSheet(
-        "QPushButton { font-size:13px; font-weight:800; color:#06172a; "
+        "QPushButton { font-size:13px; font-weight:800; color:#2a4434; "
         "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "                              stop:0 #8ee2a8, stop:0.55 #8bdff2, stop:1 #f1e8ad);"
-        "  border:1px solid #b8ffda; border-radius:12px; padding:10px 18px; }"
-        "QPushButton:hover { background:#8bdff2; }");
+        "                              stop:0 #e3efdc, stop:0.58 #d4e6cd, stop:1 #f7efdc);"
+        "  border:1px solid #c7d8c1; border-radius:12px; padding:10px 18px; }"
+        "QPushButton:hover { background:#e8f1e4; }");
     cl->addWidget(openBtn, 0, Qt::AlignLeft);
 
     pl->addWidget(topRow);
@@ -1007,19 +1007,19 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
 
     QLabel *greeting = new QLabel("WELCOME");
     greeting->setStyleSheet(
-        "font-size:11px; font-weight:700; color:#8ba493; "
+        "font-size:11px; font-weight:700; color:#7f9577; "
         "letter-spacing:1.6px;");
 
     QLabel *heading = new QLabel("What are you stressed about?");
     heading->setStyleSheet(
-        "font-size:38px; font-weight:800; color:#f1e8ad; "
+        "font-size:38px; font-weight:800; color:#274334; "
         "letter-spacing:-0.8px;");
 
     QLabel *sub = new QLabel(
         "Choose a topic below and we'll show you what BMCC has available for you — "
         "tutoring, financial help, counseling, and more.");
     sub->setWordWrap(true);
-    sub->setStyleSheet("font-size:15px; color:#d7fff1; line-height:170%;");
+    sub->setStyleSheet("font-size:15px; color:#687f6d; line-height:170%;");
 
     hl->addWidget(greeting);
     hl->addSpacing(2);
@@ -1029,9 +1029,9 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     QFrame *heroCard = new QFrame();
     heroCard->setStyleSheet(
         "QFrame { background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "                                  stop:0 #082f49, stop:0.58 #0f5a53, stop:1 #173f30);"
-        "         border:1px solid #8bdff2; border-radius:28px; }");
-    applySoftShadow(heroCard, 28, 8, QColor(139, 223, 242, 34));
+        "                                  stop:0 #f9f4e8, stop:0.56 #f6f1e5, stop:1 #ebf2e7);"
+        "         border:1px solid #c7d8c1; border-radius:28px; }");
+    applySoftShadow(heroCard, 28, 8, QColor(124, 164, 116, 22));
     QHBoxLayout *heroLay = new QHBoxLayout(heroCard);
     heroLay->setContentsMargins(32, 28, 32, 28);
     heroLay->setSpacing(28);
@@ -1044,13 +1044,13 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
 
     QLabel *heroTitle = new QLabel("Start with the stressor, not the office.");
     heroTitle->setStyleSheet(
-        "font-size:22px; font-weight:800; color:#f1e8ad; border:none;");
+        "font-size:22px; font-weight:800; color:#274334; border:none;");
     QLabel *heroBody = new QLabel(
         "MindEase narrows the list for you first, then surfaces direct links, office details, "
         "and support options without making you search across BMCC websites.");
     heroBody->setWordWrap(true);
     heroBody->setStyleSheet(
-        "font-size:14px; color:#d7fff1; border:none; line-height:170%;");
+        "font-size:14px; color:#5f7667; border:none; line-height:170%;");
     heroTextLay->addWidget(heroTitle);
     heroTextLay->addWidget(heroBody);
 
@@ -1059,9 +1059,9 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     QHBoxLayout *chipLay = new QHBoxLayout(chipRow);
     chipLay->setContentsMargins(0, 0, 0, 0);
     chipLay->setSpacing(8);
-    chipLay->addWidget(makeInfoChip("5 stress topics", "#0b2a3c", "#f1e8ad", "#8bdff2"));
-    chipLay->addWidget(makeInfoChip("Curated contacts", "#0b2a3c", "#bdeee5", "#8ee2a8"));
-    chipLay->addWidget(makeInfoChip("Links open in browser", "#0b2a3c", "#d7fff1", "#8bdff2"));
+    chipLay->addWidget(makeInfoChip("5 stress topics", "#f7f1df", "#355141", "#c7d8c1"));
+    chipLay->addWidget(makeInfoChip("Curated contacts", "#edf4e8", "#3c5b49", "#bfd0bb"));
+    chipLay->addWidget(makeInfoChip("Links open in browser", "#f5f0e2", "#607565", "#d5e0cf"));
     chipLay->addStretch();
     heroTextLay->addWidget(chipRow);
 
@@ -1069,8 +1069,8 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
         "Need urgent help?\nIf you are in immediate danger, call 911 or contact 988.\n\nBreathe. Choose. Connect.");
     heroSide->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     heroSide->setStyleSheet(
-        "font-size:13px; font-weight:800; color:#06172a; background:#f1e8ad; "
-        "border:1px solid #8bdff2; border-radius:20px; padding:18px 20px; line-height:160%;");
+        "font-size:13px; font-weight:800; color:#30503e; background:#edf3e9; "
+        "border:1px solid #c7d8c1; border-radius:20px; padding:18px 20px; line-height:160%;");
     heroSide->setMinimumWidth(320);
 
     heroLay->addWidget(heroTextBox, 1);
@@ -1089,10 +1089,10 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     searchCard->setStyleSheet(
         "QFrame { background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
         "                                  fx:0.18, fy:0.12,"
-        "                                  stop:0 #dff8ff, stop:0.38 #ffffff,"
-        "                                  stop:0.76 #f8ffff, stop:1 #e7fbff);"
-        "         border:1px solid #8bdff2; border-radius:24px; }");
-    applySoftShadow(searchCard, 22, 5, QColor(241, 232, 173, 20));
+        "                                  stop:0 #f8f3e8, stop:0.40 #ffffff,"
+        "                                  stop:0.78 #f8fbf6, stop:1 #eef4ea);"
+        "         border:1px solid #c7d8c1; border-radius:24px; }");
+    applySoftShadow(searchCard, 22, 5, QColor(124, 164, 116, 16));
     QVBoxLayout *searchOuter = new QVBoxLayout(searchCard);
     searchOuter->setContentsMargins(20, 18, 20, 16);
     searchOuter->setSpacing(10);
@@ -1107,7 +1107,7 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     searchIcon->setAlignment(Qt::AlignCenter);
     searchIcon->setFixedSize(42, 42);
     searchIcon->setStyleSheet(
-        "font-size:18px; color:#06172a; background:#f1e8ad; border:1px solid #8bdff2; "
+        "font-size:18px; color:#2e4a39; background:#edf3e9; border:1px solid #c7d8c1; "
         "border-radius:14px;");
 
     m_searchInput = new QLineEdit();
@@ -1116,7 +1116,7 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     m_searchInput->setClearButtonEnabled(true);
     m_searchInput->setStyleSheet(
         "QLineEdit {"
-        "  border:1px solid #8bdff2;"
+        "  border:1px solid #c7d8c1;"
         "  border-radius:14px;"
         "  background:#ffffff;"
         "  padding:12px 14px;"
@@ -1124,11 +1124,11 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
         "  color:#173c2c;"
         "}"
         "QLineEdit:focus {"
-        "  border:1px solid #f1e8ad;"
+        "  border:1px solid #a8bf9d;"
         "  background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
         "                             fx:0.18, fy:0.12,"
-        "                             stop:0 #eafaff, stop:0.45 #ffffff,"
-        "                             stop:1 #f6ffff);"
+        "                             stop:0 #f7fbf3, stop:0.45 #ffffff,"
+        "                             stop:1 #f7f3e9);"
         "}");
 
     QPushButton *searchBtn = new QPushButton("Search");

@@ -8,6 +8,14 @@
 
 #include <algorithm>
 
+// On-disk schema constants — single source of truth so the filename format
+// and body separator never drift between save and parse.
+namespace {
+    static const QString kEntryStampFormat = "yyyy-MM-dd_HH-mm-ss-zzz";
+    static const QChar   kSeparatorChar    = QChar(0x2500);    // ─ (BOX DRAWINGS LIGHT HORIZONTAL)
+    static const int     kSeparatorWidth   = 30;
+}
+
 JournalStorage::JournalStorage() {}
 
 JournalStorage::JournalStorage(const QString &directoryPath)
@@ -30,6 +38,7 @@ bool JournalStorage::saveEntry(const JournalEntry &entry) const {
 
     QTextStream out(&file);
     out << formatEntry(entry);
+    file.close();    // explicit flush before returning success
     return true;
 }
 
@@ -79,7 +88,9 @@ JournalEntry JournalStorage::loadEntry(const QString &path) const {
         return JournalEntry{};
 
     QTextStream in(&file);
-    return parseEntryFile(path, in.readAll());
+    const QString contents = in.readAll();
+    file.close();    // explicit close before parsing returns
+    return parseEntryFile(path, contents);
 }
 
 QString JournalStorage::resolveDirectoryPath() const {
@@ -92,7 +103,7 @@ QString JournalStorage::resolveDirectoryPath() const {
 
 QString JournalStorage::buildEntryPath(const QDateTime &dateTime) const {
     const QString basePath = resolveDirectoryPath() + "/"
-        + dateTime.toString("yyyy-MM-dd_HH-mm-ss-zzz");
+        + dateTime.toString(kEntryStampFormat);
 
     QString candidate = basePath + ".txt";
     int suffix = 1;
@@ -111,7 +122,7 @@ QString JournalStorage::formatEntry(const JournalEntry &entry) const {
     out << "=== MindEase Journal Entry ===\n";
     out << "Date: " << entry.dateTime().toString("dddd, MMMM d, yyyy") << "\n";
     out << "Time: " << entry.dateTime().toString("h:mm AP")            << "\n";
-    out << "──────────────────────────────\n\n";
+    out << QString(kSeparatorWidth, kSeparatorChar) << "\n\n";
     out << entry.body() << "\n";
     return content;
 }
@@ -120,9 +131,9 @@ JournalEntry JournalStorage::parseEntryFile(const QString &path,
                                             const QString &content) const {
     const QFileInfo fileInfo(path);
     const QString stem     = fileInfo.completeBaseName();
-    const int modernStampLength = QString("yyyy-MM-dd_HH-mm-ss-zzz").length();
+    const int modernStampLength = kEntryStampFormat.length();
     QDateTime dateTime = QDateTime::fromString(
-        stem.left(modernStampLength), "yyyy-MM-dd_HH-mm-ss-zzz");
+        stem.left(modernStampLength), kEntryStampFormat);
 
     if (!dateTime.isValid()) {
         const QString datePart = stem.left(10);
@@ -131,7 +142,7 @@ JournalEntry JournalStorage::parseEntryFile(const QString &path,
             datePart + " " + timePart, "yyyy-MM-dd HH:mm:ss");
     }
 
-    const QString separator = QString(30, QChar(0x2500));
+    const QString separator = QString(kSeparatorWidth, kSeparatorChar);
     const int separatorIndex = content.indexOf(separator);
     const QString body = (separatorIndex >= 0)
         ? content.mid(separatorIndex + separator.length() + 2).trimmed()

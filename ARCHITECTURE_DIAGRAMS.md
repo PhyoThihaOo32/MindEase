@@ -7,7 +7,6 @@ These diagrams reflect the current refactored project structure:
 - `screens/` for UI screens
 - `models/` for data objects
 - `storage/` for file I/O services
-- `legacy/` for older mood-tracking experiments not built by `MindEase.pro`
 
 ## 1. Project Structure Diagram
 
@@ -18,26 +17,22 @@ flowchart TD
     A --> D["screens/"]
     A --> E["models/"]
     A --> F["storage/"]
-    A --> G["legacy/"]
 
     B --> B1["main.cpp"]
     B --> B2["mainwindow.h/.cpp"]
 
     C --> C1["screen.h/.cpp"]
+    C --> C2["fallingleafoverlay.h/.cpp"]
 
     D --> D1["recommendations.h/.cpp"]
     D --> D2["toolkit.h/.cpp"]
     D --> D3["journal.h/.cpp"]
+    D --> D4["assistantchat.h/.cpp"]
+    D --> D5["home.h/.cpp"]
 
     E --> E1["journalentry.h/.cpp"]
 
     F --> F1["journalstorage.h/.cpp"]
-
-    G --> G1["moodentry.*"]
-    G --> G2["moodcheckin.*"]
-    G --> G3["moodlog.*"]
-    G --> G4["statsview.*"]
-    G --> G5["settingsview.*"]
 ```
 
 ## 2. Main System Flowchart

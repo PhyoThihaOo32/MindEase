@@ -14,8 +14,7 @@ INCLUDEPATH += \
     $$PWD/core \
     $$PWD/screens \
     $$PWD/models \
-    $$PWD/storage \
-    $$PWD/legacy
+    $$PWD/storage
 
 SOURCES += \
     app/main.cpp \

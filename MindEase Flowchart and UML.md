@@ -13,15 +13,14 @@ MindEase/
 |  |- mainwindow.h
 |  `- mainwindow.cpp
 |- core/
-|  |- screen.h
-|  `- screen.cpp
+|  |- screen.h / screen.cpp          (abstract base class)
+|  `- fallingleafoverlay.h / .cpp    (QPainter leaf animation)
 |- screens/
-|  |- recommendations.h
-|  |- recommendations.cpp
-|  |- toolkit.h
-|  |- toolkit.cpp
-|  |- journal.h
-|  `- journal.cpp
+|  |- home.h / home.cpp
+|  |- recommendations.h / .cpp
+|  |- toolkit.h / toolkit.cpp
+|  |- journal.h / journal.cpp
+|  `- assistantchat.h / .cpp
 |- models/
 |  |- journalentry.h
 |  `- journalentry.cpp

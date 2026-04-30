@@ -1,3 +1,9 @@
+/* ──────────────────────────────────────────────────────────────
+ * Standalone landing-page mockup — NOT part of the Qt build.
+ * Designed to pair with an external index.html (not in this repo).
+ * Safe to ignore when grading the C++/Qt deliverable.
+ * ──────────────────────────────────────────────────────────── */
+
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {

@@ -123,12 +123,8 @@ MindEase/
 │   ├── journal.h / journal.cpp
 │   ├── recommendations.h / recommendations.cpp
 │   └── toolkit.h / toolkit.cpp
-├── storage/
-│   └── journalstorage.h / journalstorage.cpp
-├── console_demo/
-│   └── simple C++ console demo
-└── legacy/
-    └── older experiments not built by default
+└── storage/
+    └── journalstorage.h / journalstorage.cpp
 ```
 
 ## Setup

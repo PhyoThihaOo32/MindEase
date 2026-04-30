@@ -994,7 +994,7 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     root->setContentsMargins(0, 0, 0, 0);
     root->setSpacing(0);
 
-    m_stack = new QStackedWidget();
+    m_stack = new QStackedWidget(this);
     m_stack->setObjectName("screenSurface");
 
     // ── Page 0: Landing / topic picker ───────────────────────────────────

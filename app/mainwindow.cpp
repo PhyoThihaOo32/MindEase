@@ -1,6 +1,7 @@
 #include "app/mainwindow.h"
 #include "core/fallingleafoverlay.h"
 #include "core/screen.h"
+#include "screens/home.h"
 #include "screens/recommendations.h"
 #include "screens/toolkit.h"
 #include "screens/assistantchat.h"
@@ -27,11 +28,13 @@ MainWindow::MainWindow(QWidget *parent)
     centralWidget->setObjectName("appShell");
     setCentralWidget(centralWidget);
 
-    mainLayout = new QHBoxLayout(centralWidget);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
+    mainLayout = new QVBoxLayout(centralWidget);
+    mainLayout->setContentsMargins(24, 20, 24, 20);
+    mainLayout->setSpacing(18);
 
     // Build screens (polymorphic — stored as Screen*)
+    Home *home = new Home(this);
+    screens.append(home);
     screens.append(new Recommendations(this));
     screens.append(new Toolkit(this));
     screens.append(new AssistantChat(this));
@@ -43,11 +46,19 @@ MainWindow::MainWindow(QWidget *parent)
     for (Screen *s : screens)
         stack->addWidget(s);
 
-    buildSidebar();
+    buildNavigationBar();
 
-    mainLayout->addWidget(sidebar);
-    mainLayout->addWidget(stack);
-    mainLayout->setStretch(1, 1);
+    mainLayout->addWidget(navShell);
+    mainLayout->addWidget(stack, 1);
+
+    connect(home, &Home::requestScreen, this, [this](const QString &screenId) {
+        for (int i = 0; i < screens.size(); ++i) {
+            if (screens[i]->screenId() == screenId) {
+                switchScreen(i);
+                return;
+            }
+        }
+    });
 
     leafOverlay = new FallingLeafOverlay(centralWidget);
     leafOverlay->setGeometry(centralWidget->rect());
@@ -67,81 +78,55 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     }
 }
 
-void MainWindow::buildSidebar() {
-    sidebar = new QWidget(this);
-    sidebar->setObjectName("sidebar");
-    sidebar->setFixedWidth(288);
+void MainWindow::buildNavigationBar() {
+    navShell = new QWidget(this);
+    navShell->setObjectName("navShell");
 
-    QVBoxLayout *sl = new QVBoxLayout(sidebar);
-    sl->setContentsMargins(0, 0, 0, 0);
-    sl->setSpacing(0);
+    QHBoxLayout *shellLayout = new QHBoxLayout(navShell);
+    shellLayout->setContentsMargins(10, 6, 10, 6);
+    shellLayout->setSpacing(24);
 
-    // ── Logo block ───────────────────────────────────────────────────────────
     QWidget *logo = new QWidget();
     logo->setObjectName("logoBox");
     QVBoxLayout *ll = new QVBoxLayout(logo);
-    ll->setContentsMargins(26, 26, 26, 22);
-    ll->setSpacing(2);
+    ll->setContentsMargins(0, 0, 0, 0);
+    ll->setSpacing(0);
 
     QLabel *appName = new QLabel("MindEase");
     appName->setObjectName("appName");
-    QLabel *appSub  = new QLabel("BMCC Wellness Companion");
-    appSub->setObjectName("appSub");
     ll->addWidget(appName);
-    ll->addWidget(appSub);
-    sl->addWidget(logo);
 
-    // Small section label above nav
-    QLabel *navHeader = new QLabel("MENU");
-    navHeader->setObjectName("navHeader");
-    navHeader->setContentsMargins(26, 18, 26, 8);
-    sl->addWidget(navHeader);
+    QWidget *navRow = new QWidget();
+    navRow->setObjectName("navRow");
+    QHBoxLayout *navLayout = new QHBoxLayout(navRow);
+    navLayout->setContentsMargins(0, 0, 0, 0);
+    navLayout->setSpacing(24);
 
-    // ── Nav items (index matches stack order) ────────────────────────────────
-    struct NavDef { QString icon; QString label; };
+    struct NavDef { QString label; };
     const QList<NavDef> navDefs = {
-        { "✦", "BMCC Resources"         },
-        { "◆", "Mental Health Toolkit"  },
-        { "☼", "MindEase Assistant"      },
-        { "✎", "My Journal"             },
+        { "Home"                 },
+        { "BMCC Resources"       },
+        { "Mental Health Toolkit"},
+        { "MindEase Assistant"   },
+        { "My Journal"           },
     };
 
     for (int i = 0; i < navDefs.size(); i++) {
-        QPushButton *btn = new QPushButton(
-            QString("  %1   %2").arg(navDefs[i].icon, navDefs[i].label));
+        QPushButton *btn = new QPushButton(navDefs[i].label);
         btn->setObjectName("navBtn");
         btn->setCheckable(true);
         btn->setChecked(i == 0);
         btn->setCursor(Qt::PointingHandCursor);
+        btn->setMinimumHeight(40);
         connect(btn, &QPushButton::clicked, this, [this, i]() { switchScreen(i); });
         navButtons.append(btn);
-        sl->addWidget(btn);
+        navLayout->addWidget(btn);
     }
+    navLayout->addStretch();
 
-    sl->addStretch();
-
-    // ── Footer block ─────────────────────────────────────────────────────────
-    QFrame *footerDiv = new QFrame();
-    footerDiv->setObjectName("footerDiv");
-    footerDiv->setFrameShape(QFrame::HLine);
-    sl->addWidget(footerDiv);
-
-    QWidget *footer = new QWidget();
-    QVBoxLayout *fl = new QVBoxLayout(footer);
-    fl->setContentsMargins(26, 16, 26, 20);
-    fl->setSpacing(2);
-
-    QLabel *footerTitle = new QLabel("Honors Project");
-    footerTitle->setObjectName("footerTitle");
-    QLabel *ver = new QLabel("v1.0  ·  CSC211H  ·  Qt 6");
-    ver->setObjectName("verLabel");
-    QLabel *footNote = new QLabel("Private, local-first wellness support");
-    footNote->setObjectName("footerNote");
-
-    fl->addWidget(footerTitle);
-    fl->addWidget(ver);
-    fl->addWidget(footNote);
-    sl->addWidget(footer);
+    shellLayout->addWidget(logo, 0, Qt::AlignLeft | Qt::AlignTop);
+    shellLayout->addSpacing(28);
+    shellLayout->addWidget(navRow, 1);
 }
 
 void MainWindow::switchScreen(int index) {
@@ -169,88 +154,47 @@ void MainWindow::applyStyle() {
                                         stop:1 rgba(249, 243, 229, 0.98));
         }
 
-        /* ── Sidebar ──────────────────────────────────────────────────── */
-        #sidebar {
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                        stop:0 rgba(247, 241, 227, 0.96),
-                                        stop:0.56 rgba(239, 238, 225, 0.94),
-                                        stop:1 rgba(228, 235, 220, 0.96));
-            border-right: 1px solid rgba(118, 148, 112, 0.24);
+        #navShell {
+            background: transparent;
+            border: none;
+        }
+        #brandRow, #navRow {
+            background: transparent;
+            border: none;
         }
         #logoBox {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                                        stop:0 rgba(247, 241, 227, 0.98),
-                                        stop:0.62 rgba(235, 241, 228, 0.96),
-                                        stop:1 rgba(220, 231, 214, 0.96));
-            border-bottom: 1px solid rgba(118, 148, 112, 0.24);
+            background: transparent;
+            border: none;
         }
         #appName {
-            font-size: 30px;
+            font-size: 26px;
             font-weight: 800;
-            color: #2b4a39;
-            letter-spacing: -0.8px;
-        }
-        #appSub {
-            font-size: 13px;
-            color: #6c8170;
-            margin-top: 3px;
-            letter-spacing: 0.35px;
-        }
-        #navHeader {
-            font-size: 10px;
-            font-weight: 700;
-            color: #7f9577;
-            letter-spacing: 1.8px;
+            color: #111111;
+            letter-spacing: -0.5px;
         }
 
-        /* ── Unified nav buttons ─────────────────────────────────────── */
         #navBtn {
-            text-align: left;
-            padding: 18px 22px;
-            border: 1px solid rgba(146, 171, 139, 0.06);
-            border-left: 4px solid transparent;
-            background: rgba(255, 255, 255, 0.28);
+            text-align: center;
+            padding: 8px 8px;
+            border: none;
+            background: transparent;
             font-size: 15px;
-            color: #385442;
-            border-radius: 0px 22px 22px 0px;
-            margin: 6px 16px 6px 0;
+            font-weight: 700;
+            color: #171717;
+            border-radius: 0px;
         }
         #navBtn:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                                        stop:0 rgba(233, 240, 227, 0.96), stop:1 rgba(221, 233, 216, 0.96));
-            color: #284635;
-            border: 1px solid rgba(133, 166, 125, 0.22);
+            color: #2f3f31;
         }
         #navBtn:checked {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                                        stop:0 rgba(233, 240, 227, 0.98), stop:1 rgba(216, 229, 209, 0.98));
-            color: #1f3a2c;
-            border-left: 4px solid #6e9770;
-            border-top: 1px solid rgba(122, 151, 116, 0.24);
-            border-right: 1px solid rgba(122, 151, 116, 0.24);
-            border-bottom: 1px solid rgba(122, 151, 116, 0.24);
+            background: transparent;
+            color: #111111;
             font-weight: 800;
         }
         #navBtn:focus {
-            background: rgba(232, 239, 226, 0.92);
-            color: #274332;
+            background: transparent;
+            color: #111111;
         }
-
-        /* ── Sidebar footer ──────────────────────────────────────────── */
-        #footerDiv {
-            color: rgba(118, 148, 112, 0.22);
-            background: rgba(118, 148, 112, 0.22);
-            max-height: 1px;
-            border: none;
-        }
-        #footerTitle {
-            font-size: 11px;
-            font-weight: 700;
-            color: #405846;
-            letter-spacing: 0.3px;
-        }
-        #verLabel { font-size: 10px; color: #738573; letter-spacing: 0.25px; }
-        #footerNote { font-size: 10px; color: #6d8476; }
 
         #screenStack {
             background: transparent;

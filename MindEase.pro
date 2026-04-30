@@ -22,6 +22,7 @@ SOURCES += \
     app/mainwindow.cpp \
     core/fallingleafoverlay.cpp \
     core/screen.cpp \
+    screens/home.cpp \
     screens/recommendations.cpp \
     screens/toolkit.cpp \
     screens/assistantchat.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     app/mainwindow.h \
     core/fallingleafoverlay.h \
     core/screen.h \
+    screens/home.h \
     screens/recommendations.h \
     screens/toolkit.h \
     screens/assistantchat.h \

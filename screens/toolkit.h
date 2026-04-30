@@ -2,9 +2,10 @@
 #define TOOLKIT_H
 
 #include "core/screen.h"
-#include <QMap>
-#include <QFrame>
 #include <QLabel>
+#include <QLineEdit>
+#include <QStackedWidget>
+#include <QVector>
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Toolkit — Mental Health Toolkit screen
@@ -28,12 +29,16 @@ public:
     void onActivated() override;
 
 private:
-    void toggleFolder(const QString &id);
+    void applyFolderSearch(const QString &query);
+    void openBestFolderMatch();
+    void showFolder(int index);
+    void showHome();
 
-    QMap<QString, QFrame*>  panels;
-    QMap<QString, QWidget*> folderCards;
-    QMap<QString, QLabel*>  chevrons;     // track all chevron labels for reset
-    QString openFolder;
+    QStackedWidget *m_stack = nullptr;
+    QLineEdit      *m_searchInput = nullptr;
+    QLabel         *m_searchStatus = nullptr;
+    QVector<QWidget*> m_folderCards;
+    QVector<QLabel*>  m_folderSubtitleLabels;
 };
 
 #endif // TOOLKIT_H

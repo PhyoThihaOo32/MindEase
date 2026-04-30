@@ -626,68 +626,71 @@ static QWidget* makeTopicCard(const TopicInfo &t,
                               std::function<void()> onClick,
                               QLabel **subtitleLabelOut = nullptr) {
     QPushButton *card = new QPushButton();
-    card->setMinimumHeight(116);
+    card->setFixedSize(268, 268);
     card->setCursor(Qt::PointingHandCursor);
     card->setStyleSheet(
         "QPushButton {"
         "  border: 1px solid #c7d8c1;"
-        "  border-radius: 24px;"
-        "  background: qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                              fx:0.18, fy:0.12,"
-        "                              stop:0 #f8f3e8, stop:0.40 #ffffff,"
-        "                              stop:0.76 #f7faf4, stop:1 #eef4ea);"
-        "  text-align: left;"
+        "  border-radius: 18px;"
+        "  background: rgba(255, 255, 255, 0.96);"
         "}"
         "QPushButton:hover {"
-        "  border: 1px solid #a8bf9d;"
-        "  background: #f5f8ef;"
+        "  border: 1px solid #afc5aa;"
+        "  background: rgba(255, 255, 255, 1.0);"
         "}"
         "QPushButton:pressed {"
-        "  background: #edf4e8;"
+        "  background: #f5f8ef;"
         "}"
     );
-    applySoftShadow(card, 22, 6, QColor(121, 154, 112, 18));
+    applySoftShadow(card, 18, 4, QColor(121, 154, 112, 12));
 
     QHBoxLayout *hl = new QHBoxLayout(card);
-    hl->setContentsMargins(26, 0, 26, 0);
-    hl->setSpacing(20);
+    hl->setContentsMargins(24, 22, 24, 22);
+    hl->setSpacing(0);
+    hl->setAlignment(Qt::AlignCenter);
 
-    // Icon badge
     QLabel *iconLbl = new QLabel(t.icon);
-    iconLbl->setFixedSize(58, 58);
+    iconLbl->setFixedSize(60, 60);
     iconLbl->setAlignment(Qt::AlignCenter);
     iconLbl->setStyleSheet(
-        QString("background:%1; border-radius:18px; font-size:25px; border:none;").arg(t.accent));
+        "background:transparent; border:none; font-size:32px;");
     iconLbl->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-    // Text block
     QWidget *textBlock = new QWidget();
     textBlock->setStyleSheet("border:none; background:transparent;");
     textBlock->setAttribute(Qt::WA_TransparentForMouseEvents);
     QVBoxLayout *vl = new QVBoxLayout(textBlock);
     vl->setContentsMargins(0, 0, 0, 0);
-    vl->setSpacing(3);
+    vl->setSpacing(9);
+    vl->setAlignment(Qt::AlignCenter);
     QLabel *titleLbl = new QLabel(t.title);
+    titleLbl->setWordWrap(true);
+    titleLbl->setAlignment(Qt::AlignCenter);
     titleLbl->setStyleSheet(
-        "font-size:18px; font-weight:800; color:#173c2c; border:none; "
-        "letter-spacing:-0.15px;");
+        "font-size:16px; font-weight:800; color:#1a1a1a; border:none; "
+        "letter-spacing:-0.1px;");
     QLabel *subLbl = new QLabel(t.subtitle);
     subLbl->setWordWrap(true);
-    subLbl->setStyleSheet("font-size:13px; color:#6d8272; border:none;");
+    subLbl->setAlignment(Qt::AlignCenter);
+    subLbl->setMaximumWidth(190);
+    subLbl->setStyleSheet("font-size:11px; color:#6d8272; border:none;");
+    subLbl->setVisible(true);
     vl->addWidget(titleLbl);
     vl->addWidget(subLbl);
 
     if (subtitleLabelOut)
         *subtitleLabelOut = subLbl;
 
-    // Arrow
-    QLabel *arrow = new QLabel("→");
-    arrow->setStyleSheet("font-size:24px; color:#7b9777; border:none;");
-    arrow->setAttribute(Qt::WA_TransparentForMouseEvents);
+    QVBoxLayout *cardColumn = new QVBoxLayout();
+    cardColumn->setContentsMargins(0, 0, 0, 0);
+    cardColumn->setSpacing(14);
+    cardColumn->setAlignment(Qt::AlignCenter);
+    cardColumn->addStretch();
+    cardColumn->addWidget(iconLbl, 0, Qt::AlignHCenter);
+    cardColumn->addWidget(textBlock, 0, Qt::AlignHCenter);
+    cardColumn->addStretch();
 
-    hl->addWidget(iconLbl);
-    hl->addWidget(textBlock, 1);
-    hl->addWidget(arrow);
+    hl->addLayout(cardColumn);
 
     QObject::connect(card, &QPushButton::clicked, onClick);
     return card;
@@ -884,12 +887,11 @@ void Recommendations::applyTopicSearch(const QString &query) {
             m_topicSubtitleLabels[i]->setText(TOPICS[i].subtitle);
             m_topicSubtitleLabels[i]->setStyleSheet(
                 "font-size:13px; color:#6d8272; border:none;");
+            m_topicSubtitleLabels[i]->setVisible(true);
         }
 
-        m_searchStatus->setText(
-            "Search checks topic cards, resource names, tags, and subtopics like Zoom, Panther Pantry, fitness, and counseling.");
-        m_searchStatus->setStyleSheet(
-            "font-size:12px; color:#6d8272; border:none; background:transparent;");
+        m_searchStatus->clear();
+        m_searchStatus->setVisible(false);
         return;
     }
 
@@ -905,14 +907,15 @@ void Recommendations::applyTopicSearch(const QString &query) {
 
         if (i < m_topicSubtitleLabels.size()) {
             if (matches && !result.matchedSubtopics.isEmpty()) {
-                m_topicSubtitleLabels[i]->setText(
-                    QString("Subtopic match: %1").arg(summarizedSubtopics(result.matchedSubtopics)));
+                m_topicSubtitleLabels[i]->setText(TOPICS[i].subtitle);
                 m_topicSubtitleLabels[i]->setStyleSheet(
-                    "font-size:13px; color:#073b4c; font-weight:600; border:none;");
+                    "font-size:11px; color:#6d8272; border:none;");
+                m_topicSubtitleLabels[i]->setVisible(true);
             } else {
                 m_topicSubtitleLabels[i]->setText(TOPICS[i].subtitle);
                 m_topicSubtitleLabels[i]->setStyleSheet(
-                    "font-size:13px; color:#6d8272; border:none;");
+                    "font-size:11px; color:#6d8272; border:none;");
+                m_topicSubtitleLabels[i]->setVisible(matches);
             }
         }
 
@@ -928,9 +931,10 @@ void Recommendations::applyTopicSearch(const QString &query) {
 
     if (visibleCount == 0) {
         m_searchStatus->setText(
-            "No topic matched that search. Try words like food, immigration, stress, or counseling.");
+            "No topic matched that search. Try words like food, immigration, tutoring, Zoom, or counseling.");
         m_searchStatus->setStyleSheet(
             "font-size:11px; color:#C62828; border:none; background:transparent;");
+        m_searchStatus->setVisible(true);
         return;
     }
 
@@ -957,7 +961,8 @@ void Recommendations::applyTopicSearch(const QString &query) {
 
     if (bestIndex >= 0) {
         m_searchStatus->setStyleSheet(
-            "font-size:12px; color:#073b4c; border:none; background:transparent;");
+            "font-size:12px; color:#4c5e78; border:none; background:transparent;");
+        m_searchStatus->setVisible(true);
     }
 }
 
@@ -1002,151 +1007,105 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     QWidget *homePage = new QWidget();
     homePage->setObjectName("screenSurface");
     QVBoxLayout *hl = new QVBoxLayout(homePage);
-    hl->setContentsMargins(64, 48, 64, 48);
-    hl->setSpacing(15);
+    hl->setContentsMargins(48, 28, 48, 48);
+    hl->setSpacing(0);
+
+    QWidget *homeInner = new QWidget();
+    homeInner->setStyleSheet("border:none; background:transparent;");
+    homeInner->setMaximumWidth(1240);
+    QVBoxLayout *innerLay = new QVBoxLayout(homeInner);
+    innerLay->setContentsMargins(0, 0, 0, 0);
+    innerLay->setSpacing(16);
 
     QLabel *greeting = new QLabel("WELCOME");
     greeting->setStyleSheet(
-        "font-size:11px; font-weight:700; color:#7f9577; "
-        "letter-spacing:1.6px;");
+        "font-size:12px; font-weight:700; color:#5e6d85; "
+        "letter-spacing:1.8px;");
 
-    QLabel *heading = new QLabel("What are you stressed about?");
+    QLabel *heading = new QLabel("What kind of support do you need right now?");
     heading->setStyleSheet(
-        "font-size:38px; font-weight:800; color:#274334; "
+        "font-size:40px; font-weight:800; color:#111111; "
         "letter-spacing:-0.8px;");
 
     QLabel *sub = new QLabel(
-        "Choose a topic below and we'll show you what BMCC has available for you — "
-        "tutoring, financial help, counseling, and more.");
-    sub->setWordWrap(true);
-    sub->setStyleSheet("font-size:15px; color:#687f6d; line-height:170%;");
+        "BMCC offers resources that can help you feel supported, connected, and heard.");
+    sub->setWordWrap(false);
+    sub->setMaximumWidth(900);
+    sub->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
 
-    hl->addWidget(greeting);
-    hl->addSpacing(2);
-    hl->addWidget(heading);
-    hl->addWidget(sub);
+    QWidget *headerWrap = new QWidget();
+    headerWrap->setStyleSheet("border:none; background:transparent;");
+    QVBoxLayout *headerLay = new QVBoxLayout(headerWrap);
+    headerLay->setContentsMargins(0, 0, 0, 0);
+    headerLay->setSpacing(10);
+    headerLay->addWidget(greeting, 0, Qt::AlignLeft);
+    headerLay->addWidget(heading, 0, Qt::AlignLeft);
+    headerLay->addWidget(sub, 0, Qt::AlignLeft);
 
-    QFrame *heroCard = new QFrame();
-    heroCard->setStyleSheet(
-        "QFrame { background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "                                  stop:0 #f9f4e8, stop:0.56 #f6f1e5, stop:1 #ebf2e7);"
-        "         border:1px solid #c7d8c1; border-radius:28px; }");
-    applySoftShadow(heroCard, 28, 8, QColor(124, 164, 116, 22));
-    QHBoxLayout *heroLay = new QHBoxLayout(heroCard);
-    heroLay->setContentsMargins(32, 28, 32, 28);
-    heroLay->setSpacing(28);
-
-    QWidget *heroTextBox = new QWidget();
-    heroTextBox->setStyleSheet("border:none; background:transparent;");
-    QVBoxLayout *heroTextLay = new QVBoxLayout(heroTextBox);
-    heroTextLay->setContentsMargins(0, 0, 0, 0);
-    heroTextLay->setSpacing(6);
-
-    QLabel *heroTitle = new QLabel("Start with the stressor, not the office.");
-    heroTitle->setStyleSheet(
-        "font-size:22px; font-weight:800; color:#274334; border:none;");
-    QLabel *heroBody = new QLabel(
-        "MindEase narrows the list for you first, then surfaces direct links, office details, "
-        "and support options without making you search across BMCC websites.");
-    heroBody->setWordWrap(true);
-    heroBody->setStyleSheet(
-        "font-size:14px; color:#5f7667; border:none; line-height:170%;");
-    heroTextLay->addWidget(heroTitle);
-    heroTextLay->addWidget(heroBody);
-
-    QWidget *chipRow = new QWidget();
-    chipRow->setStyleSheet("border:none; background:transparent;");
-    QHBoxLayout *chipLay = new QHBoxLayout(chipRow);
-    chipLay->setContentsMargins(0, 0, 0, 0);
-    chipLay->setSpacing(8);
-    chipLay->addWidget(makeInfoChip("5 stress topics", "#f7f1df", "#355141", "#c7d8c1"));
-    chipLay->addWidget(makeInfoChip("Curated contacts", "#edf4e8", "#3c5b49", "#bfd0bb"));
-    chipLay->addWidget(makeInfoChip("Links open in browser", "#f5f0e2", "#607565", "#d5e0cf"));
-    chipLay->addStretch();
-    heroTextLay->addWidget(chipRow);
-
-    QLabel *heroSide = new QLabel(
-        "Need urgent help?\nIf you are in immediate danger, call 911 or contact 988.\n\nBreathe. Choose. Connect.");
-    heroSide->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    heroSide->setStyleSheet(
-        "font-size:13px; font-weight:800; color:#30503e; background:#edf3e9; "
-        "border:1px solid #c7d8c1; border-radius:20px; padding:18px 20px; line-height:160%;");
-    heroSide->setMinimumWidth(320);
-
-    heroLay->addWidget(heroTextBox, 1);
-    heroLay->addWidget(heroSide);
-
-    hl->addSpacing(18);
-    hl->addWidget(heroCard);
-    hl->addSpacing(18);
-
-    QLabel *chooserLabel = new QLabel("CHOOSE A SUPPORT PATH");
-    chooserLabel->setObjectName("sectionLabel");
-    hl->addWidget(chooserLabel);
-    hl->addSpacing(4);
+    innerLay->addWidget(headerWrap);
+    innerLay->addSpacing(18);
 
     QFrame *searchCard = new QFrame();
     searchCard->setStyleSheet(
-        "QFrame { background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                                  fx:0.18, fy:0.12,"
-        "                                  stop:0 #f8f3e8, stop:0.40 #ffffff,"
-        "                                  stop:0.78 #f8fbf6, stop:1 #eef4ea);"
-        "         border:1px solid #c7d8c1; border-radius:24px; }");
-    applySoftShadow(searchCard, 22, 5, QColor(124, 164, 116, 16));
+        "QFrame { background:transparent; border:none; }");
     QVBoxLayout *searchOuter = new QVBoxLayout(searchCard);
-    searchOuter->setContentsMargins(20, 18, 20, 16);
-    searchOuter->setSpacing(10);
+    searchOuter->setContentsMargins(0, 0, 0, 0);
+    searchOuter->setSpacing(8);
 
     QWidget *searchRow = new QWidget();
     searchRow->setStyleSheet("border:none; background:transparent;");
     QHBoxLayout *searchLay = new QHBoxLayout(searchRow);
     searchLay->setContentsMargins(0, 0, 0, 0);
     searchLay->setSpacing(10);
+    searchLay->setAlignment(Qt::AlignLeft);
 
     QLabel *searchIcon = new QLabel("⌕");
     searchIcon->setAlignment(Qt::AlignCenter);
-    searchIcon->setFixedSize(42, 42);
+    searchIcon->setFixedSize(38, 38);
     searchIcon->setStyleSheet(
-        "font-size:18px; color:#2e4a39; background:#edf3e9; border:1px solid #c7d8c1; "
-        "border-radius:14px;");
+        "font-size:16px; color:#4c5e78; background:#ffffff; border:1px solid #d7ddd2; "
+        "border-radius:13px;");
 
     m_searchInput = new QLineEdit();
     m_searchInput->setPlaceholderText(
         "Search topics or subtopics, e.g. food, Zoom, fitness, DACA, counseling");
     m_searchInput->setClearButtonEnabled(true);
+    m_searchInput->setMaximumWidth(560);
     m_searchInput->setStyleSheet(
         "QLineEdit {"
-        "  border:1px solid #c7d8c1;"
+        "  border:1px solid #d7ddd2;"
         "  border-radius:14px;"
         "  background:#ffffff;"
         "  padding:12px 14px;"
         "  font-size:14px;"
-        "  color:#173c2c;"
+        "  color:#1a1a1a;"
         "}"
         "QLineEdit:focus {"
-        "  border:1px solid #a8bf9d;"
-        "  background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                             fx:0.18, fy:0.12,"
-        "                             stop:0 #f7fbf3, stop:0.45 #ffffff,"
-        "                             stop:1 #f7f3e9);"
+        "  border:1px solid #b8c8b5;"
+        "  background:#ffffff;"
         "}");
 
     QPushButton *searchBtn = new QPushButton("Search");
-    searchBtn->setObjectName("primaryBtn");
-    searchBtn->setMinimumHeight(46);
+    searchBtn->setMinimumHeight(42);
     searchBtn->setCursor(Qt::PointingHandCursor);
+    searchBtn->setStyleSheet(
+        "QPushButton { font-size:13px; font-weight:700; color:#1a1a1a; "
+        "background:#ffffff; border:1px solid #d7ddd2; border-radius:14px; padding:10px 18px; }"
+        "QPushButton:hover { background:#f7f7f4; border-color:#c4d1c0; }");
 
     searchLay->addWidget(searchIcon);
-    searchLay->addWidget(m_searchInput, 1);
+    searchLay->addWidget(m_searchInput);
     searchLay->addWidget(searchBtn);
+    searchLay->addStretch();
 
     m_searchStatus = new QLabel();
     m_searchStatus->setWordWrap(true);
+    m_searchStatus->setVisible(false);
 
     searchOuter->addWidget(searchRow);
     searchOuter->addWidget(m_searchStatus);
-    hl->addWidget(searchCard);
-    hl->addSpacing(8);
+    innerLay->addWidget(searchCard);
+    innerLay->addSpacing(18);
 
     connect(m_searchInput, &QLineEdit::textChanged,
             this, &Recommendations::applyTopicSearch);
@@ -1157,9 +1116,10 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
 
     QWidget *topicList = new QWidget();
     topicList->setStyleSheet("border:none; background:transparent;");
-    QVBoxLayout *topicListLay = new QVBoxLayout(topicList);
-    topicListLay->setContentsMargins(0, 0, 0, 0);
-    topicListLay->setSpacing(10);
+    QGridLayout *topicListLay = new QGridLayout(topicList);
+    topicListLay->setContentsMargins(0, 8, 0, 0);
+    topicListLay->setHorizontalSpacing(28);
+    topicListLay->setVerticalSpacing(28);
 
     for (int i = 0; i < TOPICS.size(); i++) {
         int idx = i;
@@ -1170,10 +1130,20 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
             &subtitleLabel);
         m_topicCards.append(card);
         m_topicSubtitleLabels.append(subtitleLabel);
-        topicListLay->addWidget(card);
+        topicListLay->addWidget(card, i / 3, i % 3, Qt::AlignCenter);
     }
-    topicListLay->addStretch();
-    hl->addWidget(topicList);
+    for (int col = 0; col < 3; ++col)
+        topicListLay->setColumnStretch(col, 1);
+
+    innerLay->addWidget(topicList, 0, Qt::AlignHCenter);
+    innerLay->addStretch();
+
+    QHBoxLayout *centerLay = new QHBoxLayout();
+    centerLay->setContentsMargins(0, 0, 0, 0);
+    centerLay->addStretch();
+    centerLay->addWidget(homeInner);
+    centerLay->addStretch();
+    hl->addLayout(centerLay);
     hl->addStretch();
 
     homeScroll->setWidget(homePage);

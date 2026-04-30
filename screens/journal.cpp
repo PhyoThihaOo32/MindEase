@@ -1,31 +1,30 @@
 #include "screens/journal.h"
 #include "models/journalentry.h"
-#include "core/screen.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QFrame>
-#include <QPushButton>
-#include <QListWidgetItem>
-#include <QTimer>
-#include <QDateTime>
-#include <QDir>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QShortcut>
-#include <QSplitter>
-#include <QStandardPaths>
-#include <QSizePolicy>
-#include <QGraphicsDropShadowEffect>
 #include <QColor>
+#include <QDateTime>
+#include <QFrame>
+#include <QGraphicsDropShadowEffect>
+#include <QHBoxLayout>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QRegularExpression>
+#include <QScrollArea>
+#include <QSizePolicy>
+#include <QStandardPaths>
+#include <QTimer>
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
+namespace {
+
+struct EntryDisplayParts {
+    QString title;
+    QString body;
+    QString excerpt;
+};
 
 static void applyJournalShadow(QWidget *widget,
-                               int blur = 24,
-                               int yOffset = 6,
-                               const QColor &color = QColor(121, 154, 112, 18)) {
+                               int blur = 18,
+                               int yOffset = 4,
+                               const QColor &color = QColor(121, 154, 112, 14)) {
     auto *shadow = new QGraphicsDropShadowEffect(widget);
     shadow->setBlurRadius(blur);
     shadow->setOffset(0, yOffset);
@@ -33,192 +32,63 @@ static void applyJournalShadow(QWidget *widget,
     widget->setGraphicsEffect(shadow);
 }
 
-void Journal::showStatus(const QString &msg, bool ok) {
-    m_statusLbl->setText(msg);
-    m_statusLbl->setStyleSheet(
-        ok ? "font-size:12px; color:#2E7D32; border:none; background:transparent;"
-           : "font-size:12px; color:#C62828; border:none; background:transparent;");
-    QTimer::singleShot(4000, m_statusLbl, [this, msg]() {
-        if (m_statusLbl->text() == msg)
-            m_statusLbl->setText("");
-    });
+static void clearLayout(QLayout *layout) {
+    if (!layout)
+        return;
+
+    while (QLayoutItem *item = layout->takeAt(0)) {
+        if (QWidget *widget = item->widget())
+            delete widget;
+        if (QLayout *childLayout = item->layout())
+            clearLayout(childLayout);
+        delete item;
+    }
 }
 
-void Journal::syncEntryActions() {
-    const bool hasSelection = m_entryList && m_entryList->currentItem();
-    if (m_deleteBtn)
-        m_deleteBtn->setEnabled(hasSelection);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Activation hook (overrides Screen::onActivated)
-// ─────────────────────────────────────────────────────────────────────────────
-
-// Called by MainWindow::switchScreen() each time the user navigates here.
-// Refreshes the entry list (e.g. if a file was added externally) and syncs
-// the date/time display. Demonstrates runtime polymorphism: MainWindow calls
-// screens[i]->onActivated() on a Screen* and the correct override runs.
-void Journal::onActivated() {
-    refreshEntryList();
-    updateClock();
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// File I/O — delegated to JournalStorage
-// ─────────────────────────────────────────────────────────────────────────────
-
-// saveEntry() constructs a JournalEntry object and delegates all disk I/O to
-// JournalStorage::saveEntry(). This screen only handles the UI state change.
-void Journal::saveEntry() {
-    const QString text = m_editor->toPlainText().trimmed();
-    if (text.isEmpty()) {
-        showStatus("✕  Nothing to save — write something first.", false);
-        return;
+static EntryDisplayParts buildEntryDisplay(const JournalEntry &entry) {
+    EntryDisplayParts parts;
+    const QString raw = entry.body().trimmed();
+    if (raw.isEmpty()) {
+        parts.title = "Untitled reflection";
+        return parts;
     }
 
-    // Create a model object, then let the model write itself to disk.
-    const QDateTime    now   = QDateTime::currentDateTime();
-    JournalEntry       entry(now, text);
+    QString fullBody = raw;
+    const QRegularExpression paragraphBreak("\n\\s*\n");
+    QStringList paragraphs = raw.split(paragraphBreak, Qt::SkipEmptyParts);
 
-    if (!m_storage.saveEntry(entry)) {
-        showStatus("✕  Could not save. Check file permissions.", false);
-        return;
-    }
-
-    showStatus("✔  Entry saved — " + now.toString("MMMM d, yyyy 'at' h:mm AP"));
-    m_editor->clear();
-    refreshEntryList();
-}
-
-void Journal::deleteSelectedEntry() {
-    QListWidgetItem *item = m_entryList ? m_entryList->currentItem() : nullptr;
-    if (!item) {
-        showStatus("Select an entry first.", false);
-        return;
-    }
-
-    const QString path = item->data(Qt::UserRole).toString();
-    const QFileInfo info(path);
-    const QString prompt =
-        QString("Delete this saved journal entry?\n\n%1\n\nThis removes the local file permanently.")
-            .arg(item->text());
-
-    const QMessageBox::StandardButton response = QMessageBox::question(
-        this,
-        "Delete Journal Entry",
-        prompt,
-        QMessageBox::Yes | QMessageBox::Cancel,
-        QMessageBox::Cancel);
-
-    if (response != QMessageBox::Yes)
-        return;
-
-    if (!m_storage.deleteEntry(path)) {
-        showStatus(
-            QString("Could not delete %1.").arg(info.fileName().isEmpty() ? "the selected entry"
-                                                                          : info.fileName()),
-            false);
-        return;
-    }
-
-    refreshEntryList();
-    showStatus("Entry deleted.", true);
-}
-
-void Journal::clearEditor() {
-    if (m_editor->toPlainText().trimmed().isEmpty()) return;
-    m_editor->clear();
-    m_editor->setFocus();
-    showStatus("Editor cleared.", true);
-}
-
-// refreshEntryList() asks JournalStorage for the current entries and rebuilds
-// the list UI from those model objects.
-void Journal::refreshEntryList() {
-    const QString selectedPath = m_entryList->currentItem()
-        ? m_entryList->currentItem()->data(Qt::UserRole).toString()
-        : QString{};
-
-    m_entryList->clear();
-    m_preview->clear();
-    syncEntryActions();
-
-    const QVector<JournalEntry> entries = m_storage.loadEntries();
-
-    if (entries.isEmpty()) {
-        m_preview->setPlaceholderText(
-            "No entries yet.");
-        syncEntryActions();
-        return;
-    }
-
-    for (const JournalEntry &entry : entries) {
-        QListWidgetItem *item = new QListWidgetItem(
-            entry.dateTime().toString("ddd, MMM d yyyy  ·  h:mm AP"));
-        item->setData(Qt::UserRole, entry.filePath());
-        item->setToolTip(entry.filePath());
-        m_entryList->addItem(item);
-    }
-
-    if (m_entryList->count() == 0) {
-        m_preview->setPlaceholderText("No entries yet.");
-        syncEntryActions();
-        return;
-    }
-
-    QListWidgetItem *itemToSelect = nullptr;
-    for (int i = 0; i < m_entryList->count(); ++i) {
-        QListWidgetItem *candidate = m_entryList->item(i);
-        if (candidate->data(Qt::UserRole).toString() == selectedPath) {
-            itemToSelect = candidate;
-            break;
+    if (paragraphs.size() >= 2) {
+        const QString candidateTitle = paragraphs.first().trimmed();
+        if (!candidateTitle.isEmpty() && candidateTitle.size() <= 90) {
+            parts.title = candidateTitle;
+            paragraphs.takeFirst();
+            fullBody = paragraphs.join("\n\n").trimmed();
         }
     }
 
-    if (!itemToSelect)
-        itemToSelect = m_entryList->item(0);
-
-    if (itemToSelect)
-        m_entryList->setCurrentItem(itemToSelect);
-
-    syncEntryActions();
-}
-
-// loadSelectedEntry() uses JournalStorage::loadEntry() to read the entry,
-// then accesses it through its public accessor methods (encapsulation in action).
-void Journal::loadSelectedEntry(QListWidgetItem *item) {
-    if (!item) return;
-
-    const QString    path  = item->data(Qt::UserRole).toString();
-    const JournalEntry entry = m_storage.loadEntry(path);
-
-    if (!entry.isValid()) {
-        m_preview->setPlainText("Could not open this entry.");
-        return;
+    if (parts.title.isEmpty()) {
+        const QString firstLine = raw.section('\n', 0, 0).trimmed();
+        if (!firstLine.isEmpty() && firstLine.size() <= 90) {
+            parts.title = firstLine;
+        } else {
+            parts.title = raw.simplified();
+            if (parts.title.size() > 56)
+                parts.title = parts.title.left(56).trimmed() + "...";
+        }
     }
 
-    // Build the preview text using accessor methods — no direct field access.
-    QString preview;
-    preview += entry.dateTime().toString("dddd, MMMM d, yyyy") + "\n";
-    preview += entry.dateTime().toString("h:mm AP")            + "\n";
-    preview += QString(30, QChar(0x2500))                      + "\n\n";
-    preview += entry.body();
-    m_preview->setPlainText(preview);
+    if (fullBody.isEmpty())
+        fullBody = raw;
+
+    parts.body = fullBody;
+    parts.excerpt = fullBody.simplified();
+    if (parts.excerpt.size() > 180)
+        parts.excerpt = parts.excerpt.left(180).trimmed() + "...";
+
+    return parts;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Clock
-// ─────────────────────────────────────────────────────────────────────────────
-
-void Journal::updateClock() {
-    const QDateTime now = QDateTime::currentDateTime();
-    m_dateLbl->setText(now.toString("dddd, MMMM d, yyyy"));
-    m_timeLbl->setText(now.toString("h:mm AP"));
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Constructor
-// ─────────────────────────────────────────────────────────────────────────────
+} // namespace
 
 Journal::Journal(QWidget *parent)
     : Screen("My Journal", parent),
@@ -226,340 +96,409 @@ Journal::Journal(QWidget *parent)
                 + "/MindEase_Journal") {
 
     QVBoxLayout *root = new QVBoxLayout(this);
-    root->setContentsMargins(56, 42, 56, 42);
-    root->setSpacing(22);
+    root->setContentsMargins(0, 0, 0, 0);
+    root->setSpacing(0);
 
-    // Shared header (title label + divider) from the Screen base-class helper.
-    // Demonstrates buildHeader() inherited from Screen.
-    buildHeader(root);
+    QScrollArea *scroll = new QScrollArea();
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    scroll->setObjectName("screenSurface");
+    scroll->viewport()->setObjectName("screenViewport");
 
-    // ── Two-column body ──────────────────────────────────────────────────────
-    QWidget *body = new QWidget();
-    body->setStyleSheet("border:none; background:transparent;");
-    QHBoxLayout *bodyLay = new QHBoxLayout(body);
-    bodyLay->setContentsMargins(0, 0, 0, 0);
-    bodyLay->setSpacing(0);
+    QWidget *page = new QWidget();
+    page->setObjectName("screenSurface");
+    QVBoxLayout *pageLayout = new QVBoxLayout(page);
+    pageLayout->setContentsMargins(72, 32, 72, 56);
+    pageLayout->setSpacing(0);
 
-    QSplitter *split = new QSplitter(Qt::Horizontal);
-    split->setChildrenCollapsible(false);
-    split->setHandleWidth(10);
+    QWidget *pageInner = new QWidget();
+    pageInner->setStyleSheet("background:transparent; border:none;");
+    pageInner->setMaximumWidth(1680);
+    pageInner->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    QVBoxLayout *inner = new QVBoxLayout(pageInner);
+    inner->setContentsMargins(0, 0, 0, 0);
+    inner->setSpacing(0);
 
-    // ════════════════════════════════════════════
-    // LEFT PANEL — write
-    // ════════════════════════════════════════════
-    QFrame *writePanel = new QFrame();
-    writePanel->setStyleSheet(
-        "QFrame { border:1px solid #c7d8c1; border-radius:28px;"
-        "         background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                                     fx:0.18, fy:0.12,"
-        "                                     stop:0 #f8f3e8, stop:0.40 #ffffff,"
-        "                                     stop:0.76 #f7faf4, stop:1 #eef4ea); }");
-    applyJournalShadow(writePanel, 24, 6, QColor(121, 154, 112, 18));
-    QVBoxLayout *wl = new QVBoxLayout(writePanel);
-    wl->setContentsMargins(32, 30, 32, 30);
-    wl->setSpacing(15);
+    QLabel *eyebrow = new QLabel("ZEN SPACE");
+    eyebrow->setStyleSheet(
+        "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
 
-    // Date + time header row
-    QWidget *dateRow = new QWidget();
-    dateRow->setStyleSheet("border:none; background:transparent;");
-    QHBoxLayout *drl = new QHBoxLayout(dateRow);
-    drl->setContentsMargins(0, 0, 0, 0);
-    drl->setSpacing(0);
+    QLabel *title = new QLabel("My Journal");
+    title->setStyleSheet(
+        "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
 
-    m_dateLbl = new QLabel();
-    m_dateLbl->setStyleSheet(
-        "font-size:20px; font-weight:800; color:#173c2c; border:none; "
-        "letter-spacing:-0.15px;");
+    QLabel *sub = new QLabel(
+        "Create entries to reflect on events, and return to past reflections.");
+    sub->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
 
-    m_timeLbl = new QLabel();
-    m_timeLbl->setStyleSheet(
-        "font-size:15px; color:#6d8272; border:none; font-weight:500;");
+    inner->addWidget(eyebrow, 0, Qt::AlignLeft);
+    inner->addSpacing(10);
+    inner->addWidget(title, 0, Qt::AlignLeft);
+    inner->addSpacing(12);
+    inner->addWidget(sub, 0, Qt::AlignLeft);
+    inner->addSpacing(34);
 
-    drl->addWidget(m_dateLbl, 1);
-    drl->addWidget(m_timeLbl);
-    wl->addWidget(dateRow);
+    QFrame *composerCard = new QFrame();
+    composerCard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    composerCard->setMinimumHeight(640);
+    composerCard->setStyleSheet(
+        "QFrame {"
+        "  background:qradialgradient(cx:0.18, cy:0.08, radius:1.2,"
+        "                              fx:0.18, fy:0.08,"
+        "                              stop:0 #ffffff, stop:0.58 #fbfdf8, stop:1 #edf5eb);"
+        "  border:1px solid #c7d8c1;"
+        "  border-radius:20px;"
+        "}");
+    applyJournalShadow(composerCard, 26, 8, QColor(121, 154, 112, 20));
+    QVBoxLayout *composerLayout = new QVBoxLayout(composerCard);
+    composerLayout->setContentsMargins(44, 38, 44, 30);
+    composerLayout->setSpacing(0);
 
-    QWidget *privacyRow = new QWidget();
-    privacyRow->setStyleSheet("border:none; background:transparent;");
-    QHBoxLayout *prl = new QHBoxLayout(privacyRow);
-    prl->setContentsMargins(0, 0, 0, 0);
-    prl->setSpacing(8);
-    QLabel *privacyChip = new QLabel("PRIVATE · STORED LOCALLY");
-    privacyChip->setStyleSheet(
-        "font-size:10px; font-weight:800; color:#355141; background:#f5f0e2; "
-        "border:1px solid #c7d8c1; border-radius:12px; padding:6px 10px; "
-        "letter-spacing:1.1px;");
-    QLabel *privacyNote = new QLabel("Entries are saved as plain text in your Documents folder.");
-    privacyNote->setStyleSheet(
-        "font-size:12px; color:#6d8272; border:none; background:transparent;");
-    prl->addWidget(privacyChip);
-    prl->addWidget(privacyNote, 1);
-    wl->addWidget(privacyRow);
+    m_titleEdit = new QLineEdit();
+    m_titleEdit->setPlaceholderText("Entry title...");
+    m_titleEdit->setStyleSheet(
+        "QLineEdit {"
+        "  border:none;"
+        "  background:transparent;"
+        "  font-size:27px;"
+        "  font-weight:700;"
+        "  color:#173c2c;"
+        "  padding:0 0 8px 0;"
+        "}"
+        "QLineEdit::placeholder { color:#9eaa9d; }");
+    composerLayout->addWidget(m_titleEdit);
 
-    // Prompts hint box (with left accent bar for visual consistency with
-    // the Resources screen's left-accented card style)
-    QFrame *promptBox = new QFrame();
-    promptBox->setStyleSheet(
-        "QFrame { background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-        "                                  stop:0 #f7efdf, stop:0.54 #eef4e8, stop:1 #f5f8ef);"
-        "         border:1px solid #c7d8c1; border-left:5px solid #8aa585; border-radius:20px; }");
-    QVBoxLayout *pl = new QVBoxLayout(promptBox);
-    pl->setContentsMargins(16, 12, 16, 14);
-    pl->setSpacing(6);
+    composerLayout->addSpacing(10);
 
-    QLabel *promptTitle = new QLabel("✏️  JOURNAL PROMPTS");
-    promptTitle->setStyleSheet(
-        "font-size:10px; font-weight:800; color:#355141; border:none; "
-        "background:transparent; letter-spacing:1.4px;");
-    pl->addWidget(promptTitle);
-    pl->addSpacing(2);
-
-    const QStringList prompts = {
-        "1.  What are three things that happened today that brought you peace?",
-        "2.  What went well this week, even if something else was hard?",
-        "3.  What everyday object near you are you grateful for?",
-        "4.  Who made a positive difference in your life this month?"
-    };
-    for (const QString &p : prompts) {
-        QLabel *lbl = new QLabel(p);
-        lbl->setWordWrap(true);
-        lbl->setStyleSheet(
-            "font-size:13px; color:#4f6255; border:none; background:transparent; "
-            "line-height:165%;");
-        pl->addWidget(lbl);
-    }
-    wl->addWidget(promptBox);
-
-    QLabel *editorLabel = new QLabel("WRITE YOUR ENTRY BELOW");
-    editorLabel->setStyleSheet(
-        "font-size:10px; font-weight:700; color:#7f9577; border:none; "
-        "letter-spacing:1.4px;");
-    wl->addWidget(editorLabel);
-
-    // Main text editor
     m_editor = new QTextEdit();
     m_editor->setAcceptRichText(false);
-    m_editor->setPlaceholderText(
-        "Start writing here… There's no right or wrong way to journal.\n\n"
-        "You can respond to a prompt above, describe your day, or just write\n"
-        "whatever is on your mind right now.");
+    m_editor->setPlaceholderText("How are you feeling today? What's on your mind?");
+    m_editor->setMinimumHeight(430);
+    m_editor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_editor->setStyleSheet(
         "QTextEdit {"
-        "  border: 1px solid #c7d8c1;"
-        "  border-radius: 22px;"
-        "  background: qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                              fx:0.18, fy:0.12,"
-        "                              stop:0 #f8f3e8, stop:0.45 #ffffff,"
-        "                              stop:1 #f4f7ee);"
-        "  font-size: 16px;"
-        "  color: #173c2c;"
-        "  padding: 20px;"
-        "  line-height: 170%;"
-        "  selection-background-color: #d7e4cf;"
+        "  border:none;"
+        "  background:transparent;"
+        "  font-size:17px;"
+        "  color:#365143;"
+        "  padding:12px 0 0 0;"
+        "  line-height:170%;"
         "}"
-        "QTextEdit:focus {"
-        "  border: 1px solid #a8bf9d;"
-        "  background: qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                              fx:0.18, fy:0.12,"
-        "                              stop:0 #fbf8ee, stop:0.45 #ffffff,"
-        "                              stop:1 #f6f8f0);"
-        "}");
-    m_editor->setTabStopDistance(28);
-    m_editor->setMinimumHeight(220);
-    wl->addWidget(m_editor, 1);
+        "QTextEdit::placeholder { color:#8fa09a; }");
+    composerLayout->addWidget(m_editor);
 
-    // Button row
-    QWidget *btnRow = new QWidget();
-    btnRow->setStyleSheet("border:none; background:transparent;");
-    QHBoxLayout *brl = new QHBoxLayout(btnRow);
-    brl->setContentsMargins(0, 2, 0, 0);
-    brl->setSpacing(10);
+    composerLayout->addSpacing(20);
 
-    QPushButton *saveBtn = new QPushButton("💾  Save Entry");
-    saveBtn->setObjectName("primaryBtn");
+    QFrame *divider = new QFrame();
+    divider->setFrameShape(QFrame::HLine);
+    divider->setStyleSheet("background:#dce8d8; border:none;");
+    divider->setFixedHeight(1);
+    composerLayout->addWidget(divider);
+
+    composerLayout->addSpacing(18);
+
+    QWidget *footerRow = new QWidget();
+    footerRow->setStyleSheet("background:transparent; border:none;");
+    QHBoxLayout *footerLayout = new QHBoxLayout(footerRow);
+    footerLayout->setContentsMargins(0, 0, 0, 0);
+    footerLayout->setSpacing(16);
+
+    m_dateLbl = new QLabel();
+    m_dateLbl->setStyleSheet("font-size:14px; font-weight:600; color:#5a6f62; border:none;");
+
+    m_statusLbl = new QLabel();
+    m_statusLbl->setStyleSheet("font-size:12px; color:#2E7D32; border:none;");
+
+    QPushButton *saveBtn = new QPushButton("Save Entry");
     saveBtn->setCursor(Qt::PointingHandCursor);
-    saveBtn->setMinimumHeight(42);
+    saveBtn->setMinimumHeight(44);
+    saveBtn->setMinimumWidth(150);
+    saveBtn->setStyleSheet(
+        "QPushButton {"
+        "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+        "                              stop:0 #234030, stop:1 #3d6046);"
+        "  color:#fffdf5;"
+        "  border:1px solid #2f523b;"
+        "  border-radius:10px;"
+        "  font-size:14px;"
+        "  font-weight:700;"
+        "  padding:10px 24px;"
+        "}"
+        "QPushButton:hover { background:#2d4d39; border-color:#53725a; }");
     connect(saveBtn, &QPushButton::clicked, this, &Journal::saveEntry);
 
-    QPushButton *clearBtn = new QPushButton("✕  Clear");
-    clearBtn->setObjectName("outlineBtn");
-    clearBtn->setCursor(Qt::PointingHandCursor);
-    clearBtn->setMinimumHeight(42);
-    connect(clearBtn, &QPushButton::clicked, this, &Journal::clearEditor);
+    footerLayout->addWidget(m_dateLbl);
+    footerLayout->addWidget(m_statusLbl, 1);
+    footerLayout->addWidget(saveBtn, 0, Qt::AlignRight);
+    composerLayout->addWidget(footerRow);
 
-    m_statusLbl = new QLabel("");
-    m_statusLbl->setStyleSheet(
-        "font-size:12px; color:#2E7D32; border:none; background:transparent;");
+    inner->addWidget(composerCard);
+    inner->addSpacing(42);
 
-    brl->addWidget(saveBtn);
-    brl->addWidget(clearBtn);
-    brl->addSpacing(8);
-    brl->addWidget(m_statusLbl, 1);
-    wl->addWidget(btnRow);
+    QLabel *pastLabel = new QLabel("PAST REFLECTIONS");
+    pastLabel->setStyleSheet(
+        "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
+    inner->addWidget(pastLabel, 0, Qt::AlignLeft);
+    inner->addSpacing(18);
 
-    // ════════════════════════════════════════════
-    // RIGHT PANEL — past entries
-    // ════════════════════════════════════════════
-    QFrame *readPanel = new QFrame();
-    readPanel->setStyleSheet(
-        "QFrame { border:1px solid #c7d8c1; border-radius:28px;"
-        "         background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                                     fx:0.18, fy:0.12,"
-        "                                     stop:0 #f8f3e8, stop:0.40 #ffffff,"
-        "                                     stop:0.76 #f7faf4, stop:1 #eef4ea); }");
-    applyJournalShadow(readPanel, 24, 6, QColor(121, 154, 112, 18));
-    readPanel->setMinimumWidth(390);
-    QVBoxLayout *rl = new QVBoxLayout(readPanel);
-    rl->setContentsMargins(30, 28, 30, 28);
-    rl->setSpacing(14);
+    m_entriesHost = new QWidget();
+    m_entriesHost->setStyleSheet("background:transparent; border:none;");
+    m_entriesHost->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    m_entriesLayout = new QVBoxLayout(m_entriesHost);
+    m_entriesLayout->setContentsMargins(0, 0, 0, 0);
+    m_entriesLayout->setSpacing(18);
+    inner->addWidget(m_entriesHost);
+    inner->addStretch();
 
-    QWidget *readHeader = new QWidget();
-    readHeader->setStyleSheet("border:none; background:transparent;");
-    QHBoxLayout *rhl = new QHBoxLayout(readHeader);
-    rhl->setContentsMargins(0, 0, 0, 0);
-    rhl->setSpacing(8);
+    pageLayout->addWidget(pageInner);
+    pageLayout->addStretch();
 
-    QLabel *readTitle = new QLabel("📚  Past Entries");
-    readTitle->setStyleSheet(
-        "font-size:18px; font-weight:800; color:#173c2c; border:none; "
-        "letter-spacing:-0.15px;");
-    QLabel *readMeta = new QLabel("Newest first");
-    readMeta->setStyleSheet(
-        "font-size:11px; font-weight:800; color:#355141; background:#f5f0e2; "
-        "border:1px solid #c7d8c1; border-radius:12px; padding:5px 10px;");
-    rhl->addWidget(readTitle);
-    rhl->addStretch();
-    rhl->addWidget(readMeta);
-    rl->addWidget(readHeader);
+    scroll->setWidget(page);
+    root->addWidget(scroll);
 
-    m_entryList = new QListWidget();
-    m_entryList->setStyleSheet(
-        "QListWidget {"
-        "  border:1px solid #c7d8c1;"
-        "  border-radius:20px;"
-        "  background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                             fx:0.18, fy:0.12,"
-        "                             stop:0 #f8f3e8, stop:0.45 #ffffff,"
-        "                             stop:1 #f4f7ee);"
-        "  font-size:14px;"
-        "  color:#173c2c;"
-        "  outline:none;"
-        "  padding:6px;"
-        "}"
-        "QListWidget::item {"
-        "  padding:12px 12px;"
-        "  border-bottom:1px solid #edf4ee;"
-        "  border-radius:12px;"
-        "}"
-        "QListWidget::item:last-child {"
-        "  border-bottom:none;"
-        "}"
-        "QListWidget::item:selected {"
-        "  background:#edf4e8;"
-        "  color:#355141;"
-        "  font-weight:600;"
-        "  border-bottom-color:transparent;"
-        "}"
-        "QListWidget::item:hover {"
-        "  background:#f7faf2;"
-        "}");
-    m_entryList->setMinimumHeight(170);
-    m_entryList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    connect(m_entryList, &QListWidget::itemClicked,
-            this, &Journal::loadSelectedEntry);
-    connect(m_entryList, &QListWidget::currentItemChanged, this,
-            [this](QListWidgetItem *current, QListWidgetItem *) {
-                loadSelectedEntry(current);
-                syncEntryActions();
-            });
-    rl->addWidget(m_entryList);
-
-    QWidget *entryActionRow = new QWidget();
-    entryActionRow->setStyleSheet("border:none; background:transparent;");
-    QHBoxLayout *earl = new QHBoxLayout(entryActionRow);
-    earl->setContentsMargins(0, 0, 0, 0);
-    earl->setSpacing(8);
-
-    QLabel *deleteHint = new QLabel("Remove entries you no longer want to keep.");
-    deleteHint->setStyleSheet(
-        "font-size:12px; color:#6d8272; border:none; background:transparent;");
-
-    m_deleteBtn = new QPushButton("Delete Selected");
-    m_deleteBtn->setCursor(Qt::PointingHandCursor);
-    m_deleteBtn->setMinimumHeight(34);
-    m_deleteBtn->setStyleSheet(
-        "QPushButton {"
-        "  font-size:11px;"
-        "  font-weight:700;"
-        "  color:#B42318;"
-        "  background:#fff5f4;"
-        "  border:1px solid #f1c7c2;"
-        "  border-radius:9px;"
-        "  padding:6px 12px;"
-        "}"
-        "QPushButton:hover:enabled {"
-        "  background:#feeceb;"
-        "  border-color:#e7a9a1;"
-        "}"
-        "QPushButton:disabled {"
-        "  color:#c8b9b7;"
-        "  background:#faf7f6;"
-        "  border-color:#efe3e0;"
-        "}");
-    connect(m_deleteBtn, &QPushButton::clicked, this, &Journal::deleteSelectedEntry);
-
-    earl->addWidget(deleteHint, 1);
-    earl->addWidget(m_deleteBtn);
-    rl->addWidget(entryActionRow);
-
-    QFrame *rdiv = new QFrame();
-    rdiv->setFrameShape(QFrame::HLine);
-    rdiv->setStyleSheet("background:#dfece1; border:none;");
-    rdiv->setFixedHeight(1);
-    rl->addWidget(rdiv);
-
-    QLabel *previewLbl = new QLabel("ENTRY PREVIEW");
-    previewLbl->setStyleSheet(
-        "font-size:10px; font-weight:700; color:#7f9577; border:none; "
-        "letter-spacing:1.4px;");
-    rl->addWidget(previewLbl);
-
-    m_preview = new QTextEdit();
-    m_preview->setReadOnly(true);
-    m_preview->setPlaceholderText("Click an entry on the left to read it here.");
-    m_preview->setStyleSheet(
-        "QTextEdit {"
-        "  border:1px solid #c7d8c1;"
-        "  border-radius:20px;"
-        "  background:qradialgradient(cx:0.18, cy:0.12, radius:1.15,"
-        "                             fx:0.18, fy:0.12,"
-        "                             stop:0 #f8f3e8, stop:0.45 #ffffff,"
-        "                             stop:1 #f4f7ee);"
-        "  font-size:15px;"
-        "  color:#4f6255;"
-        "  padding:16px;"
-        "  line-height:170%;"
-        "}");
-    m_preview->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    rl->addWidget(m_preview, 1);
-
-    // Assemble body
-    split->addWidget(writePanel);
-    split->addWidget(readPanel);
-    split->setStretchFactor(0, 3);
-    split->setStretchFactor(1, 2);
-    split->setSizes({820, 460});
-    bodyLay->addWidget(split);
-    root->addWidget(body, 1);
-
-    // ── Live clock ───────────────────────────────────────────────────────────
-    m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, &Journal::updateClock);
-    m_timer->start(1000);
-    updateClock();
-
-    QShortcut *deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), m_entryList);
-    connect(deleteShortcut, &QShortcut::activated, this, &Journal::deleteSelectedEntry);
-
+    refreshDateLabel();
     refreshEntryList();
+}
+
+void Journal::onActivated() {
+    refreshDateLabel();
+    refreshEntryList();
+}
+
+void Journal::showStatus(const QString &msg, bool ok) {
+    m_statusLbl->setText(msg);
+    m_statusLbl->setStyleSheet(
+        ok ? "font-size:12px; color:#2E7D32; border:none;"
+           : "font-size:12px; color:#C62828; border:none;");
+    QTimer::singleShot(4000, m_statusLbl, [this, msg]() {
+        if (m_statusLbl->text() == msg)
+            m_statusLbl->clear();
+    });
+}
+
+void Journal::refreshDateLabel() {
+    const QDate today = QDate::currentDate();
+    m_dateLbl->setText(QString("Today, %1").arg(today.toString("MMMM d, yyyy")));
+}
+
+void Journal::saveEntry() {
+    const QString title = m_titleEdit->text().trimmed();
+    const QString body = m_editor->toPlainText().trimmed();
+
+    if (body.isEmpty()) {
+        showStatus("Write something before saving.", false);
+        return;
+    }
+
+    QString combined = body;
+    if (!title.isEmpty())
+        combined = title + "\n\n" + body;
+
+    const QDateTime now = QDateTime::currentDateTime();
+    JournalEntry entry(now, combined);
+
+    if (!m_storage.saveEntry(entry)) {
+        showStatus("Could not save this entry.", false);
+        return;
+    }
+
+    showStatus("Entry saved.");
+    clearEditor();
+    refreshDateLabel();
+    refreshEntryList();
+}
+
+void Journal::clearEditor() {
+    m_titleEdit->clear();
+    m_editor->clear();
+    m_titleEdit->setFocus();
+}
+
+void Journal::deleteEntryAtPath(const QString &path) {
+    const JournalEntry entry = m_storage.loadEntry(path);
+    const EntryDisplayParts parts = buildEntryDisplay(entry);
+
+    QMessageBox dialog(this);
+    dialog.setWindowTitle("MindEase");
+    dialog.setIcon(QMessageBox::NoIcon);
+    dialog.setText("Delete this reflection?");
+    dialog.setInformativeText(
+        QString("This will remove \"%1\" from your saved journal entries.")
+            .arg(parts.title));
+    dialog.setTextFormat(Qt::PlainText);
+    dialog.setStyleSheet(
+        "QMessageBox {"
+        "  background:#f4f5ec;"
+        "  border:1px solid #c8d5c4;"
+        "}"
+        "QLabel {"
+        "  color:#264437;"
+        "}"
+        "QLabel#qt_msgbox_label {"
+        "  font-size:20px;"
+        "  font-weight:700;"
+        "  min-width:320px;"
+        "}"
+        "QLabel#qt_msgbox_informativelabel {"
+        "  font-size:14px;"
+        "  color:#5a6f62;"
+        "  min-width:320px;"
+        "}"
+        "QPushButton {"
+        "  background:#edf3e6;"
+        "  color:#264437;"
+        "  border:1px solid #c3d2bf;"
+        "  border-radius:10px;"
+        "  min-width:100px;"
+        "  min-height:38px;"
+        "  padding:8px 16px;"
+        "  font-size:13px;"
+        "  font-weight:700;"
+        "}"
+        "QPushButton:hover {"
+        "  background:#e4ecde;"
+        "  border-color:#aebfa8;"
+        "}"
+        "QPushButton:pressed {"
+        "  background:#dbe6d5;"
+        "}"
+    );
+
+    QPushButton *cancelBtn = dialog.addButton("Cancel", QMessageBox::RejectRole);
+    QPushButton *deleteBtn = dialog.addButton("Delete", QMessageBox::DestructiveRole);
+    deleteBtn->setStyleSheet(
+        "QPushButton {"
+        "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+        "                            stop:0 #dcebd4, stop:1 #cfe2c9);"
+        "  color:#234030;"
+        "  border:1px solid #aac19f;"
+        "  border-radius:10px;"
+        "  min-width:100px;"
+        "  min-height:38px;"
+        "  padding:8px 16px;"
+        "  font-size:13px;"
+        "  font-weight:700;"
+        "}"
+        "QPushButton:hover {"
+        "  background:#d3e5cc;"
+        "  border-color:#96af8b;"
+        "}"
+        "QPushButton:pressed {"
+        "  background:#c8ddc0;"
+        "}"
+    );
+    dialog.setDefaultButton(cancelBtn);
+    dialog.setEscapeButton(cancelBtn);
+    dialog.exec();
+
+    if (dialog.clickedButton() != deleteBtn)
+        return;
+
+    if (!m_storage.deleteEntry(path)) {
+        showStatus("Could not delete that entry.", false);
+        return;
+    }
+
+    showStatus("Entry deleted.");
+    refreshEntryList();
+}
+
+void Journal::refreshEntryList() {
+    clearLayout(m_entriesLayout);
+
+    const QVector<JournalEntry> entries = m_storage.loadEntries();
+    if (entries.isEmpty()) {
+        QFrame *emptyCard = new QFrame();
+        emptyCard->setStyleSheet(
+            "QFrame {"
+            "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+            "                              stop:0 #ffffff, stop:1 #eff6ec);"
+            "  border:1px solid #c7d8c1;"
+            "  border-radius:16px;"
+            "}");
+        applyJournalShadow(emptyCard, 14, 4, QColor(121, 154, 112, 12));
+        QVBoxLayout *emptyLayout = new QVBoxLayout(emptyCard);
+        emptyLayout->setContentsMargins(30, 26, 30, 26);
+
+        QLabel *emptyTitle = new QLabel("No reflections yet");
+        emptyTitle->setStyleSheet("font-size:18px; font-weight:700; color:#173c2c; border:none;");
+        QLabel *emptyBody = new QLabel("Your saved entries will appear here after you write and save your first journal reflection.");
+        emptyBody->setWordWrap(true);
+        emptyBody->setStyleSheet("font-size:14px; color:#5a6f62; border:none; line-height:160%;");
+        emptyLayout->addWidget(emptyTitle);
+        emptyLayout->addSpacing(6);
+        emptyLayout->addWidget(emptyBody);
+
+        m_entriesLayout->addWidget(emptyCard);
+        m_entriesLayout->addStretch();
+        return;
+    }
+
+    for (const JournalEntry &entry : entries) {
+        const EntryDisplayParts parts = buildEntryDisplay(entry);
+
+        QFrame *card = new QFrame();
+        card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        card->setStyleSheet(
+            "QFrame {"
+            "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+            "                              stop:0 #ffffff, stop:0.72 #fbfdf8, stop:1 #edf5eb);"
+            "  border:1px solid #c7d8c1;"
+            "  border-left:4px solid #93ad89;"
+            "  border-radius:16px;"
+            "}");
+        applyJournalShadow(card, 16, 4, QColor(121, 154, 112, 14));
+        card->setToolTip(parts.body);
+
+        QVBoxLayout *cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(30, 22, 30, 24);
+        cardLayout->setSpacing(12);
+
+        QWidget *topRow = new QWidget();
+        topRow->setStyleSheet("background:transparent; border:none;");
+        QHBoxLayout *topLayout = new QHBoxLayout(topRow);
+        topLayout->setContentsMargins(0, 0, 0, 0);
+        topLayout->setSpacing(12);
+
+        QLabel *titleLbl = new QLabel(parts.title);
+        titleLbl->setWordWrap(true);
+        titleLbl->setStyleSheet(
+            "font-size:18px; font-weight:800; color:#173c2c; border:none;");
+
+        QPushButton *deleteBtn = new QPushButton("Delete");
+        deleteBtn->setCursor(Qt::PointingHandCursor);
+        deleteBtn->setStyleSheet(
+            "QPushButton {"
+            "  background:#fff9f6;"
+            "  border:1px solid #efd3cc;"
+            "  border-radius:9px;"
+            "  color:#a33a2e;"
+            "  font-size:12px;"
+            "  font-weight:700;"
+            "  padding:6px 12px;"
+            "}"
+            "QPushButton:hover { background:#fff0ec; border-color:#e1b9b0; }");
+        const QString path = entry.filePath();
+        connect(deleteBtn, &QPushButton::clicked, this, [this, path]() {
+            deleteEntryAtPath(path);
+        });
+
+        topLayout->addWidget(titleLbl, 1);
+        topLayout->addWidget(deleteBtn, 0, Qt::AlignTop);
+        cardLayout->addWidget(topRow);
+
+        QLabel *bodyLbl = new QLabel(parts.excerpt);
+        bodyLbl->setWordWrap(true);
+        bodyLbl->setStyleSheet(
+            "font-size:14px; color:#4f6255; border:none; line-height:165%;");
+        cardLayout->addWidget(bodyLbl);
+
+        QLabel *dateLbl = new QLabel(entry.dateTime().date().toString("MMM d, yyyy"));
+        dateLbl->setStyleSheet("font-size:13px; font-weight:600; color:#71856f; border:none;");
+        cardLayout->addWidget(dateLbl);
+
+        m_entriesLayout->addWidget(card);
+    }
+
+    m_entriesLayout->addStretch();
 }

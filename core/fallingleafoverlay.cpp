@@ -58,22 +58,6 @@ void drawBambooLeaf(QPainter &painter,
     painter.restore();
 }
 
-void drawLeafCluster(QPainter &painter,
-                     const QPointF &center,
-                     qreal size,
-                     qreal opacityScale,
-                     const QVector<qreal> &angles,
-                     const QVector<QPointF> &offsets) {
-    const int count = qMin(angles.size(), offsets.size());
-    for (int index = 0; index < count; ++index) {
-        drawBambooLeaf(painter,
-                       center + offsets[index],
-                       size * (0.78 + (index % 3) * 0.10),
-                       3.9 + (index % 2) * 0.25,
-                       angles[index],
-                       opacityScale);
-    }
-}
 }
 
 FallingLeafOverlay::FallingLeafOverlay(QWidget *parent)
@@ -109,46 +93,6 @@ void FallingLeafOverlay::paintEvent(QPaintEvent *event) {
     washBottom.setColorAt(0.62, QColor(213, 234, 207, 14));
     washBottom.setColorAt(1.0, QColor(213, 234, 207, 0));
     painter.fillRect(QRectF(w * 0.56, h * 0.34, w * 0.44, h * 0.66), washBottom);
-
-    painter.save();
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setPen(QPen(QColor(86, 132, 93, 68), 11.0, Qt::SolidLine, Qt::RoundCap));
-    painter.drawLine(QPointF(w * 0.90, h * 0.12), QPointF(w * 0.88, h * 0.94));
-    painter.drawLine(QPointF(w * 0.95, h * 0.20), QPointF(w * 0.93, h * 0.88));
-    painter.setPen(QPen(QColor(65, 103, 74, 42), 8.0, Qt::SolidLine, Qt::RoundCap));
-    painter.drawLine(QPointF(w * 0.84, h * 0.36), QPointF(w * 0.82, h * 0.96));
-
-    painter.setPen(QPen(QColor(73, 112, 82, 52), 2.0, Qt::SolidLine, Qt::RoundCap));
-    const QVector<qreal> stemNodes = {0.22, 0.38, 0.56, 0.74, 0.88};
-    for (qreal node : stemNodes) {
-        const qreal y1 = h * node;
-        painter.drawLine(QPointF(w * 0.872, y1), QPointF(w * 0.906, y1));
-        painter.drawLine(QPointF(w * 0.922, y1 - 6.0), QPointF(w * 0.952, y1 - 6.0));
-    }
-
-    painter.setPen(QPen(QColor(80, 122, 86, 48), 1.8, Qt::SolidLine, Qt::RoundCap));
-    painter.drawLine(QPointF(w * 0.89, h * 0.18), QPointF(w * 0.80, h * 0.12));
-    painter.drawLine(QPointF(w * 0.90, h * 0.31), QPointF(w * 0.80, h * 0.28));
-    painter.drawLine(QPointF(w * 0.88, h * 0.50), QPointF(w * 0.77, h * 0.42));
-    painter.drawLine(QPointF(w * 0.92, h * 0.57), QPointF(w * 0.98, h * 0.49));
-    painter.drawLine(QPointF(w * 0.90, h * 0.72), QPointF(w * 0.80, h * 0.66));
-    painter.restore();
-
-    drawLeafCluster(painter, QPointF(w * 0.82, h * 0.14), 28.0, 1.0,
-                    {-54.0, -24.0, 2.0, 28.0, 52.0},
-                    {QPointF(-24.0, 6.0), QPointF(-12.0, -8.0), QPointF(0.0, -14.0), QPointF(14.0, -6.0), QPointF(24.0, 8.0)});
-    drawLeafCluster(painter, QPointF(w * 0.88, h * 0.28), 24.0, 0.88,
-                    {-62.0, -28.0, 12.0, 38.0},
-                    {QPointF(-18.0, 4.0), QPointF(-8.0, -8.0), QPointF(10.0, -10.0), QPointF(22.0, 4.0)});
-    drawLeafCluster(painter, QPointF(w * 0.78, h * 0.42), 25.0, 0.92,
-                    {-58.0, -26.0, 8.0, 34.0, 58.0},
-                    {QPointF(-24.0, 10.0), QPointF(-11.0, -3.0), QPointF(0.0, -12.0), QPointF(16.0, -4.0), QPointF(26.0, 10.0)});
-    drawLeafCluster(painter, QPointF(w * 0.89, h * 0.60), 30.0, 1.0,
-                    {-66.0, -34.0, -4.0, 20.0, 48.0},
-                    {QPointF(-28.0, 10.0), QPointF(-14.0, -2.0), QPointF(0.0, -16.0), QPointF(15.0, -6.0), QPointF(30.0, 8.0)});
-    drawLeafCluster(painter, QPointF(w * 0.79, h * 0.70), 22.0, 0.82,
-                    {-52.0, -18.0, 10.0, 34.0},
-                    {QPointF(-18.0, 8.0), QPointF(-8.0, -2.0), QPointF(10.0, -8.0), QPointF(22.0, 6.0)});
 
     for (const Leaf &leaf : m_leaves) {
         const qreal x = leaf.x + qSin(leaf.swayPhase) * leaf.swayAmplitude;

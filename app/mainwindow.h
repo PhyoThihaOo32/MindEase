@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QPushButton>
-#include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QResizeEvent>
 #include <QVector>
@@ -36,12 +36,12 @@ private slots:
     void switchScreen(int index);
 
 private:
-    void buildSidebar();
+    void buildNavigationBar();
     void applyStyle();
 
     QWidget        *centralWidget;
-    QHBoxLayout    *mainLayout;
-    QWidget        *sidebar;
+    QVBoxLayout    *mainLayout;
+    QWidget        *navShell;
     QStackedWidget *stack;
     FallingLeafOverlay *leafOverlay;
 

@@ -79,35 +79,35 @@ Settings::Settings(QWidget *parent)
     inner->setSpacing(0);
 
     // ── Page header ───────────────────────────────────────────────────────────
-    QLabel *eyebrow = new QLabel("PREFERENCES");
-    eyebrow->setStyleSheet(kSectionLabelStyle);
+    m_eyebrowLbl = new QLabel("PREFERENCES");
+    m_eyebrowLbl->setStyleSheet(kSectionLabelStyle);
 
-    QLabel *titleLbl = new QLabel("Settings");
-    titleLbl->setStyleSheet(
+    m_titleLbl = new QLabel("Settings");
+    m_titleLbl->setStyleSheet(
         "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
 
-    QLabel *subLbl = new QLabel("Personalise MindEase to suit your environment and workflow.");
-    subLbl->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
+    m_subLbl = new QLabel("Personalise MindEase to suit your environment and workflow.");
+    m_subLbl->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
 
-    inner->addWidget(eyebrow, 0, Qt::AlignLeft);
+    inner->addWidget(m_eyebrowLbl, 0, Qt::AlignLeft);
     inner->addSpacing(10);
-    inner->addWidget(titleLbl, 0, Qt::AlignLeft);
+    inner->addWidget(m_titleLbl, 0, Qt::AlignLeft);
     inner->addSpacing(10);
-    inner->addWidget(subLbl, 0, Qt::AlignLeft);
+    inner->addWidget(m_subLbl, 0, Qt::AlignLeft);
     inner->addSpacing(36);
 
     // ─────────────────────────────────────────────────────────────────────────
     // Card 1: Appearance
     // ─────────────────────────────────────────────────────────────────────────
-    QFrame *appearCard = new QFrame();
-    appearCard->setStyleSheet(kCardStyle);
-    QVBoxLayout *appearLayout = new QVBoxLayout(appearCard);
+    m_appearCard = new QFrame();
+    m_appearCard->setStyleSheet(kCardStyle);
+    QVBoxLayout *appearLayout = new QVBoxLayout(m_appearCard);
     appearLayout->setContentsMargins(36, 30, 36, 30);
     appearLayout->setSpacing(22);
 
-    QLabel *appearLabel = new QLabel("APPEARANCE");
-    appearLabel->setStyleSheet(kSectionLabelStyle);
-    appearLayout->addWidget(appearLabel);
+    m_appearLabel = new QLabel("APPEARANCE");
+    m_appearLabel->setStyleSheet(kSectionLabelStyle);
+    appearLayout->addWidget(m_appearLabel);
 
     // ── Theme ─────────────────────────────────────────────────────────────────
     QFrame *themeDiv = new QFrame();
@@ -116,14 +116,14 @@ Settings::Settings(QWidget *parent)
     themeDiv->setFixedHeight(1);
     appearLayout->addWidget(themeDiv);
 
-    QLabel *themeLabel = new QLabel("Theme");
-    themeLabel->setStyleSheet(kRowLabelStyle);
-    QLabel *themeDesc = new QLabel(
+    m_themeLabel = new QLabel("Theme");
+    m_themeLabel->setStyleSheet(kRowLabelStyle);
+    m_themeDesc = new QLabel(
         "Switch between a warm natural palette and a dark Zen Night mode.");
-    themeDesc->setWordWrap(true);
-    themeDesc->setStyleSheet(kDescStyle);
-    appearLayout->addWidget(themeLabel);
-    appearLayout->addWidget(themeDesc);
+    m_themeDesc->setWordWrap(true);
+    m_themeDesc->setStyleSheet(kDescStyle);
+    appearLayout->addWidget(m_themeLabel);
+    appearLayout->addWidget(m_themeDesc);
 
     QWidget *themeRow = new QWidget();
     themeRow->setStyleSheet("background:transparent; border:none;");
@@ -155,14 +155,14 @@ Settings::Settings(QWidget *parent)
     fontDiv->setFixedHeight(1);
     appearLayout->addWidget(fontDiv);
 
-    QLabel *fontLabel = new QLabel("Base Font Size");
-    fontLabel->setStyleSheet(kRowLabelStyle);
-    QLabel *fontDesc = new QLabel(
+    m_fontLabel = new QLabel("Base Font Size");
+    m_fontLabel->setStyleSheet(kRowLabelStyle);
+    m_fontDesc = new QLabel(
         "Adjusts the global font scale across the application. Default: 14 px.");
-    fontDesc->setWordWrap(true);
-    fontDesc->setStyleSheet(kDescStyle);
-    appearLayout->addWidget(fontLabel);
-    appearLayout->addWidget(fontDesc);
+    m_fontDesc->setWordWrap(true);
+    m_fontDesc->setStyleSheet(kDescStyle);
+    appearLayout->addWidget(m_fontLabel);
+    appearLayout->addWidget(m_fontDesc);
 
     QWidget *sliderRow = new QWidget();
     sliderRow->setStyleSheet("background:transparent; border:none;");
@@ -170,8 +170,8 @@ Settings::Settings(QWidget *parent)
     sliderLayout->setContentsMargins(0, 0, 0, 0);
     sliderLayout->setSpacing(16);
 
-    QLabel *minLbl = new QLabel("12px");
-    minLbl->setStyleSheet(kDescStyle);
+    m_minLbl = new QLabel("12px");
+    m_minLbl->setStyleSheet(kDescStyle);
 
     m_fontSlider = new QSlider(Qt::Horizontal);
     m_fontSlider->setRange(12, 20);
@@ -190,8 +190,8 @@ Settings::Settings(QWidget *parent)
         "  background:#7aac6e; border-radius:3px;"
         "}");
 
-    QLabel *maxLbl = new QLabel("20px");
-    maxLbl->setStyleSheet(kDescStyle);
+    m_maxLbl = new QLabel("20px");
+    m_maxLbl->setStyleSheet(kDescStyle);
 
     m_fontSizeLbl = new QLabel("14 px");
     m_fontSizeLbl->setStyleSheet(
@@ -202,28 +202,28 @@ Settings::Settings(QWidget *parent)
         m_fontSizeLbl->setText(QString("%1 px").arg(v));
     });
 
-    sliderLayout->addWidget(minLbl);
+    sliderLayout->addWidget(m_minLbl);
     sliderLayout->addWidget(m_fontSlider, 1);
-    sliderLayout->addWidget(maxLbl);
+    sliderLayout->addWidget(m_maxLbl);
     sliderLayout->addSpacing(16);
     sliderLayout->addWidget(m_fontSizeLbl);
     appearLayout->addWidget(sliderRow);
 
-    inner->addWidget(appearCard);
+    inner->addWidget(m_appearCard);
     inner->addSpacing(24);
 
     // ─────────────────────────────────────────────────────────────────────────
     // Card 2: Journal Storage
     // ─────────────────────────────────────────────────────────────────────────
-    QFrame *journalCard = new QFrame();
-    journalCard->setStyleSheet(kCardStyle);
-    QVBoxLayout *journalLayout = new QVBoxLayout(journalCard);
+    m_journalCard = new QFrame();
+    m_journalCard->setStyleSheet(kCardStyle);
+    QVBoxLayout *journalLayout = new QVBoxLayout(m_journalCard);
     journalLayout->setContentsMargins(36, 30, 36, 30);
     journalLayout->setSpacing(16);
 
-    QLabel *journalSec = new QLabel("JOURNAL STORAGE");
-    journalSec->setStyleSheet(kSectionLabelStyle);
-    journalLayout->addWidget(journalSec);
+    m_journalSec = new QLabel("JOURNAL STORAGE");
+    m_journalSec->setStyleSheet(kSectionLabelStyle);
+    journalLayout->addWidget(m_journalSec);
 
     QFrame *jDiv = new QFrame();
     jDiv->setFrameShape(QFrame::HLine);
@@ -231,15 +231,15 @@ Settings::Settings(QWidget *parent)
     jDiv->setFixedHeight(1);
     journalLayout->addWidget(jDiv);
 
-    QLabel *jLabel = new QLabel("Journal Directory");
-    jLabel->setStyleSheet(kRowLabelStyle);
-    QLabel *jDesc = new QLabel(
+    m_jLabel = new QLabel("Journal Directory");
+    m_jLabel->setStyleSheet(kRowLabelStyle);
+    m_jDesc = new QLabel(
         "Where MindEase saves your journal .txt files. "
         "Leave blank to use the default Documents/MindEase_Journal folder.");
-    jDesc->setWordWrap(true);
-    jDesc->setStyleSheet(kDescStyle);
-    journalLayout->addWidget(jLabel);
-    journalLayout->addWidget(jDesc);
+    m_jDesc->setWordWrap(true);
+    m_jDesc->setStyleSheet(kDescStyle);
+    journalLayout->addWidget(m_jLabel);
+    journalLayout->addWidget(m_jDesc);
 
     QWidget *dirRow = new QWidget();
     dirRow->setStyleSheet("background:transparent; border:none;");
@@ -284,7 +284,7 @@ Settings::Settings(QWidget *parent)
     dirLayout->addWidget(resetBtn);
     journalLayout->addWidget(dirRow);
 
-    inner->addWidget(journalCard);
+    inner->addWidget(m_journalCard);
     inner->addSpacing(32);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -333,6 +333,117 @@ Settings::Settings(QWidget *parent)
 // ─────────────────────────────────────────────────────────────────────────────
 void Settings::onActivated() {
     loadFromSettings();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Feature 5: Theme — re-apply inline styles so Settings content stays readable
+// ─────────────────────────────────────────────────────────────────────────────
+void Settings::onThemeChanged(bool dark) {
+    m_dark = dark;
+
+    // ── Dark palette helpers ──────────────────────────────────────────────────
+    const QString cardSS = dark
+        ? "QFrame {"
+          "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+          "    stop:0 #111E12, stop:1 #0F1A10);"
+          "  border:1px solid rgba(74,122,67,0.32);"
+          "  border-radius:16px;"
+          "}"
+        : "QFrame {"
+          "  background:#ffffff;"
+          "  border:1px solid #dce8d9;"
+          "  border-radius:16px;"
+          "}";
+
+    // ── Cards ─────────────────────────────────────────────────────────────────
+    m_appearCard->setStyleSheet(cardSS);
+    m_journalCard->setStyleSheet(cardSS);
+
+    // ── Page header ───────────────────────────────────────────────────────────
+    m_eyebrowLbl->setStyleSheet(dark
+        ? "font-size:11px; font-weight:700; color:#4a7a43; letter-spacing:1.8px;"
+        : "font-size:11px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
+    m_titleLbl->setStyleSheet(dark
+        ? "font-size:40px; font-weight:800; color:#C8ECC2; letter-spacing:-0.8px;"
+        : "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
+    m_subLbl->setStyleSheet(dark
+        ? "font-size:15px; color:#6a9c6a; border:none;"
+        : "font-size:15px; color:#4c5e78; border:none;");
+
+    // ── Appearance card labels ────────────────────────────────────────────────
+    const QString sectionSS = dark
+        ? "font-size:11px; font-weight:700; color:#4a7a43; letter-spacing:1.8px;"
+        : "font-size:11px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;";
+    const QString rowSS = dark
+        ? "font-size:15px; font-weight:700; color:#C8ECC2; border:none;"
+        : "font-size:15px; font-weight:700; color:#173c2c; border:none;";
+    const QString descSS = dark
+        ? "font-size:13px; color:#6a9c6a; border:none;"
+        : "font-size:13px; color:#5a6f62; border:none;";
+
+    m_appearLabel->setStyleSheet(sectionSS);
+    m_themeLabel->setStyleSheet(rowSS);
+    m_themeDesc->setStyleSheet(descSS);
+    m_fontLabel->setStyleSheet(rowSS);
+    m_fontDesc->setStyleSheet(descSS);
+    m_minLbl->setStyleSheet(descSS);
+    m_maxLbl->setStyleSheet(descSS);
+
+    m_fontSizeLbl->setStyleSheet(dark
+        ? "font-size:16px; font-weight:700; color:#C8ECC2; min-width:50px; border:none;"
+        : "font-size:16px; font-weight:700; color:#173c2c; min-width:50px; border:none;");
+
+    m_lightRadio->setStyleSheet(dark
+        ? "QRadioButton { font-size:14px; font-weight:600; color:#8AAD85; padding:6px 0; }"
+          "QRadioButton::indicator { width:18px; height:18px; border-radius:9px;"
+          "  border:2px solid rgba(74,122,67,0.5); }"
+          "QRadioButton::indicator:checked { background:#4a7a43; border:2px solid #4a7a43; }"
+        : "QRadioButton { font-size:14px; font-weight:600; color:#2d4833; padding:6px 0; }"
+          "QRadioButton::indicator { width:18px; height:18px; border-radius:9px;"
+          "  border:2px solid #b5cfb0; }"
+          "QRadioButton::indicator:checked { background:#4a7a43; border:2px solid #4a7a43; }");
+    m_darkRadio->setStyleSheet(dark
+        ? "QRadioButton { font-size:14px; font-weight:600; color:#8AAD85; padding:6px 0; }"
+          "QRadioButton::indicator { width:18px; height:18px; border-radius:9px;"
+          "  border:2px solid rgba(74,122,67,0.5); }"
+          "QRadioButton::indicator:checked { background:#6DBF5E; border:2px solid #6DBF5E; }"
+        : "QRadioButton { font-size:14px; font-weight:600; color:#2d4833; padding:6px 0; }"
+          "QRadioButton::indicator { width:18px; height:18px; border-radius:9px;"
+          "  border:2px solid #b5cfb0; }"
+          "QRadioButton::indicator:checked { background:#6DBF5E; border:2px solid #6DBF5E; }");
+
+    m_fontSlider->setStyleSheet(dark
+        ? "QSlider::groove:horizontal { height:6px; background:#1A3018; border-radius:3px; }"
+          "QSlider::handle:horizontal { width:20px; height:20px; margin:-7px 0;"
+          "  background:#6DBF5E; border-radius:10px; }"
+          "QSlider::sub-page:horizontal { background:#4a7a43; border-radius:3px; }"
+        : "QSlider::groove:horizontal { height:6px; background:#dce8d9; border-radius:3px; }"
+          "QSlider::handle:horizontal { width:20px; height:20px; margin:-7px 0;"
+          "  background:#4a7a43; border-radius:10px; }"
+          "QSlider::sub-page:horizontal { background:#7aac6e; border-radius:3px; }");
+
+    // ── Journal storage card labels ───────────────────────────────────────────
+    m_journalSec->setStyleSheet(sectionSS);
+    m_jLabel->setStyleSheet(rowSS);
+    m_jDesc->setStyleSheet(descSS);
+
+    m_dirEdit->setStyleSheet(dark
+        ? "QLineEdit {"
+          "  border:1px solid rgba(74,122,67,0.4); border-radius:10px;"
+          "  background:#0D1A0E; padding:10px 16px;"
+          "  font-size:14px; color:#8AAD85;"
+          "}"
+          "QLineEdit:focus { border-color:#6DBF5E; }"
+        : "QLineEdit {"
+          "  border:1px solid #c7d8c1; border-radius:10px;"
+          "  background:#f8fcf7; padding:10px 16px;"
+          "  font-size:14px; color:#365143;"
+          "}"
+          "QLineEdit:focus { border-color:#7aac6e; }");
+
+    m_statusLbl->setStyleSheet(dark
+        ? "font-size:13px; color:#6DBF5E; border:none;"
+        : "font-size:13px; color:#2E7D32; border:none;");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

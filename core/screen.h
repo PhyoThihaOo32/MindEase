@@ -48,6 +48,20 @@ public:
     // refresh data, restart timers, or reset state.
     virtual void onActivated() {}
 
+    // ── Virtual theme hook ────────────────────────────────────────────────────
+    // Called by MainWindow::applyTheme() whenever the user switches between the
+    // Light (Natural) and Zen Night (dark) themes.
+    //
+    // The default is a no-op; derived classes that contain inline-styled widgets
+    // (which take precedence over the application-level stylesheet) override this
+    // to re-apply their own colours so that all content text remains legible in
+    // both themes.
+    //
+    // Demonstrates the Open/Closed Principle: MainWindow iterates Screen* and
+    // calls onThemeChanged() without knowing which concrete class it is talking
+    // to — each subclass decides what "theme changed" means for its own widgets.
+    virtual void onThemeChanged(bool dark) { Q_UNUSED(dark) }
+
 protected:
     // Shared utility: appends a styled title QLabel followed by a horizontal
     // rule to *root*. Derived classes call this at the top of their constructor

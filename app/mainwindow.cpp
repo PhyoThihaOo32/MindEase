@@ -171,6 +171,12 @@ void MainWindow::applyTheme(bool dark) {
         applyDarkStyle();
     else
         applyLightStyle();
+
+    // Propagate to every screen so inline-styled widgets re-colour themselves.
+    // Uses runtime polymorphism: each Screen subclass decides what theme change
+    // means for its own widgets; screens that don't override do nothing (no-op).
+    for (Screen *s : screens)
+        s->onThemeChanged(dark);
 }
 
 void MainWindow::applyFontSize(int px) {

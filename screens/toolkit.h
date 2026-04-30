@@ -4,6 +4,7 @@
 #include "core/screen.h"
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QStackedWidget>
 #include <QVector>
 
@@ -27,6 +28,7 @@ public:
 
     // ── Override activation hook ──────────────────────────────────────────────
     void onActivated() override;
+    void onThemeChanged(bool dark) override;   // Feature 5: Zen Night readability
 
 private:
     void applyFolderSearch(const QString &query);
@@ -39,6 +41,14 @@ private:
     QLabel         *m_searchStatus = nullptr;
     QVector<QWidget*> m_folderCards;
     QVector<QLabel*>  m_folderSubtitleLabels;
+
+    // Feature 5: landing-page header + search widgets that need re-theming
+    bool          m_dark       = false;
+    QLabel       *m_greeting   = nullptr;   // "WELCOME" eyebrow
+    QLabel       *m_heading    = nullptr;   // big heading
+    QLabel       *m_sub        = nullptr;   // subtitle text
+    QLabel       *m_searchIcon = nullptr;   // ⌕ icon label
+    QPushButton  *m_searchBtn  = nullptr;   // "Search" button
 };
 
 #endif // TOOLKIT_H

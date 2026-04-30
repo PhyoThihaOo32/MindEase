@@ -5,19 +5,54 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared stylesheet factory — returns the correct palette for dark / light mode
+// ─────────────────────────────────────────────────────────────────────────────
 namespace {
-QPushButton *makeHomeAction(const QString &text) {
-    auto *button = new QPushButton(text);
-    button->setObjectName("homeActionBtn");
-    button->setCursor(Qt::PointingHandCursor);
-    button->setMinimumHeight(50);
-    return button;
-}
-}
-
-Home::Home(QWidget *parent)
-    : Screen("Home", parent) {
-    setStyleSheet(R"(
+QString homeStylesheet(bool dark) {
+    if (dark) {
+        return R"(
+            QLabel#homeEyebrow {
+                color: #4a7a43;
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 2.3px;
+                background: transparent;
+                border: none;
+            }
+            QLabel#homeTitle {
+                color: #C8ECC2;
+                font-size: 52px;
+                font-weight: 800;
+                background: transparent;
+                border: none;
+            }
+            QLabel#homeBody {
+                color: #6a9c6a;
+                font-size: 18px;
+                font-weight: 500;
+                background: transparent;
+                border: none;
+            }
+            QPushButton#homeActionBtn {
+                font-size: 15px;
+                font-weight: 700;
+                color: #C8ECC2;
+                background: rgba(20, 40, 22, 0.88);
+                border: 1px solid rgba(74, 122, 67, 0.45);
+                border-radius: 24px;
+                padding: 14px 24px;
+            }
+            QPushButton#homeActionBtn:hover {
+                background: rgba(30, 61, 32, 0.95);
+                color: #A8D8A0;
+            }
+            QPushButton#homeActionBtn:pressed {
+                background: rgba(15, 30, 16, 0.98);
+            }
+        )";
+    }
+    return R"(
         QLabel#homeEyebrow {
             color: #5e6d85;
             font-size: 13px;
@@ -55,7 +90,23 @@ Home::Home(QWidget *parent)
         QPushButton#homeActionBtn:pressed {
             background: rgba(245, 245, 245, 0.96);
         }
-    )");
+    )";
+}
+} // namespace
+
+namespace {
+QPushButton *makeHomeAction(const QString &text) {
+    auto *button = new QPushButton(text);
+    button->setObjectName("homeActionBtn");
+    button->setCursor(Qt::PointingHandCursor);
+    button->setMinimumHeight(50);
+    return button;
+}
+}
+
+Home::Home(QWidget *parent)
+    : Screen("Home", parent) {
+    setStyleSheet(homeStylesheet(false));   // light theme default
 
     auto *root = new QVBoxLayout(this);
     root->setContentsMargins(72, 30, 72, 72);
@@ -123,4 +174,12 @@ Home::Home(QWidget *parent)
     connect(toolkitBtn, &QPushButton::clicked, this, [this]() { emit requestScreen("toolkit"); });
     connect(assistantBtn, &QPushButton::clicked, this, [this]() { emit requestScreen("assistant"); });
     connect(journalBtn, &QPushButton::clicked, this, [this]() { emit requestScreen("journal"); });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Feature 5: Theme — swap the entire widget stylesheet so all named selectors
+// (homeTitle, homeBody, homeActionBtn…) pick up the correct palette.
+// ─────────────────────────────────────────────────────────────────────────────
+void Home::onThemeChanged(bool dark) {
+    setStyleSheet(homeStylesheet(dark));
 }

@@ -25,6 +25,7 @@ public:
     explicit Settings(QWidget *parent = nullptr);
     QString screenId() const override { return "settings"; }
     void onActivated() override;
+    void onThemeChanged(bool dark) override;   // Feature 5: Zen Night readability
 
 signals:
     void themeChanged(bool dark);
@@ -46,6 +47,27 @@ private:
     QLabel       *m_fontSizeLbl = nullptr;
     QLineEdit    *m_dirEdit     = nullptr;
     QLabel       *m_statusLbl   = nullptr;
+
+    // Feature 5: stored pointers for inline-styled widgets that need re-theming
+    bool          m_dark         = false;
+    QFrame       *m_appearCard   = nullptr;
+    QFrame       *m_journalCard  = nullptr;
+    // Page-level header
+    QLabel       *m_eyebrowLbl   = nullptr;
+    QLabel       *m_titleLbl     = nullptr;
+    QLabel       *m_subLbl       = nullptr;
+    // Appearance card interior
+    QLabel       *m_appearLabel  = nullptr;
+    QLabel       *m_themeLabel   = nullptr;
+    QLabel       *m_themeDesc    = nullptr;
+    QLabel       *m_fontLabel    = nullptr;
+    QLabel       *m_fontDesc     = nullptr;
+    QLabel       *m_minLbl       = nullptr;
+    QLabel       *m_maxLbl       = nullptr;
+    // Journal storage card interior
+    QLabel       *m_journalSec   = nullptr;
+    QLabel       *m_jLabel       = nullptr;
+    QLabel       *m_jDesc        = nullptr;
 };
 
 #endif // SETTINGS_H

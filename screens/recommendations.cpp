@@ -1017,30 +1017,30 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     innerLay->setContentsMargins(0, 0, 0, 0);
     innerLay->setSpacing(16);
 
-    QLabel *greeting = new QLabel("WELCOME");
-    greeting->setStyleSheet(
+    m_greeting = new QLabel("WELCOME");
+    m_greeting->setStyleSheet(
         "font-size:12px; font-weight:700; color:#5e6d85; "
         "letter-spacing:1.8px;");
 
-    QLabel *heading = new QLabel("What kind of support do you need right now?");
-    heading->setStyleSheet(
+    m_heading = new QLabel("What kind of support do you need right now?");
+    m_heading->setStyleSheet(
         "font-size:40px; font-weight:800; color:#111111; "
         "letter-spacing:-0.8px;");
 
-    QLabel *sub = new QLabel(
+    m_sub = new QLabel(
         "BMCC offers resources that can help you feel supported, connected, and heard.");
-    sub->setWordWrap(false);
-    sub->setMaximumWidth(900);
-    sub->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
+    m_sub->setWordWrap(false);
+    m_sub->setMaximumWidth(900);
+    m_sub->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
 
     QWidget *headerWrap = new QWidget();
     headerWrap->setStyleSheet("border:none; background:transparent;");
     QVBoxLayout *headerLay = new QVBoxLayout(headerWrap);
     headerLay->setContentsMargins(0, 0, 0, 0);
     headerLay->setSpacing(10);
-    headerLay->addWidget(greeting, 0, Qt::AlignLeft);
-    headerLay->addWidget(heading, 0, Qt::AlignLeft);
-    headerLay->addWidget(sub, 0, Qt::AlignLeft);
+    headerLay->addWidget(m_greeting, 0, Qt::AlignLeft);
+    headerLay->addWidget(m_heading,  0, Qt::AlignLeft);
+    headerLay->addWidget(m_sub,      0, Qt::AlignLeft);
 
     innerLay->addWidget(headerWrap);
     innerLay->addSpacing(18);
@@ -1059,10 +1059,10 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     searchLay->setSpacing(10);
     searchLay->setAlignment(Qt::AlignLeft);
 
-    QLabel *searchIcon = new QLabel("⌕");
-    searchIcon->setAlignment(Qt::AlignCenter);
-    searchIcon->setFixedSize(38, 38);
-    searchIcon->setStyleSheet(
+    m_searchIcon = new QLabel("⌕");
+    m_searchIcon->setAlignment(Qt::AlignCenter);
+    m_searchIcon->setFixedSize(38, 38);
+    m_searchIcon->setStyleSheet(
         "font-size:16px; color:#4c5e78; background:#ffffff; border:1px solid #d7ddd2; "
         "border-radius:13px;");
 
@@ -1085,17 +1085,17 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
         "  background:#ffffff;"
         "}");
 
-    QPushButton *searchBtn = new QPushButton("Search");
-    searchBtn->setMinimumHeight(42);
-    searchBtn->setCursor(Qt::PointingHandCursor);
-    searchBtn->setStyleSheet(
+    m_searchBtn = new QPushButton("Search");
+    m_searchBtn->setMinimumHeight(42);
+    m_searchBtn->setCursor(Qt::PointingHandCursor);
+    m_searchBtn->setStyleSheet(
         "QPushButton { font-size:13px; font-weight:700; color:#1a1a1a; "
         "background:#ffffff; border:1px solid #d7ddd2; border-radius:14px; padding:10px 18px; }"
         "QPushButton:hover { background:#f7f7f4; border-color:#c4d1c0; }");
 
-    searchLay->addWidget(searchIcon);
+    searchLay->addWidget(m_searchIcon);
     searchLay->addWidget(m_searchInput);
-    searchLay->addWidget(searchBtn);
+    searchLay->addWidget(m_searchBtn);
     searchLay->addStretch();
 
     m_searchStatus = new QLabel();
@@ -1111,7 +1111,7 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
             this, &Recommendations::applyTopicSearch);
     connect(m_searchInput, &QLineEdit::returnPressed,
             this, &Recommendations::openBestTopicMatch);
-    connect(searchBtn, &QPushButton::clicked,
+    connect(m_searchBtn, &QPushButton::clicked,
             this, &Recommendations::openBestTopicMatch);
 
     QWidget *topicList = new QWidget();
@@ -1183,6 +1183,7 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
                 .arg(TOPICS[i].accent));
 
         QLabel *titleLbl = new QLabel(TOPICS[i].title);
+        titleLbl->setObjectName("detailTopicTitle");
         titleLbl->setStyleSheet(
             "font-size:23px; font-weight:700; color:#173c2c; border:none; "
             "letter-spacing:-0.3px;");
@@ -1265,4 +1266,87 @@ void Recommendations::showTopic(int index) {
 
 void Recommendations::showHome() {
     m_stack->setCurrentIndex(0);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Feature 5: Theme — re-style landing-page header + search row
+// ─────────────────────────────────────────────────────────────────────────────
+void Recommendations::onThemeChanged(bool dark) {
+    m_dark = dark;
+
+    if (dark) {
+        // ── Landing-page header ───────────────────────────────────────────────
+        m_greeting->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#4a7a43; letter-spacing:1.8px;");
+        m_heading->setStyleSheet(
+            "font-size:40px; font-weight:800; color:#C8ECC2; letter-spacing:-0.8px;");
+        m_sub->setStyleSheet(
+            "font-size:15px; color:#6a9c6a; border:none;");
+
+        // ── Search row ────────────────────────────────────────────────────────
+        m_searchIcon->setStyleSheet(
+            "font-size:16px; color:#7aac6e; background:#0D1A0E;"
+            " border:1px solid rgba(74,122,67,0.4); border-radius:13px;");
+        m_searchInput->setStyleSheet(
+            "QLineEdit {"
+            "  border:1px solid rgba(74,122,67,0.4); border-radius:14px;"
+            "  background:#0D1A0E; padding:12px 14px;"
+            "  font-size:14px; color:#8AAD85;"
+            "}"
+            "QLineEdit:focus { border:1px solid #6DBF5E; }");
+        m_searchBtn->setStyleSheet(
+            "QPushButton { font-size:13px; font-weight:700; color:#8AAD85; "
+            "  background:#0D1A0E; border:1px solid rgba(74,122,67,0.4);"
+            "  border-radius:14px; padding:10px 18px; }"
+            "QPushButton:hover { background:#142016; border-color:#6DBF5E; }");
+
+        // ── Detail-page topic titles (found via objectName) ───────────────────
+        for (QLabel *lbl : findChildren<QLabel*>("detailTopicTitle")) {
+            lbl->setStyleSheet(
+                "font-size:23px; font-weight:700; color:#C8ECC2; border:none; "
+                "letter-spacing:-0.3px;");
+        }
+
+    } else {
+        // ── Landing-page header ───────────────────────────────────────────────
+        m_greeting->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
+        m_heading->setStyleSheet(
+            "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
+        m_sub->setStyleSheet(
+            "font-size:15px; color:#4c5e78; border:none;");
+
+        // ── Search row ────────────────────────────────────────────────────────
+        m_searchIcon->setStyleSheet(
+            "font-size:16px; color:#4c5e78; background:#ffffff;"
+            " border:1px solid #d7ddd2; border-radius:13px;");
+        m_searchInput->setStyleSheet(
+            "QLineEdit {"
+            "  border:1px solid #d7ddd2; border-radius:14px;"
+            "  background:#ffffff; padding:12px 14px;"
+            "  font-size:14px; color:#1a1a1a;"
+            "}"
+            "QLineEdit:focus { border:1px solid #b8c8b5; }");
+        m_searchBtn->setStyleSheet(
+            "QPushButton { font-size:13px; font-weight:700; color:#1a1a1a; "
+            "  background:#ffffff; border:1px solid #d7ddd2;"
+            "  border-radius:14px; padding:10px 18px; }"
+            "QPushButton:hover { background:#f7f7f4; border-color:#c4d1c0; }");
+
+        // ── Detail-page topic titles ──────────────────────────────────────────
+        for (QLabel *lbl : findChildren<QLabel*>("detailTopicTitle")) {
+            lbl->setStyleSheet(
+                "font-size:23px; font-weight:700; color:#173c2c; border:none; "
+                "letter-spacing:-0.3px;");
+        }
+    }
+
+    // Topic card subtitle labels are on white card backgrounds — still readable,
+    // but re-sync their colour so applyTopicSearch stays consistent with theme.
+    const QString subtitleColor = dark ? "#5a8f54" : "#6d8272";
+    for (QLabel *lbl : m_topicSubtitleLabels) {
+        if (lbl && lbl->isVisible())
+            lbl->setStyleSheet(
+                QString("font-size:11px; color:%1; border:none;").arg(subtitleColor));
+    }
 }

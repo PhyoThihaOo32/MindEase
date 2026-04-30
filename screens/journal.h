@@ -18,6 +18,7 @@ public:
     explicit Journal(QWidget *parent = nullptr);
     QString screenId() const override { return "journal"; }
     void onActivated() override;
+    void onThemeChanged(bool dark) override;   // Feature 5: Zen Night readability
 
     // Called by MainWindow when Settings changes the journal directory.
     void setStoragePath(const QString &path);
@@ -44,19 +45,30 @@ private:
     QString buildHtmlExport(const JournalEntry &entry) const;
 
     // Composer
-    QLineEdit    *m_titleEdit     = nullptr;
-    QTextEdit    *m_editor        = nullptr;
-    QLabel       *m_dateLbl       = nullptr;
-    QLabel       *m_statusLbl     = nullptr;
+    QLineEdit    *m_titleEdit       = nullptr;
+    QTextEdit    *m_editor          = nullptr;
+    QLabel       *m_dateLbl         = nullptr;
+    QLabel       *m_statusLbl       = nullptr;
 
     // Past-reflections panel
-    QWidget      *m_entriesHost   = nullptr;
-    QVBoxLayout  *m_entriesLayout = nullptr;
+    QWidget      *m_entriesHost     = nullptr;
+    QVBoxLayout  *m_entriesLayout   = nullptr;
 
     // Feature 4: search / filter widgets + cached list
-    QLineEdit    *m_searchEdit    = nullptr;
-    QComboBox    *m_periodFilter  = nullptr;
+    QLineEdit    *m_searchEdit      = nullptr;
+    QComboBox    *m_periodFilter    = nullptr;
     QVector<JournalEntry> m_allEntries;
+
+    // Feature 5: theme-aware widgets (needed because inline setStyleSheet
+    // has higher specificity than the app-level stylesheet).
+    bool          m_dark            = false;
+    QLabel       *m_eyebrowLbl      = nullptr;
+    QLabel       *m_titleLbl        = nullptr;
+    QLabel       *m_subLbl          = nullptr;
+    QLabel       *m_pastLbl         = nullptr;
+    QFrame       *m_composerCard    = nullptr;
+    QFrame       *m_composerDivider = nullptr;
+    QLabel       *m_shortcutHint    = nullptr;
 
     JournalStorage m_storage;
 };

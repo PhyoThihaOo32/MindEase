@@ -123,30 +123,30 @@ Journal::Journal(QWidget *parent)
     inner->setSpacing(0);
 
     // ── Header ───────────────────────────────────────────────────────────────
-    QLabel *eyebrow = new QLabel("ZEN SPACE");
-    eyebrow->setStyleSheet(
+    m_eyebrowLbl = new QLabel("ZEN SPACE");
+    m_eyebrowLbl->setStyleSheet(
         "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
 
-    QLabel *titleLbl = new QLabel("My Journal");
-    titleLbl->setStyleSheet(
+    m_titleLbl = new QLabel("My Journal");
+    m_titleLbl->setStyleSheet(
         "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
 
-    QLabel *sub = new QLabel(
+    m_subLbl = new QLabel(
         "Create entries to reflect on events, and return to past reflections.");
-    sub->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
+    m_subLbl->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
 
-    inner->addWidget(eyebrow, 0, Qt::AlignLeft);
+    inner->addWidget(m_eyebrowLbl, 0, Qt::AlignLeft);
     inner->addSpacing(10);
-    inner->addWidget(titleLbl, 0, Qt::AlignLeft);
+    inner->addWidget(m_titleLbl, 0, Qt::AlignLeft);
     inner->addSpacing(12);
-    inner->addWidget(sub, 0, Qt::AlignLeft);
+    inner->addWidget(m_subLbl, 0, Qt::AlignLeft);
     inner->addSpacing(34);
 
     // ── Composer card ────────────────────────────────────────────────────────
-    QFrame *composerCard = new QFrame();
-    composerCard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    composerCard->setMinimumHeight(640);
-    composerCard->setStyleSheet(
+    m_composerCard = new QFrame();
+    m_composerCard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    m_composerCard->setMinimumHeight(640);
+    m_composerCard->setStyleSheet(
         "QFrame {"
         "  background:qradialgradient(cx:0.18, cy:0.08, radius:1.2,"
         "                              fx:0.18, fy:0.08,"
@@ -154,8 +154,8 @@ Journal::Journal(QWidget *parent)
         "  border:1px solid #c7d8c1;"
         "  border-radius:20px;"
         "}");
-    applyJournalShadow(composerCard, 26, 8, QColor(121, 154, 112, 20));
-    QVBoxLayout *composerLayout = new QVBoxLayout(composerCard);
+    applyJournalShadow(m_composerCard, 26, 8, QColor(121, 154, 112, 20));
+    QVBoxLayout *composerLayout = new QVBoxLayout(m_composerCard);
     composerLayout->setContentsMargins(44, 38, 44, 30);
     composerLayout->setSpacing(0);
 
@@ -184,11 +184,11 @@ Journal::Journal(QWidget *parent)
     composerLayout->addWidget(m_editor);
     composerLayout->addSpacing(20);
 
-    QFrame *divider = new QFrame();
-    divider->setFrameShape(QFrame::HLine);
-    divider->setStyleSheet("background:#dce8d8; border:none;");
-    divider->setFixedHeight(1);
-    composerLayout->addWidget(divider);
+    m_composerDivider = new QFrame();
+    m_composerDivider->setFrameShape(QFrame::HLine);
+    m_composerDivider->setStyleSheet("background:#dce8d8; border:none;");
+    m_composerDivider->setFixedHeight(1);
+    composerLayout->addWidget(m_composerDivider);
     composerLayout->addSpacing(18);
 
     QWidget *footerRow = new QWidget();
@@ -204,8 +204,8 @@ Journal::Journal(QWidget *parent)
     m_statusLbl->setStyleSheet("font-size:12px; color:#2E7D32; border:none;");
 
     // ── Keyboard shortcut hint ───────────────────────────────────────────────
-    QLabel *shortcutHint = new QLabel("Ctrl+S to save");
-    shortcutHint->setStyleSheet("font-size:11px; color:#9eaa9d; border:none;");
+    m_shortcutHint = new QLabel("Ctrl+S to save");
+    m_shortcutHint->setStyleSheet("font-size:11px; color:#9eaa9d; border:none;");
 
     QPushButton *saveBtn = new QPushButton("Save Entry");
     saveBtn->setCursor(Qt::PointingHandCursor);
@@ -227,17 +227,17 @@ Journal::Journal(QWidget *parent)
 
     footerLayout->addWidget(m_dateLbl);
     footerLayout->addWidget(m_statusLbl, 1);
-    footerLayout->addWidget(shortcutHint);
+    footerLayout->addWidget(m_shortcutHint);
     footerLayout->addWidget(saveBtn, 0, Qt::AlignRight);
     composerLayout->addWidget(footerRow);
-    inner->addWidget(composerCard);
+    inner->addWidget(m_composerCard);
     inner->addSpacing(42);
 
     // ── Past Reflections header ──────────────────────────────────────────────
-    QLabel *pastLabel = new QLabel("PAST REFLECTIONS");
-    pastLabel->setStyleSheet(
+    m_pastLbl = new QLabel("PAST REFLECTIONS");
+    m_pastLbl->setStyleSheet(
         "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
-    inner->addWidget(pastLabel, 0, Qt::AlignLeft);
+    inner->addWidget(m_pastLbl, 0, Qt::AlignLeft);
     inner->addSpacing(14);
 
     // ── Feature 4: Search + Date-filter row ──────────────────────────────────
@@ -325,6 +325,138 @@ void Journal::onActivated() {
 void Journal::setStoragePath(const QString &path) {
     m_storage = JournalStorage(path);
     refreshEntryList();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Feature 5: Theme — re-apply inline styles so content text stays readable
+// ─────────────────────────────────────────────────────────────────────────────
+void Journal::onThemeChanged(bool dark) {
+    m_dark = dark;
+
+    if (dark) {
+        // ── Page header ──────────────────────────────────────────────────────
+        m_eyebrowLbl->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#4a7a43; letter-spacing:1.8px;");
+        m_titleLbl->setStyleSheet(
+            "font-size:40px; font-weight:800; color:#C8ECC2; letter-spacing:-0.8px;");
+        m_subLbl->setStyleSheet(
+            "font-size:15px; color:#6a9c6a; border:none;");
+        m_pastLbl->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#4a7a43; letter-spacing:1.8px;");
+
+        // ── Composer card ────────────────────────────────────────────────────
+        m_composerCard->setStyleSheet(
+            "QFrame {"
+            "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+            "    stop:0 #111E12, stop:0.58 #142016, stop:1 #0F1A10);"
+            "  border:1px solid rgba(74,122,67,0.35);"
+            "  border-radius:20px;"
+            "}");
+        m_titleEdit->setStyleSheet(
+            "QLineEdit {"
+            "  border:none; background:transparent;"
+            "  font-size:27px; font-weight:700; color:#C8ECC2; padding:0 0 8px 0;"
+            "}"
+            "QLineEdit::placeholder { color:#3a5c3a; }");
+        m_editor->setStyleSheet(
+            "QTextEdit {"
+            "  border:none; background:transparent;"
+            "  font-size:17px; color:#8AAD85; padding:12px 0 0 0; line-height:170%;"
+            "}"
+            "QTextEdit::placeholder { color:#3a5c3a; }");
+        m_composerDivider->setStyleSheet(
+            "background:rgba(74,122,67,0.22); border:none;");
+        m_dateLbl->setStyleSheet(
+            "font-size:14px; font-weight:600; color:#5a8f54; border:none;");
+        m_shortcutHint->setStyleSheet(
+            "font-size:11px; color:#3a5c3a; border:none;");
+
+        // ── Search / filter row ──────────────────────────────────────────────
+        m_searchEdit->setStyleSheet(
+            "QLineEdit {"
+            "  border:1px solid rgba(74,122,67,0.4); border-radius:10px;"
+            "  background:#0D1A0E; padding:10px 16px;"
+            "  font-size:14px; color:#8AAD85;"
+            "}"
+            "QLineEdit:focus { border-color:#6DBF5E; }"
+            "QLineEdit::placeholder { color:#3a5c3a; }");
+        m_periodFilter->setStyleSheet(
+            "QComboBox {"
+            "  border:1px solid rgba(74,122,67,0.4); border-radius:10px;"
+            "  background:#0D1A0E; padding:8px 14px;"
+            "  font-size:14px; color:#8AAD85; font-weight:600;"
+            "}"
+            "QComboBox:focus { border-color:#6DBF5E; }"
+            "QComboBox::drop-down { border:none; width:28px; }"
+            "QComboBox QAbstractItemView {"
+            "  background:#0D1A0E; border:1px solid rgba(74,122,67,0.4);"
+            "  selection-background-color:#1A3018; selection-color:#C8ECC2;"
+            "}");
+
+    } else {
+        // ── Page header ──────────────────────────────────────────────────────
+        m_eyebrowLbl->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
+        m_titleLbl->setStyleSheet(
+            "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
+        m_subLbl->setStyleSheet(
+            "font-size:15px; color:#4c5e78; border:none;");
+        m_pastLbl->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
+
+        // ── Composer card ────────────────────────────────────────────────────
+        m_composerCard->setStyleSheet(
+            "QFrame {"
+            "  background:qradialgradient(cx:0.18, cy:0.08, radius:1.2,"
+            "                              fx:0.18, fy:0.08,"
+            "                              stop:0 #ffffff, stop:0.58 #fbfdf8, stop:1 #edf5eb);"
+            "  border:1px solid #c7d8c1;"
+            "  border-radius:20px;"
+            "}");
+        m_titleEdit->setStyleSheet(
+            "QLineEdit {"
+            "  border:none; background:transparent;"
+            "  font-size:27px; font-weight:700; color:#173c2c; padding:0 0 8px 0;"
+            "}"
+            "QLineEdit::placeholder { color:#9eaa9d; }");
+        m_editor->setStyleSheet(
+            "QTextEdit {"
+            "  border:none; background:transparent;"
+            "  font-size:17px; color:#365143; padding:12px 0 0 0; line-height:170%;"
+            "}"
+            "QTextEdit::placeholder { color:#8fa09a; }");
+        m_composerDivider->setStyleSheet(
+            "background:#dce8d8; border:none;");
+        m_dateLbl->setStyleSheet(
+            "font-size:14px; font-weight:600; color:#5a6f62; border:none;");
+        m_shortcutHint->setStyleSheet(
+            "font-size:11px; color:#9eaa9d; border:none;");
+
+        // ── Search / filter row ──────────────────────────────────────────────
+        m_searchEdit->setStyleSheet(
+            "QLineEdit {"
+            "  border:1px solid #c7d8c1; border-radius:10px;"
+            "  background:#ffffff; padding:10px 16px;"
+            "  font-size:14px; color:#365143;"
+            "}"
+            "QLineEdit:focus { border-color:#7aac6e; }"
+            "QLineEdit::placeholder { color:#9eaa9d; }");
+        m_periodFilter->setStyleSheet(
+            "QComboBox {"
+            "  border:1px solid #c7d8c1; border-radius:10px;"
+            "  background:#ffffff; padding:8px 14px;"
+            "  font-size:14px; color:#365143; font-weight:600;"
+            "}"
+            "QComboBox:focus { border-color:#7aac6e; }"
+            "QComboBox::drop-down { border:none; width:28px; }"
+            "QComboBox QAbstractItemView {"
+            "  background:#ffffff; border:1px solid #c7d8c1;"
+            "  selection-background-color:#edf5eb; selection-color:#173c2c;"
+            "}");
+    }
+
+    // Rebuild entry cards with the updated m_dark flag applied
+    applyFilter();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -426,13 +558,18 @@ void Journal::buildEntryCards(const QVector<JournalEntry> &entries) {
 
     if (entries.isEmpty()) {
         QFrame *emptyCard = new QFrame();
-        emptyCard->setStyleSheet(
-            "QFrame {"
-            "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-            "                              stop:0 #ffffff, stop:1 #eff6ec);"
-            "  border:1px solid #c7d8c1; border-radius:16px;"
-            "}");
-        applyJournalShadow(emptyCard, 14, 4, QColor(121, 154, 112, 12));
+        emptyCard->setStyleSheet(m_dark
+            ? "QFrame {"
+              "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+              "    stop:0 #111E12, stop:1 #0F1A10);"
+              "  border:1px solid rgba(74,122,67,0.28); border-radius:16px;"
+              "}"
+            : "QFrame {"
+              "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+              "    stop:0 #ffffff, stop:1 #eff6ec);"
+              "  border:1px solid #c7d8c1; border-radius:16px;"
+              "}");
+        applyJournalShadow(emptyCard, 14, 4, QColor(121, 154, 112, m_dark ? 6 : 12));
         QVBoxLayout *emptyLayout = new QVBoxLayout(emptyCard);
         emptyLayout->setContentsMargins(30, 26, 30, 26);
 
@@ -441,15 +578,17 @@ void Journal::buildEntryCards(const QVector<JournalEntry> &entries) {
                              || (m_periodFilter && m_periodFilter->currentIndex() != 0);
         QLabel *emptyTitle = new QLabel(filtering ? "No matching reflections"
                                                   : "No reflections yet");
-        emptyTitle->setStyleSheet(
-            "font-size:18px; font-weight:700; color:#173c2c; border:none;");
+        emptyTitle->setStyleSheet(m_dark
+            ? "font-size:18px; font-weight:700; color:#C8ECC2; border:none;"
+            : "font-size:18px; font-weight:700; color:#173c2c; border:none;");
         QLabel *emptyBody = new QLabel(
             filtering ? "Try a different search term or time period."
                       : "Your saved entries will appear here after you write and save "
                         "your first journal reflection.");
         emptyBody->setWordWrap(true);
-        emptyBody->setStyleSheet(
-            "font-size:14px; color:#5a6f62; border:none; line-height:160%;");
+        emptyBody->setStyleSheet(m_dark
+            ? "font-size:14px; color:#6a9c6a; border:none; line-height:160%;"
+            : "font-size:14px; color:#5a6f62; border:none; line-height:160%;");
         emptyLayout->addWidget(emptyTitle);
         emptyLayout->addSpacing(6);
         emptyLayout->addWidget(emptyBody);
@@ -464,13 +603,21 @@ void Journal::buildEntryCards(const QVector<JournalEntry> &entries) {
 
         QFrame *card = new QFrame();
         card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        card->setStyleSheet(
-            "QFrame {"
-            "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-            "                              stop:0 #ffffff, stop:0.72 #fbfdf8, stop:1 #edf5eb);"
-            "  border:1px solid #c7d8c1; border-left:4px solid #93ad89; border-radius:16px;"
-            "}");
-        applyJournalShadow(card, 16, 4, QColor(121, 154, 112, 14));
+        card->setStyleSheet(m_dark
+            ? "QFrame {"
+              "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+              "    stop:0 #111E12, stop:0.72 #142016, stop:1 #0F1A10);"
+              "  border:1px solid rgba(74,122,67,0.28);"
+              "  border-left:4px solid rgba(109,191,94,0.65);"
+              "  border-radius:16px;"
+              "}"
+            : "QFrame {"
+              "  background:qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+              "    stop:0 #ffffff, stop:0.72 #fbfdf8, stop:1 #edf5eb);"
+              "  border:1px solid #c7d8c1; border-left:4px solid #93ad89;"
+              "  border-radius:16px;"
+              "}");
+        applyJournalShadow(card, 16, 4, QColor(121, 154, 112, m_dark ? 6 : 14));
         card->setToolTip(parts.body);
 
         QVBoxLayout *cardLayout = new QVBoxLayout(card);
@@ -486,28 +633,42 @@ void Journal::buildEntryCards(const QVector<JournalEntry> &entries) {
 
         QLabel *titleLabel = new QLabel(parts.title);
         titleLabel->setWordWrap(true);
-        titleLabel->setStyleSheet(
-            "font-size:18px; font-weight:800; color:#173c2c; border:none;");
+        titleLabel->setStyleSheet(m_dark
+            ? "font-size:18px; font-weight:800; color:#C8ECC2; border:none;"
+            : "font-size:18px; font-weight:800; color:#173c2c; border:none;");
 
         // ── Feature 6: Export button with dropdown menu ───────────────────────
         QPushButton *exportBtn = new QPushButton("Export ▾");
         exportBtn->setCursor(Qt::PointingHandCursor);
-        exportBtn->setStyleSheet(
-            "QPushButton {"
-            "  background:#f0f8ed; border:1px solid #b8d4b0;"
-            "  border-radius:9px; color:#2d5c39;"
-            "  font-size:12px; font-weight:700; padding:6px 12px;"
-            "}"
-            "QPushButton:hover  { background:#e4f0e0; border-color:#9ac094; }"
-            "QPushButton::menu-indicator { image:none; }");
+        exportBtn->setStyleSheet(m_dark
+            ? "QPushButton {"
+              "  background:#1A3018; border:1px solid rgba(74,122,67,0.45);"
+              "  border-radius:9px; color:#7aac6e;"
+              "  font-size:12px; font-weight:700; padding:6px 12px;"
+              "}"
+              "QPushButton:hover { background:#213d20; border-color:#5a8f54; }"
+              "QPushButton::menu-indicator { image:none; }"
+            : "QPushButton {"
+              "  background:#f0f8ed; border:1px solid #b8d4b0;"
+              "  border-radius:9px; color:#2d5c39;"
+              "  font-size:12px; font-weight:700; padding:6px 12px;"
+              "}"
+              "QPushButton:hover { background:#e4f0e0; border-color:#9ac094; }"
+              "QPushButton::menu-indicator { image:none; }");
 
         QMenu *exportMenu = new QMenu(exportBtn);
-        exportMenu->setStyleSheet(
-            "QMenu {"
-            "  background:#ffffff; border:1px solid #c7d8c1; border-radius:8px; padding:4px;"
-            "}"
-            "QMenu::item { padding:8px 20px; font-size:13px; color:#173c2c; border-radius:6px; }"
-            "QMenu::item:selected { background:#edf5eb; }");
+        exportMenu->setStyleSheet(m_dark
+            ? "QMenu {"
+              "  background:#0D1A0E; border:1px solid rgba(74,122,67,0.4);"
+              "  border-radius:8px; padding:4px;"
+              "}"
+              "QMenu::item { padding:8px 20px; font-size:13px; color:#8AAD85; border-radius:6px; }"
+              "QMenu::item:selected { background:#1A3018; color:#C8ECC2; }"
+            : "QMenu {"
+              "  background:#ffffff; border:1px solid #c7d8c1; border-radius:8px; padding:4px;"
+              "}"
+              "QMenu::item { padding:8px 20px; font-size:13px; color:#173c2c; border-radius:6px; }"
+              "QMenu::item:selected { background:#edf5eb; }");
         exportMenu->addAction("📄  Save as PDF", this, [this, entry]() { exportAsPdf(entry); });
         exportMenu->addAction("📝  Save as Plain Text", this, [this, entry]() { exportAsText(entry); });
         exportBtn->setMenu(exportMenu);
@@ -515,12 +676,17 @@ void Journal::buildEntryCards(const QVector<JournalEntry> &entries) {
         // Delete button
         QPushButton *deleteBtn = new QPushButton("Delete");
         deleteBtn->setCursor(Qt::PointingHandCursor);
-        deleteBtn->setStyleSheet(
-            "QPushButton {"
-            "  background:#fff9f6; border:1px solid #efd3cc; border-radius:9px;"
-            "  color:#a33a2e; font-size:12px; font-weight:700; padding:6px 12px;"
-            "}"
-            "QPushButton:hover { background:#fff0ec; border-color:#e1b9b0; }");
+        deleteBtn->setStyleSheet(m_dark
+            ? "QPushButton {"
+              "  background:#2a1212; border:1px solid rgba(163,58,46,0.4); border-radius:9px;"
+              "  color:#e07060; font-size:12px; font-weight:700; padding:6px 12px;"
+              "}"
+              "QPushButton:hover { background:#351818; border-color:rgba(163,58,46,0.7); }"
+            : "QPushButton {"
+              "  background:#fff9f6; border:1px solid #efd3cc; border-radius:9px;"
+              "  color:#a33a2e; font-size:12px; font-weight:700; padding:6px 12px;"
+              "}"
+              "QPushButton:hover { background:#fff0ec; border-color:#e1b9b0; }");
         const QString path = entry.filePath();
         connect(deleteBtn, &QPushButton::clicked, this, [this, path]() {
             deleteEntryAtPath(path);
@@ -533,13 +699,15 @@ void Journal::buildEntryCards(const QVector<JournalEntry> &entries) {
 
         QLabel *bodyLbl = new QLabel(parts.excerpt);
         bodyLbl->setWordWrap(true);
-        bodyLbl->setStyleSheet(
-            "font-size:14px; color:#4f6255; border:none; line-height:165%;");
+        bodyLbl->setStyleSheet(m_dark
+            ? "font-size:14px; color:#6a9c6a; border:none; line-height:165%;"
+            : "font-size:14px; color:#4f6255; border:none; line-height:165%;");
         cardLayout->addWidget(bodyLbl);
 
         QLabel *dateLbl = new QLabel(entry.dateTime().toString("MMM d, yyyy · h:mm AP"));
-        dateLbl->setStyleSheet(
-            "font-size:13px; font-weight:600; color:#71856f; border:none;");
+        dateLbl->setStyleSheet(m_dark
+            ? "font-size:13px; font-weight:600; color:#4a7a43; border:none;"
+            : "font-size:13px; font-weight:600; color:#71856f; border:none;");
         cardLayout->addWidget(dateLbl);
 
         m_entriesLayout->addWidget(card);

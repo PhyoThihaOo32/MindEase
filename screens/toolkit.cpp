@@ -456,6 +456,7 @@ static QWidget* makeFolderDetailPage(const FolderDef &fd, std::function<void()> 
     trl->setSpacing(12);
 
     QPushButton *backBtn = new QPushButton("←  Back");
+    backBtn->setObjectName("detailFolderBack");
     backBtn->setCursor(Qt::PointingHandCursor);
     backBtn->setStyleSheet(
         "QPushButton { font-size:13px; font-weight:700; color:#1a1a1a; "
@@ -477,14 +478,17 @@ static QWidget* makeFolderDetailPage(const FolderDef &fd, std::function<void()> 
     titleLay->setSpacing(2);
 
     QLabel *eyebrow = new QLabel("MENTAL HEALTH TOOLKIT");
+    eyebrow->setObjectName("detailFolderEyebrow");
     eyebrow->setStyleSheet(
         "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
 
     QLabel *titleLbl = new QLabel(fd.name);
+    titleLbl->setObjectName("detailFolderTitle");
     titleLbl->setStyleSheet(
         "font-size:28px; font-weight:800; color:#111111; letter-spacing:-0.5px;");
 
     QLabel *tagLbl = new QLabel(fd.tagline);
+    tagLbl->setObjectName("detailFolderTagline");
     tagLbl->setStyleSheet("font-size:14px; color:#4c5e78; border:none;");
 
     titleLay->addWidget(eyebrow);
@@ -575,28 +579,28 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
     innerLay->setContentsMargins(0, 0, 0, 0);
     innerLay->setSpacing(16);
 
-    QLabel *greeting = new QLabel("WELCOME");
-    greeting->setStyleSheet(
+    m_greeting = new QLabel("WELCOME");
+    m_greeting->setStyleSheet(
         "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
 
-    QLabel *heading = new QLabel("A quiet space to pause, reflect, and reset");
-    heading->setStyleSheet(
+    m_heading = new QLabel("A quiet space to pause, reflect, and reset");
+    m_heading->setStyleSheet(
         "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
 
-    QLabel *sub = new QLabel(
+    m_sub = new QLabel(
         "Choose a toolkit topic for calming tools, reflection prompts, and supportive practices you can try at your own pace.");
-    sub->setWordWrap(false);
-    sub->setMaximumWidth(900);
-    sub->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
+    m_sub->setWordWrap(false);
+    m_sub->setMaximumWidth(900);
+    m_sub->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
 
     QWidget *headerWrap = new QWidget();
     headerWrap->setStyleSheet("border:none; background:transparent;");
     QVBoxLayout *headerLay = new QVBoxLayout(headerWrap);
     headerLay->setContentsMargins(0, 0, 0, 0);
     headerLay->setSpacing(10);
-    headerLay->addWidget(greeting, 0, Qt::AlignLeft);
-    headerLay->addWidget(heading, 0, Qt::AlignLeft);
-    headerLay->addWidget(sub, 0, Qt::AlignLeft);
+    headerLay->addWidget(m_greeting, 0, Qt::AlignLeft);
+    headerLay->addWidget(m_heading,  0, Qt::AlignLeft);
+    headerLay->addWidget(m_sub,      0, Qt::AlignLeft);
 
     innerLay->addWidget(headerWrap);
     innerLay->addSpacing(18);
@@ -614,10 +618,10 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
     searchLay->setSpacing(10);
     searchLay->setAlignment(Qt::AlignLeft);
 
-    QLabel *searchIcon = new QLabel("⌕");
-    searchIcon->setAlignment(Qt::AlignCenter);
-    searchIcon->setFixedSize(38, 38);
-    searchIcon->setStyleSheet(
+    m_searchIcon = new QLabel("⌕");
+    m_searchIcon->setAlignment(Qt::AlignCenter);
+    m_searchIcon->setFixedSize(38, 38);
+    m_searchIcon->setStyleSheet(
         "font-size:16px; color:#4c5e78; background:#ffffff; border:1px solid #d7ddd2; border-radius:13px;");
 
     m_searchInput = new QLineEdit();
@@ -639,17 +643,17 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
         "  background:#ffffff;"
         "}");
 
-    QPushButton *searchBtn = new QPushButton("Search");
-    searchBtn->setMinimumHeight(42);
-    searchBtn->setCursor(Qt::PointingHandCursor);
-    searchBtn->setStyleSheet(
+    m_searchBtn = new QPushButton("Search");
+    m_searchBtn->setMinimumHeight(42);
+    m_searchBtn->setCursor(Qt::PointingHandCursor);
+    m_searchBtn->setStyleSheet(
         "QPushButton { font-size:13px; font-weight:700; color:#1a1a1a; "
         "background:#ffffff; border:1px solid #d7ddd2; border-radius:14px; padding:10px 18px; }"
         "QPushButton:hover { background:#f7f7f4; border-color:#c4d1c0; }");
 
-    searchLay->addWidget(searchIcon);
+    searchLay->addWidget(m_searchIcon);
     searchLay->addWidget(m_searchInput);
-    searchLay->addWidget(searchBtn);
+    searchLay->addWidget(m_searchBtn);
     searchLay->addStretch();
 
     m_searchStatus = new QLabel();
@@ -700,7 +704,7 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
             this, &Toolkit::applyFolderSearch);
     connect(m_searchInput, &QLineEdit::returnPressed,
             this, &Toolkit::openBestFolderMatch);
-    connect(searchBtn, &QPushButton::clicked,
+    connect(m_searchBtn, &QPushButton::clicked,
             this, &Toolkit::openBestFolderMatch);
 
     for (int i = 0; i < FOLDERS.size(); ++i) {
@@ -815,4 +819,106 @@ void Toolkit::showFolder(int index) {
 void Toolkit::showHome() {
     if (m_stack)
         m_stack->setCurrentIndex(0);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Feature 5: Theme — re-style landing-page header, search row, and detail-page
+// title labels so all text remains legible in Zen Night mode.
+// ─────────────────────────────────────────────────────────────────────────────
+void Toolkit::onThemeChanged(bool dark) {
+    m_dark = dark;
+
+    if (dark) {
+        // ── Landing-page header ───────────────────────────────────────────────
+        m_greeting->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#4a7a43; letter-spacing:1.8px;");
+        m_heading->setStyleSheet(
+            "font-size:40px; font-weight:800; color:#C8ECC2; letter-spacing:-0.8px;");
+        m_sub->setStyleSheet(
+            "font-size:15px; color:#6a9c6a; border:none;");
+
+        // ── Search row ────────────────────────────────────────────────────────
+        m_searchIcon->setStyleSheet(
+            "font-size:16px; color:#7aac6e; background:#0D1A0E;"
+            " border:1px solid rgba(74,122,67,0.4); border-radius:13px;");
+        m_searchInput->setStyleSheet(
+            "QLineEdit {"
+            "  border:1px solid rgba(74,122,67,0.4); border-radius:14px;"
+            "  background:#0D1A0E; padding:12px 14px;"
+            "  font-size:14px; color:#8AAD85;"
+            "}"
+            "QLineEdit:focus { border:1px solid #6DBF5E; }");
+        m_searchBtn->setStyleSheet(
+            "QPushButton { font-size:13px; font-weight:700; color:#8AAD85; "
+            "  background:#0D1A0E; border:1px solid rgba(74,122,67,0.4);"
+            "  border-radius:14px; padding:10px 18px; }"
+            "QPushButton:hover { background:#142016; border-color:#6DBF5E; }");
+
+        // ── Detail-page header labels (all folder pages, found via objectName) ─
+        for (QLabel *lbl : findChildren<QLabel*>("detailFolderEyebrow"))
+            lbl->setStyleSheet(
+                "font-size:12px; font-weight:700; color:#4a7a43; letter-spacing:1.8px;");
+        for (QLabel *lbl : findChildren<QLabel*>("detailFolderTitle"))
+            lbl->setStyleSheet(
+                "font-size:28px; font-weight:800; color:#C8ECC2; letter-spacing:-0.5px;");
+        for (QLabel *lbl : findChildren<QLabel*>("detailFolderTagline"))
+            lbl->setStyleSheet("font-size:14px; color:#6a9c6a; border:none;");
+        for (QPushButton *btn : findChildren<QPushButton*>("detailFolderBack"))
+            btn->setStyleSheet(
+                "QPushButton { font-size:13px; font-weight:700; color:#8AAD85; "
+                "  background:#0D1A0E; border:1px solid rgba(74,122,67,0.4);"
+                "  border-radius:14px; padding:10px 16px; }"
+                "QPushButton:hover { background:#142016; border-color:#6DBF5E; }");
+
+    } else {
+        // ── Landing-page header ───────────────────────────────────────────────
+        m_greeting->setStyleSheet(
+            "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
+        m_heading->setStyleSheet(
+            "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
+        m_sub->setStyleSheet(
+            "font-size:15px; color:#4c5e78; border:none;");
+
+        // ── Search row ────────────────────────────────────────────────────────
+        m_searchIcon->setStyleSheet(
+            "font-size:16px; color:#4c5e78; background:#ffffff;"
+            " border:1px solid #d7ddd2; border-radius:13px;");
+        m_searchInput->setStyleSheet(
+            "QLineEdit {"
+            "  border:1px solid #d7ddd2; border-radius:14px;"
+            "  background:#ffffff; padding:12px 14px;"
+            "  font-size:14px; color:#1a1a1a;"
+            "}"
+            "QLineEdit:focus { border:1px solid #b8c8b5; }");
+        m_searchBtn->setStyleSheet(
+            "QPushButton { font-size:13px; font-weight:700; color:#1a1a1a; "
+            "  background:#ffffff; border:1px solid #d7ddd2;"
+            "  border-radius:14px; padding:10px 18px; }"
+            "QPushButton:hover { background:#f7f7f4; border-color:#c4d1c0; }");
+
+        // ── Detail-page header labels ─────────────────────────────────────────
+        for (QLabel *lbl : findChildren<QLabel*>("detailFolderEyebrow"))
+            lbl->setStyleSheet(
+                "font-size:12px; font-weight:700; color:#5e6d85; letter-spacing:1.8px;");
+        for (QLabel *lbl : findChildren<QLabel*>("detailFolderTitle"))
+            lbl->setStyleSheet(
+                "font-size:28px; font-weight:800; color:#111111; letter-spacing:-0.5px;");
+        for (QLabel *lbl : findChildren<QLabel*>("detailFolderTagline"))
+            lbl->setStyleSheet("font-size:14px; color:#4c5e78; border:none;");
+        for (QPushButton *btn : findChildren<QPushButton*>("detailFolderBack"))
+            btn->setStyleSheet(
+                "QPushButton { font-size:13px; font-weight:700; color:#1a1a1a; "
+                "  background:#ffffff; border:1px solid #d7ddd2;"
+                "  border-radius:14px; padding:10px 16px; }"
+                "QPushButton:hover { background:#f7f7f4; border-color:#c4d1c0; }");
+    }
+
+    // Folder card subtitle labels sit on white card backgrounds — still readable,
+    // but re-sync colour for visual consistency.
+    const QString subtitleColor = dark ? "#5a8f54" : "#6d8272";
+    for (QLabel *lbl : m_folderSubtitleLabels) {
+        if (lbl && lbl->isVisible())
+            lbl->setStyleSheet(
+                QString("font-size:11px; color:%1; border:none;").arg(subtitleColor));
+    }
 }

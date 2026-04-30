@@ -10,6 +10,7 @@ public:
     explicit Home(QWidget *parent = nullptr);
 
     QString screenId() const override { return "home"; }
+    void onThemeChanged(bool dark) override;   // Feature 5: Zen Night readability
 
 signals:
     void requestScreen(const QString &screenId);

@@ -1,4 +1,4 @@
-QT       += core gui widgets network
+QT       += core gui widgets network printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,6 +26,7 @@ SOURCES += \
     screens/toolkit.cpp \
     screens/assistantchat.cpp \
     screens/journal.cpp \
+    screens/settings.cpp \
     models/journalentry.cpp \
     storage/journalstorage.cpp
 
@@ -38,6 +39,7 @@ HEADERS += \
     screens/toolkit.h \
     screens/assistantchat.h \
     screens/journal.h \
+    screens/settings.h \
     models/journalentry.h \
     storage/journalstorage.h
 

@@ -3,15 +3,19 @@
 #include "core/screen.h"
 #include "screens/home.h"
 #include "screens/recommendations.h"
+#include "screens/settings.h"
 #include "screens/toolkit.h"
 #include "screens/assistantchat.h"
 #include "screens/journal.h"
 
+#include <QApplication>
+#include <QFont>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
 #include <QFrame>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -38,7 +42,13 @@ MainWindow::MainWindow(QWidget *parent)
     screens.append(new Recommendations(this));
     screens.append(new Toolkit(this));
     screens.append(new AssistantChat(this));
-    screens.append(new Journal(this));
+
+    m_journal = new Journal(this);
+    screens.append(m_journal);
+
+    // Settings screen — wired after stack is built so signals connect cleanly
+    Settings *settings = new Settings(this);
+    screens.append(settings);
 
     // Stack
     stack = new QStackedWidget(this);
@@ -59,6 +69,19 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }
     });
+
+    // Feature 5: wire Settings signals → MainWindow + Journal
+    connect(settings, &Settings::themeChanged,
+            this,     &MainWindow::applyTheme);
+    connect(settings, &Settings::fontSizeChanged,
+            this,     &MainWindow::applyFontSize);
+    connect(settings, &Settings::journalDirChanged,
+            m_journal, &Journal::setStoragePath);
+
+    // Apply saved theme / font on startup
+    QSettings cfg("YangonDevs", "MindEase");
+    applyTheme(cfg.value("darkTheme", false).toBool());
+    applyFontSize(cfg.value("fontSize", 14).toInt());
 
     leafOverlay = new FallingLeafOverlay(centralWidget);
     leafOverlay->setGeometry(centralWidget->rect());
@@ -109,6 +132,7 @@ void MainWindow::buildNavigationBar() {
         { "Mental Health Toolkit"},
         { "MindEase Assistant"   },
         { "My Journal"           },
+        { "⚙  Settings"          },
     };
 
     for (int i = 0; i < navDefs.size(); i++) {
@@ -137,6 +161,81 @@ void MainWindow::switchScreen(int index) {
     // Polymorphic dispatch — each Screen subclass decides what to refresh.
     if (index >= 0 && index < screens.size())
         screens[index]->onActivated();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Feature 5 — Theme & font-size application
+// ─────────────────────────────────────────────────────────────────────────────
+void MainWindow::applyTheme(bool dark) {
+    if (dark)
+        applyDarkStyle();
+    else
+        applyLightStyle();
+}
+
+void MainWindow::applyFontSize(int px) {
+    QFont f = QApplication::font();
+    f.setPointSize(px);
+    QApplication::setFont(f);
+}
+
+void MainWindow::applyDarkStyle() {
+    setStyleSheet(R"(
+        QMainWindow { background: #0B1A0C; }
+        #appShell {
+            background: qradialgradient(cx:0.88, cy:0.24, radius:1.4,
+                fx:0.88, fy:0.24,
+                stop:0 rgba(30,61,32,0.97),
+                stop:0.38 rgba(18,33,19,0.98),
+                stop:1 rgba(10,20,11,0.99));
+        }
+        #navShell, #brandRow, #navRow, #logoBox { background:transparent; border:none; }
+        #appName { font-size:26px; font-weight:800; color:#A8D8A0; letter-spacing:-0.5px; }
+
+        #navBtn {
+            text-align:center; padding:8px 8px; border:none;
+            background:transparent; font-size:15px; font-weight:700;
+            color:#7aac6e; border-radius:0px;
+        }
+        #navBtn:hover  { color:#A8D8A0; }
+        #navBtn:checked { color:#6DBF5E; font-weight:800; background:transparent; }
+        #navBtn:focus   { background:transparent; color:#6DBF5E; }
+
+        #screenStack { background:transparent; }
+        QWidget#screenRoot,
+        QWidget#screenSurface,
+        QWidget#screenViewport { background:transparent; }
+
+        QLabel#screenTitle { font-size:34px; font-weight:800; color:#C8ECC2; letter-spacing:-0.8px; }
+        QLabel#sectionLabel { font-size:10px; font-weight:700; color:#5a8f54; letter-spacing:1.7px; }
+
+        QPushButton#primaryBtn {
+            background:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 #1E3D20,stop:1 #2C5F2D);
+            color:#C8ECC2; border:1px solid rgba(74,122,67,0.5);
+            border-radius:16px; padding:13px 26px; font-size:14px; font-weight:800;
+        }
+        QPushButton#primaryBtn:hover { background:#2C5F2D; }
+
+        QPushButton#outlineBtn {
+            background:rgba(20,40,22,0.8); color:#7aac6e;
+            border:1px solid rgba(74,122,67,0.34); border-radius:16px;
+            padding:11px 20px; font-size:14px; font-weight:600;
+        }
+        QPushButton#outlineBtn:hover { background:rgba(30,61,32,0.9); color:#A8D8A0; }
+
+        QScrollArea { border:none; background:transparent; }
+        QScrollBar:vertical { width:10px; background:transparent; margin:6px 2px 6px 0; }
+        QScrollBar::handle:vertical {
+            background:rgba(74,122,67,0.5); border-radius:5px; min-height:30px;
+        }
+        QScrollBar::handle:vertical:hover { background:rgba(74,122,67,0.8); }
+        QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height:0; }
+        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background:transparent; }
+    )");
+}
+
+void MainWindow::applyLightStyle() {
+    applyStyle();    // delegate to the existing light stylesheet builder
 }
 
 void MainWindow::applyStyle() {

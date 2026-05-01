@@ -1,15 +1,21 @@
 /* ── Falling Leaves ─────────────────────────────────────────────────────── */
 (function() {
   const canvas = document.getElementById('leaf-canvas');
-  const emojis = ['🍃','🍂','🍀','🌿','🍁','☘️'];
+  const leafSvgs = [
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/><path d="M2 12C2 6.48 6.48 2 12 2"/></svg>',
+  ];
   const count = 18;
   for (let i = 0; i < count; i++) {
     const leaf = document.createElement('div');
     leaf.className = 'leaf';
-    leaf.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const size = 16 + Math.random() * 12;
+    leaf.innerHTML = leafSvgs[Math.floor(Math.random() * leafSvgs.length)];
     leaf.style.cssText = `
       left: ${Math.random() * 100}%;
-      font-size: ${14 + Math.random() * 14}px;
+      width: ${size}px;
+      height: ${size}px;
       animation-duration: ${8 + Math.random() * 14}s;
       animation-delay: ${-Math.random() * 20}s;
       opacity: ${0.25 + Math.random() * 0.35};
@@ -61,7 +67,10 @@ const darkToggle = document.getElementById('dark-toggle');
 let isDark = localStorage.getItem('mindease-dark') === '1';
 function applyDark(d) {
   document.body.classList.toggle('dark', d);
-  darkToggle.textContent = d ? '☀️ Light' : '🌙 Night';
+  darkToggle.innerHTML = d
+    ? '<i data-lucide="sun"></i> Light'
+    : '<i data-lucide="moon"></i> Night';
+  if (typeof lucide !== 'undefined') lucide.createIcons({ nodes: [darkToggle] });
 }
 applyDark(isDark);
 function toggleDark() {
@@ -127,13 +136,13 @@ function switchScreen(name, btn) {
 
 /* ── Chat demo ──────────────────────────────────────────────────────────── */
 const demoReplies = {
-  'counseling': "BMCC's Counseling Center offers free, confidential sessions at Room S-343.\n📞 (212) 220-8140 · Mon, Tue, Thu 9am–6pm · Wed, Fri 9am–5pm\nYou can also book via Zoom. No referral needed.",
-  'tutor': "The Learning Resource Center has free peer tutoring — no appointment needed!\n📍 Room S-510, 199 Chambers St.\n🕐 Mon–Thu 10am–6pm · Fri–Sat 10am–5pm\nYou can also book online at bmcc.upswing.io",
-  'food': "The Panther Pantry has free food for all BMCC students — just walk in.\n📍 Room S-230 · Mon–Fri 8am–6:30pm · Sat 10am–1pm\nNo paperwork or questions asked.",
+  'counseling': "BMCC's Counseling Center offers free, confidential sessions at Room S-343.\nPhone: (212) 220-8140 · Mon, Tue, Thu 9am–6pm · Wed, Fri 9am–5pm\nYou can also book via Zoom. No referral needed.",
+  'tutor': "The Learning Resource Center has free peer tutoring — no appointment needed!\nLocation: Room S-510, 199 Chambers St.\nHours: Mon–Thu 10am–6pm · Fri–Sat 10am–5pm\nYou can also book online at bmcc.upswing.io",
+  'food': "The Panther Pantry has free food for all BMCC students — just walk in.\nLocation: Room S-230 · Mon–Fri 8am–6:30pm · Sat 10am–1pm\nNo paperwork or questions asked.",
   'sleep': "A few things that help: aim for 7–9 hours, keep consistent bed/wake times, avoid screens 30 min before sleep, and try the 4-7-8 breathing technique (inhale 4s, hold 7s, exhale 8s). The Sleep folder in the Toolkit has a sleep calculator too!",
   'stress': "Stress during the semester is normal, but you don't have to carry it alone.\nTry: breaking tasks into small steps · using the LRC for academic support · speaking with a BMCC counselor · trying a short mindfulness practice.\nWhat's stressing you most right now?",
   'anxiety': "Anxiety can feel overwhelming, but small grounding steps really help.\nTry the 5-4-3-2-1 method: name 5 things you see, 4 you hear, 3 you can touch, 2 you smell, 1 you taste.\nIf anxiety is persistent, BMCC's free counseling can help: (212) 220-8140.",
-  'immigration': "BMCC has a dedicated Immigrant Resource Center — confidential for all statuses.\n📞 Albert Lee: (212) 776-6252 · allee@bmcc.cuny.edu\n📍 Room S-230\nFree legal services (DACA, TPS, naturalization) are also available monthly.",
+  'immigration': "BMCC has a dedicated Immigrant Resource Center — confidential for all statuses.\nContact: Albert Lee: (212) 776-6252 · allee@bmcc.cuny.edu\nLocation: Room S-230\nFree legal services (DACA, TPS, naturalization) are also available monthly.",
   'default': "That's a thoughtful question. MindEase can help you explore BMCC resources, wellness tools, and coping strategies. Try asking about tutoring, counseling, food, sleep, stress, anxiety, or immigration support — I'm here for all of it."
 };
 
@@ -152,9 +161,11 @@ function getBotReply(text) {
 function addMsg(text, role) {
   const wrap = document.createElement('div');
   wrap.className = 'msg ' + role;
-  wrap.innerHTML = `<div class="msg-icon">${role === 'bot' ? '🌿' : '🙋'}</div><div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  const iconName = role === 'bot' ? 'sparkles' : 'user';
+  wrap.innerHTML = `<div class="msg-icon"><i data-lucide="${iconName}"></i></div><div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>`;
   const msgs = document.getElementById('chat-messages');
   msgs.appendChild(wrap);
+  if (typeof lucide !== 'undefined') lucide.createIcons({ nodes: [wrap] });
   msgs.scrollTop = msgs.scrollHeight;
   return wrap;
 }
@@ -163,9 +174,10 @@ function showTyping() {
   const wrap = document.createElement('div');
   wrap.className = 'msg bot typing-wrap';
   wrap.id = 'typing-indicator';
-  wrap.innerHTML = `<div class="msg-icon">🌿</div><div class="msg-bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+  wrap.innerHTML = `<div class="msg-icon"><i data-lucide="sparkles"></i></div><div class="msg-bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
   const msgs = document.getElementById('chat-messages');
   msgs.appendChild(wrap);
+  if (typeof lucide !== 'undefined') lucide.createIcons({ nodes: [wrap] });
   msgs.scrollTop = msgs.scrollHeight;
 }
 
@@ -250,3 +262,5 @@ function filterEntries() {
     card.style.display = (!q || text.includes(q)) ? '' : 'none';
   });
 }
+
+lucide.createIcons();

@@ -47,7 +47,7 @@ private:
     QLabel       *m_greeting   = nullptr;   // "WELCOME" eyebrow
     QLabel       *m_heading    = nullptr;   // big heading
     QLabel       *m_sub        = nullptr;   // subtitle text
-    QLabel       *m_searchIcon = nullptr;   // ⌕ icon label
+    QLabel       *m_searchIcon = nullptr;   // search icon label
     QPushButton  *m_searchBtn  = nullptr;   // "Search" button
 };
 

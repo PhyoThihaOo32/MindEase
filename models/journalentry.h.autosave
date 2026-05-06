@@ -1,0 +1,42 @@
+#ifndef JOURNALENTRY_H
+#define JOURNALENTRY_H
+
+#include <QString> // includes Qt's String class - used for journal body and file path
+#include <QDateTime> // includes Qt's date/time class - used to store when the journal entry was created
+
+/*
+Journal Class - represents one saved journal entry.
+This is a model/value class - it stores data but does not draw UI and does not handle files directly. 
+*/
+
+class JournalEntry {
+public:
+    // Default constructor - creates an empty journal entry
+    JournalEntry();
+
+    // Constructs that creates a journal entry with real data
+    // Q
+    JournalEntry(const QDateTime &dt, const QString &body,
+                 const QString &filePath = QString());
+
+    // ── Accessors (encapsulation: no public data members) ────────────────────
+    QDateTime dateTime() const;   // when the entry was written
+    QString   body()     const;   // the user's text (without the file header)
+    QString   filePath() const;   // absolute path; set after save or load
+    bool      isValid()  const;   // true iff dateTime is valid AND body non-empty
+
+    // ── Operator overloads ────────────────────────────────────────────────────
+    // Returns true when *this is NEWER than other, so that std::sort produces
+    // a newest-first list. (Intentionally reverses the natural < direction.)
+    bool operator<(const JournalEntry &other) const;
+
+    // Two entries are equal iff they share the same timestamp AND body text.
+    bool operator==(const JournalEntry &other) const;
+
+private:
+    QDateTime m_dateTime;   // timestamp of the entry
+    QString   m_body;       // the user's written text (post-header body only)
+    QString   m_filePath;   // absolute path on disk; empty until saved/loaded
+};
+
+#endif // JOURNALENTRY_H

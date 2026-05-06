@@ -1,0 +1,36 @@
+/*
+LucideIcons is a utility/helper system for icons in MindEase - it creates and manages Lucide icons for UI.
+Lucide is an icon library - helps load icons, color icons, resize icons, attach icons to labels/buttons and clean icon text formatting.
+This is a reusable icon utility module - multiple parts of the app can use it. 
+*/
+
+
+#ifndef LUCIDEICONS_H // check whether LUCDEICONS_H has not already been defined - this starts the include guard.
+#define LUCIDEICONS_H
+
+#include <QColor> // includes Qt's color class - used for icon stroke colors.
+#include <QIcon> // includes Qt's icon class - used when an icon is needed for buttons or actions
+#include <QLabel> // includes Qt's label widget - used because one function places an icon inside a QLabel.
+#include <QPixmap> // includes Qt's image/pixmap class - a QPixmap is used to display images in Qt widgets.
+#include <QString> // Qt's native string class
+
+
+// declares a function that converts a project token into a Lucide icon name.
+// example: lucideIconNameForToken("journal") might return something like "NotebookPen"
+// this function helps the app avoid hardcoding icon names everywhere
+QString lucideIconNameForToken(const QString &token);
+
+// 
+QPixmap lucidePixmap(const QString &tokenOrName,
+                     const QColor &stroke = QColor("#173c2c"),
+                     int size = 24);
+QIcon lucideIcon(const QString &tokenOrName,
+                 const QColor &stroke = QColor("#173c2c"),
+                 int size = 24);
+void setLucideIcon(QLabel *label,
+                   const QString &tokenOrName,
+                   const QColor &stroke = QColor("#173c2c"),
+                   int size = 24);
+QString lucideCleanText(QString text);
+
+#endif // LUCIDEICONS_H

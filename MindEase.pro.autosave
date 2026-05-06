@@ -1,0 +1,71 @@
+#Import these Qt modules into the project
+QT       += core gui widgets network printsupport 
+
+# core  = basic Qt functionality
+# gui = graphical UI features
+# widgets = buttons, labels, layouts, windows
+# network = internet/API request - for openAI calls for chatbots
+# printsupport = printing/export support
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets # Qt version Check
+
+CONFIG += c++17 # compile using C++17 standard
+
+# Compiler Flag - This modifies compiler warnings.
+# Suppress warnings about implicit function declarations.
+# Usually added when: external libraries, platform compatibility, generated code
+QMAKE_CXXFLAGS += -Wno-implicit-function-declaration
+
+
+# Application Name - this sets the app name.
+TARGET = MindEase
+# Project Type - meaning build a (standalone) desktop application
+TEMPLATE = app
+
+
+# Include Paths - very important concept
+# tell the compiler when searching for header files(.h) look in these folders
+# PWD mean present working directory
+INCLUDEPATH += \
+    $$PWD \
+    $$PWD/app \
+    $$PWD/core \
+    $$PWD/screens \
+    $$PWD/models \
+    $$PWD/storage
+
+# Sources - lists all .cpp implementation files - the actual code implementations
+SOURCES += \
+    app/main.cpp \  # application entry point - this is where the app starts
+    app/mainwindow.cpp \ # main application window - handles navigation, sidebar, switching screens
+    core/fallingleafoverlay.cpp \ # for visual effects - for animated leaves, calming visuals, wellness atmosphere
+    core/lucideicons.cpp \ # lucide is an icon library - loads icons, manages SVG icons, standardizes UI icons
+    core/screen.cpp \ # a base screen class - all screens inherit common behavior - this is OOP design
+    screens/home.cpp \ # # home/dashboard screen 
+    screens/recommendations.cpp \ # wellness recommendations, BMCC rescources mainly
+    screens/toolkit.cpp \ # self-care toolkit screen
+    screens/assistantchat.cpp \ # AI chat UI, message sending, network requests, API interaction
+    screens/journal.cpp \ # journal writing, displaying entries, saving entries
+    screens/settings.cpp \ # app settings/preferences
+    models/journalentry.cpp \ # a data model- contains title, content, timestamp
+    storage/journalstorage.cpp # handles saving journal entries, loading entries, readind/writing JSON files
+
+# Headers - these are .h files
+HEADERS += \
+    app/mainwindow.h \
+    core/fallingleafoverlay.h \
+    core/lucideicons.h \
+    core/screen.h \
+    screens/home.h \
+    screens/recommendations.h \
+    screens/toolkit.h \
+    screens/assistantchat.h \
+    screens/journal.h \
+    screens/settings.h \
+    models/journalentry.h \
+    storage/journalstorage.h
+
+# Resources - QT resource system - this packages assets INSIDE the app
+# includes - images, icons, fonts, SVGs, themes
+RESOURCES += \
+    resources/resources.qrc

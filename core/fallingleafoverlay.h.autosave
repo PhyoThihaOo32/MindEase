@@ -1,0 +1,65 @@
+/*
+ 
+FallingLeafOverlay class is the architectural piece in MindEase project.
+It's a custom animated UI component - it is a transparent overlay widget that renders
+animated falling leaves to create a calm wellness atmosphere.
+It has custome rendering, animation loops, object simulation, event-driven graphics and Qt painting system.
+This is a REAL GUI programming!
+*/
+
+
+#ifndef FALLINGLEAFOVERLAY_H // check whether FALLINGLEAFOVERLAY_H has not been defined yet - this prevent duplicate inclusion.
+#define FALLINGLEAFOVERLAY_H
+
+#include <QVector> // includes Qt's dynamic array container - it is used to store many leaves.
+#include <QWidget> // includes Qt's base widget class - FallingLeafOverlay inherits from QWidget
+
+
+// forward declarations - these tell C++ that these Qt classes exist without including their full header files here.
+class QPaintEvent;
+class QResizeEvent;
+class QShowEvent;
+class QTimer;
+
+// declares a class named FallingLeafOverLay - it inherits from QWidget - so it can be displayed as part of the UI.
+class FallingLeafOverlay : public QWidget {
+    Q_OBJECT // Qt macro required because this class uses Qt's signal/slot system
+
+public:
+    // con
+    explicit FallingLeafOverlay(QWidget *parent = nullptr);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+
+private slots:
+    void advanceFrame();
+
+private:
+    struct Leaf {
+        qreal x = 0.0;
+        qreal y = 0.0;
+        qreal size = 24.0;
+        qreal fallSpeed = 0.8;
+        qreal swayAmplitude = 12.0;
+        qreal swayPhase = 0.0;
+        qreal swaySpeed = 0.02;
+        qreal drift = 0.0;
+        qreal rotation = 0.0;
+        qreal rotationSpeed = 0.0;
+        qreal opacity = 0.18;
+        qreal stretch = 2.8;
+    };
+    
+    // note: qreal is a Qt data type used for decimal numbers(floating-point values)
+
+    void seedLeaves();
+    void resetLeaf(Leaf &leaf, bool randomY);
+
+    QVector<Leaf> m_leaves;
+    QTimer *m_timer;
+};
+
+#endif // FALLINGLEAFOVERLAY_H

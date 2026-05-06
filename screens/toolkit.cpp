@@ -1,4 +1,5 @@
 #include "screens/toolkit.h"
+#include "core/lucideicons.h"
 #include <QColor>
 #include <QDesktopServices>
 #include <QFrame>
@@ -297,11 +298,11 @@ static QWidget* makeToolItem(const ToolItem &item) {
     hl->setContentsMargins(0, 12, 0, 12);
     hl->setSpacing(14);
 
-    QLabel *iconLbl = new QLabel(item.icon);
+    QLabel *iconLbl = new QLabel();
     iconLbl->setFixedSize(40, 40);
-    iconLbl->setAlignment(Qt::AlignCenter);
+    setLucideIcon(iconLbl, item.icon, QColor("#173c2c"), 23);
     iconLbl->setStyleSheet(
-        "font-size:19px; background:#edf4e8; border:1px solid #c7d8c1; border-radius:12px;");
+        "background:#edf4e8; border:1px solid #c7d8c1; border-radius:12px;");
 
     QWidget *textBlock = new QWidget();
     textBlock->setStyleSheet("background:transparent; border:none;");
@@ -315,7 +316,7 @@ static QWidget* makeToolItem(const ToolItem &item) {
     vl->addWidget(titleLbl);
 
     if (!item.body.isEmpty()) {
-        QLabel *bodyLbl = new QLabel(item.body);
+        QLabel *bodyLbl = new QLabel(lucideCleanText(item.body));
         bodyLbl->setWordWrap(true);
         bodyLbl->setStyleSheet(
             "font-size:13px; color:#4f6255; border:none; line-height:168%;");
@@ -394,10 +395,10 @@ static QWidget* makeFolderCard(const FolderDef &fd,
     hl->setSpacing(0);
     hl->setAlignment(Qt::AlignCenter);
 
-    QLabel *iconLbl = new QLabel(fd.icon);
+    QLabel *iconLbl = new QLabel();
     iconLbl->setFixedSize(60, 60);
-    iconLbl->setAlignment(Qt::AlignCenter);
-    iconLbl->setStyleSheet("background:transparent; border:none; font-size:32px;");
+    setLucideIcon(iconLbl, fd.icon, QColor("#173c2c"), 34);
+    iconLbl->setStyleSheet("background:transparent; border:none;");
     iconLbl->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     QWidget *textBlock = new QWidget();
@@ -464,11 +465,11 @@ static QWidget* makeFolderDetailPage(const FolderDef &fd, std::function<void()> 
         "QPushButton:hover { background:#f7f7f4; border-color:#c4d1c0; }");
     QObject::connect(backBtn, &QPushButton::clicked, backBtn, [onBack]() { onBack(); });
 
-    QLabel *iconLbl = new QLabel(fd.icon);
+    QLabel *iconLbl = new QLabel();
     iconLbl->setFixedSize(42, 42);
-    iconLbl->setAlignment(Qt::AlignCenter);
+    setLucideIcon(iconLbl, fd.icon, QColor("#173c2c"), 25);
     iconLbl->setStyleSheet(
-        QString("background:%1; border-radius:12px; font-size:20px; border:none;")
+        QString("background:%1; border-radius:12px; border:none;")
             .arg(fd.accent));
 
     QWidget *titleBlock = new QWidget();
@@ -618,9 +619,10 @@ Toolkit::Toolkit(QWidget *parent) : Screen("Mental Health Toolkit", parent) {
     searchLay->setSpacing(10);
     searchLay->setAlignment(Qt::AlignLeft);
 
-    m_searchIcon = new QLabel("⌕");
+    m_searchIcon = new QLabel();
     m_searchIcon->setAlignment(Qt::AlignCenter);
     m_searchIcon->setFixedSize(38, 38);
+    setLucideIcon(m_searchIcon, "search", QColor("#4c5e78"), 18);
     m_searchIcon->setStyleSheet(
         "font-size:16px; color:#4c5e78; background:#ffffff; border:1px solid #d7ddd2; border-radius:13px;");
 
@@ -838,6 +840,7 @@ void Toolkit::onThemeChanged(bool dark) {
             "font-size:15px; color:#6a9c6a; border:none;");
 
         // ── Search row ────────────────────────────────────────────────────────
+        setLucideIcon(m_searchIcon, "search", QColor("#7aac6e"), 18);
         m_searchIcon->setStyleSheet(
             "font-size:16px; color:#7aac6e; background:#0D1A0E;"
             " border:1px solid rgba(74,122,67,0.4); border-radius:13px;");
@@ -880,6 +883,7 @@ void Toolkit::onThemeChanged(bool dark) {
             "font-size:15px; color:#4c5e78; border:none;");
 
         // ── Search row ────────────────────────────────────────────────────────
+        setLucideIcon(m_searchIcon, "search", QColor("#4c5e78"), 18);
         m_searchIcon->setStyleSheet(
             "font-size:16px; color:#4c5e78; background:#ffffff;"
             " border:1px solid #d7ddd2; border-radius:13px;");

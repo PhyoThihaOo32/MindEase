@@ -1,4 +1,5 @@
 #include "screens/journal.h"
+#include "core/lucideicons.h"
 #include <QColor>
 #include <QDateTime>
 #include <QFileDialog>
@@ -13,7 +14,6 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QScrollArea>
-#include <QSettings>
 #include <QSizePolicy>
 #include <QStandardPaths>
 #include <QTextDocument>
@@ -248,7 +248,7 @@ Journal::Journal(QWidget *parent)
     filterLayout->setSpacing(12);
 
     m_searchEdit = new QLineEdit();
-    m_searchEdit->setPlaceholderText("🔍  Search reflections...");
+    m_searchEdit->setPlaceholderText("Search reflections...");
     m_searchEdit->setClearButtonEnabled(true);
     m_searchEdit->setStyleSheet(
         "QLineEdit {"
@@ -312,18 +312,7 @@ Journal::Journal(QWidget *parent)
 // Screen interface
 // ─────────────────────────────────────────────────────────────────────────────
 void Journal::onActivated() {
-    // Re-read journal directory from settings (may have changed in Settings screen)
-    QSettings cfg("YangonDevs", "MindEase");
-    const QString customDir = cfg.value("journalDir").toString();
-    if (!customDir.isEmpty()) {
-        m_storage = JournalStorage(customDir);
-    }
     refreshDateLabel();
-    refreshEntryList();
-}
-
-void Journal::setStoragePath(const QString &path) {
-    m_storage = JournalStorage(path);
     refreshEntryList();
 }
 
@@ -499,7 +488,7 @@ void Journal::saveEntry() {
         return;
     }
 
-    showStatus("Entry saved ✓");
+    showStatus("Entry saved");
     clearEditor();
     refreshDateLabel();
     refreshEntryList();
@@ -669,8 +658,10 @@ void Journal::buildEntryCards(const QVector<JournalEntry> &entries) {
               "}"
               "QMenu::item { padding:8px 20px; font-size:13px; color:#173c2c; border-radius:6px; }"
               "QMenu::item:selected { background:#edf5eb; }");
-        exportMenu->addAction("📄  Save as PDF", this, [this, entry]() { exportAsPdf(entry); });
-        exportMenu->addAction("📝  Save as Plain Text", this, [this, entry]() { exportAsText(entry); });
+        exportMenu->addAction(lucideIcon("file-text", QColor("#173c2c"), 18),
+                              "Save as PDF", this, [this, entry]() { exportAsPdf(entry); });
+        exportMenu->addAction(lucideIcon("pencil", QColor("#173c2c"), 18),
+                              "Save as Plain Text", this, [this, entry]() { exportAsText(entry); });
         exportBtn->setMenu(exportMenu);
 
         // Delete button
@@ -808,7 +799,7 @@ void Journal::exportAsPdf(const JournalEntry &entry) {
     doc.setHtml(buildHtmlExport(entry));
     doc.print(&printer);
 
-    showStatus("Exported PDF to Desktop ✓");
+    showStatus("Exported PDF to Desktop");
 }
 
 void Journal::exportAsText(const JournalEntry &entry) {
@@ -836,5 +827,5 @@ void Journal::exportAsText(const JournalEntry &entry) {
     out << "Exported from MindEase · YangonDevs · BMCC\n";
     f.close();
 
-    showStatus("Exported plain text to Desktop ✓");
+    showStatus("Exported plain text to Desktop");
 }

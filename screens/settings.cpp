@@ -1,13 +1,11 @@
 #include "screens/settings.h"
 #include <QButtonGroup>
-#include <QFileDialog>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSettings>
 #include <QSizePolicy>
-#include <QStandardPaths>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -86,7 +84,7 @@ Settings::Settings(QWidget *parent)
     m_titleLbl->setStyleSheet(
         "font-size:40px; font-weight:800; color:#111111; letter-spacing:-0.8px;");
 
-    m_subLbl = new QLabel("Personalise MindEase to suit your environment and workflow.");
+    m_subLbl = new QLabel("Choose the MindEase visual theme.");
     m_subLbl->setStyleSheet("font-size:15px; color:#4c5e78; border:none;");
 
     inner->addWidget(m_eyebrowLbl, 0, Qt::AlignLeft);
@@ -133,11 +131,11 @@ Settings::Settings(QWidget *parent)
 
     auto *themeGroup = new QButtonGroup(this);
 
-    m_lightRadio = new QRadioButton("☀️   Light (Natural)");
+    m_lightRadio = new QRadioButton("Light (Natural)");
     m_lightRadio->setStyleSheet(radioStyle("#4a7a43"));
     m_lightRadio->setChecked(true);
 
-    m_darkRadio = new QRadioButton("🌙   Zen Night");
+    m_darkRadio = new QRadioButton("Zen Night");
     m_darkRadio->setStyleSheet(radioStyle("#6DBF5E"));
 
     themeGroup->addButton(m_lightRadio, 0);
@@ -148,143 +146,7 @@ Settings::Settings(QWidget *parent)
     themeLayout->addStretch();
     appearLayout->addWidget(themeRow);
 
-    // ── Font size ─────────────────────────────────────────────────────────────
-    QFrame *fontDiv = new QFrame();
-    fontDiv->setFrameShape(QFrame::HLine);
-    fontDiv->setStyleSheet("background:#eeefeb; border:none;");
-    fontDiv->setFixedHeight(1);
-    appearLayout->addWidget(fontDiv);
-
-    m_fontLabel = new QLabel("Base Font Size");
-    m_fontLabel->setStyleSheet(kRowLabelStyle);
-    m_fontDesc = new QLabel(
-        "Adjusts the global font scale across the application. Default: 14 px.");
-    m_fontDesc->setWordWrap(true);
-    m_fontDesc->setStyleSheet(kDescStyle);
-    appearLayout->addWidget(m_fontLabel);
-    appearLayout->addWidget(m_fontDesc);
-
-    QWidget *sliderRow = new QWidget();
-    sliderRow->setStyleSheet("background:transparent; border:none;");
-    QHBoxLayout *sliderLayout = new QHBoxLayout(sliderRow);
-    sliderLayout->setContentsMargins(0, 0, 0, 0);
-    sliderLayout->setSpacing(16);
-
-    m_minLbl = new QLabel("12px");
-    m_minLbl->setStyleSheet(kDescStyle);
-
-    m_fontSlider = new QSlider(Qt::Horizontal);
-    m_fontSlider->setRange(12, 20);
-    m_fontSlider->setValue(14);
-    m_fontSlider->setTickPosition(QSlider::TicksBelow);
-    m_fontSlider->setTickInterval(2);
-    m_fontSlider->setStyleSheet(
-        "QSlider::groove:horizontal {"
-        "  height:6px; background:#dce8d9; border-radius:3px;"
-        "}"
-        "QSlider::handle:horizontal {"
-        "  width:20px; height:20px; margin:-7px 0;"
-        "  background:#4a7a43; border-radius:10px;"
-        "}"
-        "QSlider::sub-page:horizontal {"
-        "  background:#7aac6e; border-radius:3px;"
-        "}");
-
-    m_maxLbl = new QLabel("20px");
-    m_maxLbl->setStyleSheet(kDescStyle);
-
-    m_fontSizeLbl = new QLabel("14 px");
-    m_fontSizeLbl->setStyleSheet(
-        "font-size:16px; font-weight:700; color:#173c2c; min-width:50px; border:none;");
-    m_fontSizeLbl->setAlignment(Qt::AlignCenter);
-
-    connect(m_fontSlider, &QSlider::valueChanged, this, [this](int v) {
-        m_fontSizeLbl->setText(QString("%1 px").arg(v));
-    });
-
-    sliderLayout->addWidget(m_minLbl);
-    sliderLayout->addWidget(m_fontSlider, 1);
-    sliderLayout->addWidget(m_maxLbl);
-    sliderLayout->addSpacing(16);
-    sliderLayout->addWidget(m_fontSizeLbl);
-    appearLayout->addWidget(sliderRow);
-
     inner->addWidget(m_appearCard);
-    inner->addSpacing(24);
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Card 2: Journal Storage
-    // ─────────────────────────────────────────────────────────────────────────
-    m_journalCard = new QFrame();
-    m_journalCard->setStyleSheet(kCardStyle);
-    QVBoxLayout *journalLayout = new QVBoxLayout(m_journalCard);
-    journalLayout->setContentsMargins(36, 30, 36, 30);
-    journalLayout->setSpacing(16);
-
-    m_journalSec = new QLabel("JOURNAL STORAGE");
-    m_journalSec->setStyleSheet(kSectionLabelStyle);
-    journalLayout->addWidget(m_journalSec);
-
-    QFrame *jDiv = new QFrame();
-    jDiv->setFrameShape(QFrame::HLine);
-    jDiv->setStyleSheet("background:#eeefeb; border:none;");
-    jDiv->setFixedHeight(1);
-    journalLayout->addWidget(jDiv);
-
-    m_jLabel = new QLabel("Journal Directory");
-    m_jLabel->setStyleSheet(kRowLabelStyle);
-    m_jDesc = new QLabel(
-        "Where MindEase saves your journal .txt files. "
-        "Leave blank to use the default Documents/MindEase_Journal folder.");
-    m_jDesc->setWordWrap(true);
-    m_jDesc->setStyleSheet(kDescStyle);
-    journalLayout->addWidget(m_jLabel);
-    journalLayout->addWidget(m_jDesc);
-
-    QWidget *dirRow = new QWidget();
-    dirRow->setStyleSheet("background:transparent; border:none;");
-    QHBoxLayout *dirLayout = new QHBoxLayout(dirRow);
-    dirLayout->setContentsMargins(0, 0, 0, 0);
-    dirLayout->setSpacing(10);
-
-    m_dirEdit = new QLineEdit();
-    m_dirEdit->setPlaceholderText("Default: Documents/MindEase_Journal");
-    m_dirEdit->setStyleSheet(
-        "QLineEdit {"
-        "  border:1px solid #c7d8c1; border-radius:10px;"
-        "  background:#f8fcf7; padding:10px 16px;"
-        "  font-size:14px; color:#365143;"
-        "}"
-        "QLineEdit:focus { border-color:#7aac6e; }");
-
-    QPushButton *browseBtn = new QPushButton("Browse...");
-    browseBtn->setCursor(Qt::PointingHandCursor);
-    browseBtn->setMinimumHeight(44);
-    browseBtn->setStyleSheet(
-        "QPushButton {"
-        "  background:#edf3e6; border:1px solid #c3d2bf; border-radius:10px;"
-        "  color:#264437; font-size:14px; font-weight:700; padding:8px 20px;"
-        "}"
-        "QPushButton:hover { background:#e0ecda; }");
-    connect(browseBtn, &QPushButton::clicked, this, &Settings::onBrowseDir);
-
-    QPushButton *resetBtn = new QPushButton("Reset to Default");
-    resetBtn->setCursor(Qt::PointingHandCursor);
-    resetBtn->setMinimumHeight(44);
-    resetBtn->setStyleSheet(
-        "QPushButton {"
-        "  background:transparent; border:1px solid #dce8d9; border-radius:10px;"
-        "  color:#71856f; font-size:13px; font-weight:600; padding:8px 16px;"
-        "}"
-        "QPushButton:hover { background:#f0f7ee; }");
-    connect(resetBtn, &QPushButton::clicked, this, &Settings::onResetDir);
-
-    dirLayout->addWidget(m_dirEdit, 1);
-    dirLayout->addWidget(browseBtn);
-    dirLayout->addWidget(resetBtn);
-    journalLayout->addWidget(dirRow);
-
-    inner->addWidget(m_journalCard);
     inner->addSpacing(32);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -357,7 +219,6 @@ void Settings::onThemeChanged(bool dark) {
 
     // ── Cards ─────────────────────────────────────────────────────────────────
     m_appearCard->setStyleSheet(cardSS);
-    m_journalCard->setStyleSheet(cardSS);
 
     // ── Page header ───────────────────────────────────────────────────────────
     m_eyebrowLbl->setStyleSheet(dark
@@ -384,14 +245,6 @@ void Settings::onThemeChanged(bool dark) {
     m_appearLabel->setStyleSheet(sectionSS);
     m_themeLabel->setStyleSheet(rowSS);
     m_themeDesc->setStyleSheet(descSS);
-    m_fontLabel->setStyleSheet(rowSS);
-    m_fontDesc->setStyleSheet(descSS);
-    m_minLbl->setStyleSheet(descSS);
-    m_maxLbl->setStyleSheet(descSS);
-
-    m_fontSizeLbl->setStyleSheet(dark
-        ? "font-size:16px; font-weight:700; color:#C8ECC2; min-width:50px; border:none;"
-        : "font-size:16px; font-weight:700; color:#173c2c; min-width:50px; border:none;");
 
     m_lightRadio->setStyleSheet(dark
         ? "QRadioButton { font-size:14px; font-weight:600; color:#8AAD85; padding:6px 0; }"
@@ -412,35 +265,6 @@ void Settings::onThemeChanged(bool dark) {
           "  border:2px solid #b5cfb0; }"
           "QRadioButton::indicator:checked { background:#6DBF5E; border:2px solid #6DBF5E; }");
 
-    m_fontSlider->setStyleSheet(dark
-        ? "QSlider::groove:horizontal { height:6px; background:#1A3018; border-radius:3px; }"
-          "QSlider::handle:horizontal { width:20px; height:20px; margin:-7px 0;"
-          "  background:#6DBF5E; border-radius:10px; }"
-          "QSlider::sub-page:horizontal { background:#4a7a43; border-radius:3px; }"
-        : "QSlider::groove:horizontal { height:6px; background:#dce8d9; border-radius:3px; }"
-          "QSlider::handle:horizontal { width:20px; height:20px; margin:-7px 0;"
-          "  background:#4a7a43; border-radius:10px; }"
-          "QSlider::sub-page:horizontal { background:#7aac6e; border-radius:3px; }");
-
-    // ── Journal storage card labels ───────────────────────────────────────────
-    m_journalSec->setStyleSheet(sectionSS);
-    m_jLabel->setStyleSheet(rowSS);
-    m_jDesc->setStyleSheet(descSS);
-
-    m_dirEdit->setStyleSheet(dark
-        ? "QLineEdit {"
-          "  border:1px solid rgba(74,122,67,0.4); border-radius:10px;"
-          "  background:#0D1A0E; padding:10px 16px;"
-          "  font-size:14px; color:#8AAD85;"
-          "}"
-          "QLineEdit:focus { border-color:#6DBF5E; }"
-        : "QLineEdit {"
-          "  border:1px solid #c7d8c1; border-radius:10px;"
-          "  background:#f8fcf7; padding:10px 16px;"
-          "  font-size:14px; color:#365143;"
-          "}"
-          "QLineEdit:focus { border-color:#7aac6e; }");
-
     m_statusLbl->setStyleSheet(dark
         ? "font-size:13px; color:#6DBF5E; border:none;"
         : "font-size:13px; color:#2E7D32; border:none;");
@@ -455,12 +279,6 @@ void Settings::loadFromSettings() {
     const bool dark = cfg.value("darkTheme", false).toBool();
     m_darkRadio->setChecked(dark);
     m_lightRadio->setChecked(!dark);
-
-    const int fontSize = cfg.value("fontSize", 14).toInt();
-    m_fontSlider->setValue(fontSize);
-    m_fontSizeLbl->setText(QString("%1 px").arg(fontSize));
-
-    m_dirEdit->setText(cfg.value("journalDir").toString());
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -472,40 +290,12 @@ void Settings::onApply() {
     // ── Theme ─────────────────────────────────────────────────────────────────
     const bool dark = m_darkRadio->isChecked();
     cfg.setValue("darkTheme", dark);
-    emit themeChanged(dark);
-
-    // ── Font size ─────────────────────────────────────────────────────────────
-    const int fontSize = m_fontSlider->value();
-    cfg.setValue("fontSize", fontSize);
-    emit fontSizeChanged(fontSize);
-
-    // ── Journal dir ───────────────────────────────────────────────────────────
-    const QString dir = m_dirEdit->text().trimmed();
-    cfg.setValue("journalDir", dir);
-    if (!dir.isEmpty())
-        emit journalDirChanged(dir);
+    cfg.remove("fontSize");
+    cfg.remove("journalDir");
 
     cfg.sync();
-    showStatus("Settings applied ✓");
-}
-
-void Settings::onBrowseDir() {
-    const QString chosen = QFileDialog::getExistingDirectory(
-        this, "Choose Journal Folder",
-        m_dirEdit->text().isEmpty()
-            ? QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-            : m_dirEdit->text());
-    if (!chosen.isEmpty())
-        m_dirEdit->setText(chosen);
-}
-
-void Settings::onResetDir() {
-    m_dirEdit->clear();
-    QSettings("YangonDevs", "MindEase").remove("journalDir");
-    emit journalDirChanged(
-        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-        + "/MindEase_Journal");
-    showStatus("Journal directory reset to default ✓");
+    emit themeChanged(dark);
+    showStatus("Theme applied");
 }
 
 void Settings::showStatus(const QString &msg, bool ok) {

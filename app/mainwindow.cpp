@@ -1,5 +1,6 @@
 #include "app/mainwindow.h"
 #include "core/fallingleafoverlay.h"
+#include "core/lucideicons.h"
 #include "core/screen.h"
 #include "screens/home.h"
 #include "screens/recommendations.h"
@@ -8,8 +9,6 @@
 #include "screens/assistantchat.h"
 #include "screens/journal.h"
 
-#include <QApplication>
-#include <QFont>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -42,9 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
     screens.append(new Recommendations(this));
     screens.append(new Toolkit(this));
     screens.append(new AssistantChat(this));
-
-    m_journal = new Journal(this);
-    screens.append(m_journal);
+    screens.append(new Journal(this));
 
     // Settings screen — wired after stack is built so signals connect cleanly
     Settings *settings = new Settings(this);
@@ -70,18 +67,13 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    // Feature 5: wire Settings signals → MainWindow + Journal
+    // Feature 5: wire Settings theme signal → MainWindow
     connect(settings, &Settings::themeChanged,
             this,     &MainWindow::applyTheme);
-    connect(settings, &Settings::fontSizeChanged,
-            this,     &MainWindow::applyFontSize);
-    connect(settings, &Settings::journalDirChanged,
-            m_journal, &Journal::setStoragePath);
 
-    // Apply saved theme / font on startup
+    // Apply saved theme on startup
     QSettings cfg("YangonDevs", "MindEase");
     applyTheme(cfg.value("darkTheme", false).toBool());
-    applyFontSize(cfg.value("fontSize", 14).toInt());
 
     leafOverlay = new FallingLeafOverlay(centralWidget);
     leafOverlay->setGeometry(centralWidget->rect());
@@ -132,7 +124,7 @@ void MainWindow::buildNavigationBar() {
         { "Mental Health Toolkit"},
         { "MindEase Assistant"   },
         { "My Journal"           },
-        { "⚙  Settings"          },
+        { "Settings"             },
     };
 
     for (int i = 0; i < navDefs.size(); i++) {
@@ -142,6 +134,9 @@ void MainWindow::buildNavigationBar() {
         btn->setChecked(i == 0);
         btn->setCursor(Qt::PointingHandCursor);
         btn->setMinimumHeight(40);
+        if (navDefs[i].label == "Settings") {
+            btn->setIcon(lucideIcon("settings", QColor("#315143"), 18));
+        }
         connect(btn, &QPushButton::clicked, this, [this, i]() { switchScreen(i); });
         navButtons.append(btn);
         navLayout->addWidget(btn);
@@ -164,7 +159,7 @@ void MainWindow::switchScreen(int index) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Feature 5 — Theme & font-size application
+// Feature 5 — Theme application
 // ─────────────────────────────────────────────────────────────────────────────
 void MainWindow::applyTheme(bool dark) {
     if (dark)
@@ -177,12 +172,6 @@ void MainWindow::applyTheme(bool dark) {
     // means for its own widgets; screens that don't override do nothing (no-op).
     for (Screen *s : screens)
         s->onThemeChanged(dark);
-}
-
-void MainWindow::applyFontSize(int px) {
-    QFont f = QApplication::font();
-    f.setPointSize(px);
-    QApplication::setFont(f);
 }
 
 void MainWindow::applyDarkStyle() {

@@ -1,0 +1,75 @@
+#ifndef HOME_H // starts the include gurad - check whether HOME_H has not already been defined
+#define HOME_H 
+
+#include "core/screen.h" // Home class inherits from Screen - so screen.h header is included
+
+// declares a class named Home
+// it inherits from Screen - meaning Home is one of the app's pages
+class Home : public Screen {
+    Q_OBJECT
+
+public:
+    
+    // constructor - creates Home Screen
+    // explicit prevents accidental automatic conversations
+    explicit Home(QWidget *parent = nullptr);
+    
+    
+    // polymorphism: overrides the pure vitual screenId() function from abstract base class Screen
+    // this also gives the Home screen a uniqure 
+    QString screenId() const override { return "home"; }
+    void onThemeChanged(bool dark) override;   // Feature 5: Zen Night readability
+
+signals:
+    void requestScreen(const QString &screenId);
+};
+
+#endif // HOME_H
+
+
+// Q_OBJECT
+// --------------------------------------------
+// Qt macro that enables the meta-object system.
+// Required for:
+//   - signals and slots
+//   - runtime type information
+//   - dynamic properties
+//
+// Behind the scenes, Qt's Meta-Object Compiler (moc)
+// generates additional code for this class.
+//
+// Without Q_OBJECT:
+//   - signals will not work
+//   - slots cannot be connected
+//   - Qt features break
+//
+// Think of it as:
+// "Enable Qt-specific features for this class"
+
+
+// private slots:
+// --------------------------------------------
+// Qt-specific section for declaring SLOT functions.
+//
+// A slot is a function that can respond to a signal
+// (event-driven programming in Qt).
+//
+// "private" → normal C++ access control
+// "slots"   → Qt keyword (expanded by moc)
+//
+// Example:
+//   void sendMessage();
+//
+// This function can:
+//   - be called normally like a regular function
+//   - be triggered automatically when a signal fires
+//
+// Example connection:
+//   connect(button, &QPushButton::clicked,
+//           this, &AssistantChat::sendMessage);
+//
+// Meaning:
+//   button clicked → sendMessage() executes
+//
+// Note:
+//   Slots are just functions with extra Qt capability.

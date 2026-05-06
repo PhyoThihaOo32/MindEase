@@ -1,12 +1,27 @@
-#ifndef RECOMMENDATIONS_H
-#define RECOMMENDATIONS_H
+/*
 
-#include "core/screen.h"
-#include <QPushButton>
-#include <QStackedWidget>
-#include <QLineEdit>
-#include <QLabel>
-#include <QVector>
+Recommendations Class control the BMCC rescources pages:
+User opens BMCC Resources
+-> sees topic cards
+-> types in search bar
+-> applyTopicSearch()
+-> matching cards/ subtopics are found
+-> user opens a topic
+-> showTopic (index)
+-> user can return with showHome() 
+
+*/
+
+
+#ifndef RECOMMENDATIONS_H // starts the include guard - it checks whether RECOMMENDATIONS_H has not already been defined
+#define RECOMMENDATIONS_H // so this header is skipped if included again
+
+#include "core/screen.h" // includes the custom Screen base class - recommendations inherits from Screen
+#include <QPushButton> // includes Qt button widgets - used for buttons like Search, Back, Visit or topic actions
+#include <QStackedWidget> // includes Qt stacked widget - used to switch between individual topic pages
+#include <QLineEdit> // includes single-line text input - used for search bar
+#include <QLabel> // includes label widgets - used for heading, subtitles, status 
+#include <QVector> // 
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Recommendations — BMCC Resources screen

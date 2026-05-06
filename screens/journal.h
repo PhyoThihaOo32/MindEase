@@ -20,9 +20,6 @@ public:
     void onActivated() override;
     void onThemeChanged(bool dark) override;   // Feature 5: Zen Night readability
 
-    // Called by MainWindow when Settings changes the journal directory.
-    void setStoragePath(const QString &path);
-
 private slots:
     void saveEntry();
     void clearEditor();

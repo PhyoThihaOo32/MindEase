@@ -1,4 +1,5 @@
 #include "screens/recommendations.h"
+#include "core/lucideicons.h"
 #include "core/screen.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -64,6 +65,7 @@ static const QList<TopicInfo> TOPICS = {
     { "🌐", "#dff6ff", "Immigration",                "Legal help, DACA, undocumented support"     },
     { "💬", "#e9fff3", "Relationships & Family",     "Personal counseling, peer support"          },
     { "🏥", "#e7fbff", "Health & Wellness",          "Medical care, mental health, insurance"     },
+    { "💼", "#f7efdf", "Job & Career",               "Career center, resumes, internships, jobs"  },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -274,6 +276,39 @@ static const QList<QList<ResourceInfo>> RESOURCES = {
           "https://www.bmcc.cuny.edu/student-affairs/arc/health-insurance/",
           {"Insurance", "All Students"} },
 
+    },
+
+    // 5 — Job & Career
+    {
+        { "💼", "#f7efdf", "Center for Career Development",
+          "Start here for career planning, job search support, internships, resume help, and interview preparation.",
+          "📍  199 Chambers Street, Room S-103\n"
+          "    New York, NY 10007\n"
+          "📧  career@bmcc.cuny.edu\n"
+          "📞  (212) 220-8170\n"
+          "🕐  Drop-in Hours: 2 p.m.–4 p.m.",
+          "https://www.bmcc.cuny.edu/student-affairs/career/",
+          {"Career Center", "Drop-in", "Jobs"},
+          "https://bit.ly/ccdvfrontdesk",
+          "Virtual Front Desk →" },
+
+        { "🧰", "#eef8f1", "Career Toolkit",
+          "Use BMCC's career toolkit to organize your job search, prepare application materials, and build confidence before applying.",
+          "Helpful for choosing a direction, preparing for interviews, finding opportunities, and understanding what employers expect.",
+          "https://www.bmcc.cuny.edu/student-affairs/career/student-resources/develop-a-career-toolkit/",
+          {"Career Planning", "Job Search", "Interview Prep"} },
+
+        { "📄", "#e7fbff", "Resume & Cover Letter Tools",
+          "Build a cleaner resume or cover letter quickly, then bring your draft to BMCC Career Development for feedback.",
+          "Use this as a starting point for first drafts, class assignments, internship applications, and part-time job applications.",
+          "https://quick-resume-builder-three.vercel.app/",
+          {"Resume", "Cover Letter", "Builder"} },
+
+        { "🚀", "#edf7ee", "Internships — Vault",
+          "Explore internship and career research tools through BMCC's Vault access. Useful for learning about industries, companies, and application pathways.",
+          "Vault can help you compare career fields, prepare for interviews, and research employers before applying.",
+          "https://www.bmcc.cuny.edu/student-affairs/career/vault/",
+          {"Internships", "Vault", "Career Research"} },
     },
 };
 
@@ -494,11 +529,11 @@ static QWidget* makeResourceCard(const ResourceInfo &r,
     hl->setContentsMargins(0, 0, 0, 0);
     hl->setSpacing(12);
 
-    QLabel *iconLbl = new QLabel(r.icon);
+    QLabel *iconLbl = new QLabel();
     iconLbl->setFixedSize(38, 38);
-    iconLbl->setAlignment(Qt::AlignCenter);
+    setLucideIcon(iconLbl, r.icon, QColor("#173c2c"), 24);
     iconLbl->setStyleSheet(
-        QString("background:%1; border-radius:10px; font-size:19px; border:none;").arg(r.color));
+        QString("background:%1; border-radius:10px; border:none;").arg(r.color));
 
     QLabel *titleLbl = new QLabel(r.title);
     titleLbl->setWordWrap(true);
@@ -532,7 +567,7 @@ static QWidget* makeResourceCard(const ResourceInfo &r,
 
         for (const QString &line : r.details.split('\n')) {
             if (line.trimmed().isEmpty()) continue;
-            QLabel *lbl = new QLabel(line.trimmed());
+            QLabel *lbl = new QLabel(lucideCleanText(line.trimmed()));
             lbl->setWordWrap(true);
             lbl->setStyleSheet(
                 "font-size:12px; color:#4f6255; border:none; background:transparent; "
@@ -649,11 +684,11 @@ static QWidget* makeTopicCard(const TopicInfo &t,
     hl->setSpacing(0);
     hl->setAlignment(Qt::AlignCenter);
 
-    QLabel *iconLbl = new QLabel(t.icon);
+    QLabel *iconLbl = new QLabel();
     iconLbl->setFixedSize(60, 60);
-    iconLbl->setAlignment(Qt::AlignCenter);
+    setLucideIcon(iconLbl, t.icon, QColor("#173c2c"), 34);
     iconLbl->setStyleSheet(
-        "background:transparent; border:none; font-size:32px;");
+        "background:transparent; border:none;");
     iconLbl->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     QWidget *textBlock = new QWidget();
@@ -742,11 +777,11 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
         onBackToTopic(subpage.parentTopicIndex);
     });
 
-    QLabel *iconLbl = new QLabel(subpage.icon);
+    QLabel *iconLbl = new QLabel();
     iconLbl->setFixedSize(42, 42);
-    iconLbl->setAlignment(Qt::AlignCenter);
+    setLucideIcon(iconLbl, subpage.icon, QColor("#173c2c"), 25);
     iconLbl->setStyleSheet(
-        QString("background:%1; border-radius:11px; font-size:20px; border:none;").arg(subpage.color));
+        QString("background:%1; border-radius:11px; border:none;").arg(subpage.color));
 
     QLabel *titleLbl = new QLabel(subpage.title);
     titleLbl->setWordWrap(true);
@@ -787,7 +822,7 @@ static QWidget* makeSubpage(const ResourceSubpageInfo &subpage,
     for (const QString &line : subpage.details.split('\n')) {
         if (line.trimmed().isEmpty())
             continue;
-        QLabel *lineLbl = new QLabel(line.trimmed());
+        QLabel *lineLbl = new QLabel(lucideCleanText(line.trimmed()));
         lineLbl->setWordWrap(true);
         lineLbl->setStyleSheet(
             "font-size:12px; color:#4f6255; border:none; background:transparent; line-height:165%;");
@@ -1059,16 +1094,17 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
     searchLay->setSpacing(10);
     searchLay->setAlignment(Qt::AlignLeft);
 
-    m_searchIcon = new QLabel("⌕");
+    m_searchIcon = new QLabel();
     m_searchIcon->setAlignment(Qt::AlignCenter);
     m_searchIcon->setFixedSize(38, 38);
+    setLucideIcon(m_searchIcon, "search", QColor("#4c5e78"), 18);
     m_searchIcon->setStyleSheet(
         "font-size:16px; color:#4c5e78; background:#ffffff; border:1px solid #d7ddd2; "
         "border-radius:13px;");
 
     m_searchInput = new QLineEdit();
     m_searchInput->setPlaceholderText(
-        "Search topics or subtopics, e.g. food, Zoom, fitness, DACA, counseling");
+        "Search topics or subtopics, e.g. career, resume, internship, food, Zoom, DACA");
     m_searchInput->setClearButtonEnabled(true);
     m_searchInput->setMaximumWidth(560);
     m_searchInput->setStyleSheet(
@@ -1175,11 +1211,11 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
         backBtn->setCursor(Qt::PointingHandCursor);
         connect(backBtn, &QPushButton::clicked, this, &Recommendations::showHome);
 
-        QLabel *iconLbl = new QLabel(TOPICS[i].icon);
+        QLabel *iconLbl = new QLabel();
         iconLbl->setFixedSize(40, 40);
-        iconLbl->setAlignment(Qt::AlignCenter);
+        setLucideIcon(iconLbl, TOPICS[i].icon, QColor("#173c2c"), 24);
         iconLbl->setStyleSheet(
-            QString("background:%1; border-radius:10px; font-size:20px; border:none;")
+            QString("background:%1; border-radius:10px; border:none;")
                 .arg(TOPICS[i].accent));
 
         QLabel *titleLbl = new QLabel(TOPICS[i].title);
@@ -1247,7 +1283,7 @@ Recommendations::Recommendations(QWidget *parent) : Screen("BMCC Resources", par
             }
         }), 1);
 
-        m_stack->addWidget(page); // indices 1–5
+        m_stack->addWidget(page); // detail pages start at index 1
     }
 
     for (const ResourceSubpageInfo &subpage : RESOURCE_SUBPAGES) {
@@ -1284,6 +1320,7 @@ void Recommendations::onThemeChanged(bool dark) {
             "font-size:15px; color:#6a9c6a; border:none;");
 
         // ── Search row ────────────────────────────────────────────────────────
+        setLucideIcon(m_searchIcon, "search", QColor("#7aac6e"), 18);
         m_searchIcon->setStyleSheet(
             "font-size:16px; color:#7aac6e; background:#0D1A0E;"
             " border:1px solid rgba(74,122,67,0.4); border-radius:13px;");
@@ -1317,6 +1354,7 @@ void Recommendations::onThemeChanged(bool dark) {
             "font-size:15px; color:#4c5e78; border:none;");
 
         // ── Search row ────────────────────────────────────────────────────────
+        setLucideIcon(m_searchIcon, "search", QColor("#4c5e78"), 18);
         m_searchIcon->setStyleSheet(
             "font-size:16px; color:#4c5e78; background:#ffffff;"
             " border:1px solid #d7ddd2; border-radius:13px;");

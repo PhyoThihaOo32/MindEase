@@ -20,6 +20,7 @@ SOURCES += \
     app/main.cpp \
     app/mainwindow.cpp \
     core/fallingleafoverlay.cpp \
+    core/lucideicons.cpp \
     core/screen.cpp \
     screens/home.cpp \
     screens/recommendations.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 HEADERS += \
     app/mainwindow.h \
     core/fallingleafoverlay.h \
+    core/lucideicons.h \
     core/screen.h \
     screens/home.h \
     screens/recommendations.h \

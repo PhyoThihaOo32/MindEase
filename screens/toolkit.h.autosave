@@ -1,0 +1,81 @@
+/*
+
+Toolkit Class - this class controls the Mental Health Toolkit page.
+
+User opens Toolkit
+→ sees folder cards
+→ types search
+→ applyFolderSearch()
+→ matching folders/subtopics are found
+→ openBestFolderMatch() or showFolder(index)
+→ user can go back with showHome()
+
+
+*/
+
+#ifndef TOOLKIT_H
+#define TOOLKIT_H
+
+#include "core/screen.h" // includes the custom Screen base class
+#include <QLabel> // includes Qt label widgets - used for heading, subtitles, search status, and icons
+#include <QLineEdit> // includes single-line text input - used for toolkit search bar
+#include <QPushButton> // includes button widgets - used for search buttons, back buttons, and tool/action buttons
+#include <QStackedWidget> // includes Qt stacked widget - used to switch between the toolkit and individual pages
+#include <QVector> // includes Qt's dynamic array container
+
+
+// declare a class named Toolkit - it interits from Scren
+class Toolkit : public Screen {
+    Q_OBJECT
+
+public:
+    // constructor - creates the Toolkit screen
+    explicit Toolkit(QWidget *parent = nullptr);
+
+    // polymorphism: override the pure virtual screenId() function Screen class
+    // this screen's unique ID is "toolkit"
+    QString screenId() const override { return "toolkit"; }
+
+    // polymorphism: overrides Screen::onActivated()
+    // this runs whenever the user navigates to the Toolkit screen
+    // it can reset the page, refresh search state, or update content
+    void onActivated() override;
+    
+    // polymorphism: override the theme-change hook from Screen
+    void onThemeChanged(bool dark) override;   
+
+private:
+    
+    // searches toolkit folders and possibly their subtools
+    // example searches could be - music, sleep, connection, mindfulness
+    void applyFolderSearch(const QString &query);
+    
+    // show matching toolkit folder based on the search text
+    // example - user types "lofi" -> open Music for Your Mind folder
+    void openBestFolderMatch();
+    
+    // shows a specific toolkit folder page
+    // index indentifies which folder to display
+    void showFolder(int index);
+    
+    // returns to the Toolkit home page
+    void showHome();
+    
+    
+    
+    QStackedWidget *m_stack = nullptr;           // stack of toolkit pages - contains toolkit home page, academic stress, muisc, journaling, etc
+    QLineEdit      *m_searchInput = nullptr;     // search input field - user types 
+    QLabel         *m_searchStatus = nullptr;
+    QVector<QWidget*> m_folderCards;
+    QVector<QLabel*>  m_folderSubtitleLabels;
+
+    // Feature 5: landing-page header + search widgets that need re-theming
+    bool          m_dark       = false;
+    QLabel       *m_greeting   = nullptr;   // "WELCOME" eyebrow
+    QLabel       *m_heading    = nullptr;   // big heading
+    QLabel       *m_sub        = nullptr;   // subtitle text
+    QLabel       *m_searchIcon = nullptr;   // search icon label
+    QPushButton  *m_searchBtn  = nullptr;   // "Search" button
+};
+
+#endif // TOOLKIT_H

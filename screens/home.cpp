@@ -34,6 +34,14 @@ QString homeStylesheet(bool dark) {
                 background: transparent;
                 border: none;
             }
+            QLabel#homeCredit {
+                color: #4a7a43;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.8px;
+                background: transparent;
+                border: none;
+            }
             QPushButton#homeActionBtn {
                 font-size: 15px;
                 font-weight: 700;
@@ -72,6 +80,14 @@ QString homeStylesheet(bool dark) {
             color: #4c5e78;
             font-size: 18px;
             font-weight: 500;
+            background: transparent;
+            border: none;
+        }
+        QLabel#homeCredit {
+            color: #7a8fa0;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
             background: transparent;
             border: none;
         }
@@ -153,6 +169,13 @@ Home::Home(QWidget *parent)
     auto *assistantBtn = makeHomeAction("Assistant");
     auto *journalBtn = makeHomeAction("Journal");
 
+    // ── Course credit line ────────────────────────────────────────────────
+    auto *credit = new QLabel(
+        "CSC211H Honors Project  ·  Phyo Thiha Oo  ·  Instructor: Dr. Azhar");
+    credit->setObjectName("homeCredit");
+    credit->setAlignment(Qt::AlignHCenter);
+    credit->setWordWrap(true);
+
     actionsRow->addWidget(resourcesBtn);
     actionsRow->addWidget(toolkitBtn);
     actionsRow->addWidget(assistantBtn);
@@ -163,6 +186,8 @@ Home::Home(QWidget *parent)
     contentLayout->addWidget(body);
     contentLayout->addSpacing(8);
     contentLayout->addLayout(actionsRow);
+    contentLayout->addSpacing(18);
+    contentLayout->addWidget(credit);
 
     contentRow->addWidget(content);
     contentRow->addStretch();

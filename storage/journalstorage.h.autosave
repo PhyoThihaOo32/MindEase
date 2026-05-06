@@ -1,0 +1,77 @@
+/*
+JournalStorage Class - this class is responsible for journal file I/O
+this is not a UI class and does not inherit from QWidget
+
+
+saveEntry()
+->write JournalEntry to .txt file
+
+loadEntries()
+-> scan journal folder
+-> read .txt files
+-> convert them into JournalEntry objects
+
+deleteEntry()
+-> remove selected file
+ 
+*/
+
+
+#ifndef JOURNALSTORAGE_H // start the include guard - it checks whether JournalStorage_H has not already been defined
+#define JOURNALSTORAGE_H
+
+#include "models/journalentry.h"    // includes the JournalEntry model class
+#include <QString>  // includes Qt's string class - used for file paths and text content
+#include <QVector>  // includes Qt's dynamic array container - used to return a list of journal entries
+
+
+class JournalStorage {
+public:
+    
+    // default constructor
+    // creates a storage object using the default journal directory
+    JournalStorage();
+    
+    // constructor that can choose a custom directory
+    // explicit - prevents accidental conversion from QString to JournalStorage
+    explicit JournalStorage(const QString &directoryPath);
+    
+    // returns the directory path where journal files are stored
+    QString directoryPath() const;
+    
+    // saves on journal entry to disk - it receives a JournalEntry
+    bool saveEntry(const JournalEntry &entry) const;
+    
+    // deletes on journal file from disk
+    // path is the file path of the entry - return true if deletion succeeds
+    bool deleteEntry(const QString &path) const;
+    
+    // loads all saved journal entries from disk
+    // return a vector lof JournalEntry objects
+    QVector<JournalEntry> loadEntries() const;
+    
+    // loads one journal entry from a specific file path - returns a JournalEntry
+    // if loading fails, it may return an invalid/default entry
+    JournalEntry loadEntry(const QString &path) const;
+
+private:
+    
+    //Helper Functions
+    
+    // figure out the final directory path
+    // if the user gave a custom directory, it may use that, if not it may return the default Documents folder path
+    QString resolveDirectoryPath() const;
+    
+    // builds the filename/path for a new journal entry
+    // it probably uses the timestamp to create a unique file name
+    // ex
+    QString buildEntryPath(const QDateTime &dateTime) const;
+    
+    // 
+    QString formatEntry(const JournalEntry &entry) const;
+    JournalEntry parseEntryFile(const QString &path, const QString &content) const;
+
+    QString m_directoryPath;
+};
+
+#endif // JOURNALSTORAGE_H

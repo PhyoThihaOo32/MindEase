@@ -1,0 +1,147 @@
+#ifndef ASSISTANTCHAT_H // start the include guard - prevent this header from being included multiple times
+#define ASSISTANTCHAT_H
+
+#include "core/screen.h" // include the Screen base class - AssistantChat inherits from Screen
+
+#include <QJsonArray> // includes Qt's JSON array class - used to send recent chat history to the backend
+#include <QLabel> // includes text lael widgets - used to status text or message display
+#include <QLineEdit> // includes single-line text input - used for the chat input box
+#include <QNetworkAccessManager> // includes Qt's network manager - used to send HTTP requests to the backend
+#include <QProcess> // includes Qt's process - used to start the Node backend automatically 
+#include <QPushButton> // includes button widgets - used for the Send button
+#include <QScrollArea> // includes scrollable area widget - used so the conversation can scroll
+#include <QScrollBar> // includes scrollbar support - used for auto-scrolling the chat to the buttom
+#include <QVBoxLayout> // includes vertical layout - used to stack chat messages top-to-bottom
+#include <QVector> // includes Qt's dynamic array - used to store conversation turns
+
+
+// forward declaration - this is used when receiving a backend response
+class QNetworkReply;
+
+
+// declare AssistantChat - it inherits from Screen - meaning it is one of the app's pages
+class AssistantChat : public Screen {
+    Q_OBJECT
+
+public:
+    
+    // constructor - to create the assistant chat screen
+    explicit AssistantChat(QWidget *parent = nullptr);
+    
+    // Note: explicit keyword in C++ is a specifier used to prevent the compiler from performing implicit type conversions.
+    // By making a constructor or conversion operator explicit, we force the programmer to manually(explicitly) cast or initialize an
+    // objec, which helps avoid suble bugs caused by "hidden" conversions.
+    
+    
+    // Destructor - override means it overrides the virtual destructor from Screen
+    // This is where cleanup (can) happen, such as stopping the backend process if needed.
+    ~AssistantChat() override;
+    
+    // polymorphism: override Screen::screenId()
+    // this screen's uniqure ID is "assistant"
+    // this is also inline function - because this function is written directly in the header
+    QString screenId() const override { return "assistant"; }
+    
+    // polymorphism: override Screen::onActivated() - this runs when the Assistant screen becomes visible
+    // might check backend status or update the UI
+    void onActivated() override;
+    
+    // polymorphism: overrides the theme hook from Screen - lets the assistant page adjust colors when switching between light and dark themes
+    void onThemeChanged(bool dark) override;   // Feature 5: Zen Night readability
+
+private slots:
+    // slot that sends the user's message - usually connected to send button clicked or entery key pressed
+    void sendMessage();
+
+private:
+    
+    // define a small internal struct for one message in the conversation
+    struct ChatTurn {
+        QString role; // stores who wrote the message - "user" or "assistant"
+        QString text; // stores the message text
+    };
+    
+    // creates a UI row for one chat message
+    // const QString &text - the message text
+    // bool fromUser - whether the messag came from the user
+    // bool crisis - whether the message is a crisis/safety response
+    QWidget    *makeMessageRow(const QString &text, bool fromUser, bool crisis) const;
+    
+    // add a message bubble to the chat UI
+    // crisis = false means normal messages are not crisis messages by default
+    void addMessage(const QString &text, bool fromUser, bool crisis = false);
+    
+    // check whether the backend is ready before sending a message
+    // constQstring &message - the message waiting to be send
+    // const QJsonArray &history - recent conversation history
+    // int attempt = 0 - retry count - defaults to first attempt
+    void ensureBackendReady(const QString &message, const QJsonArray &history, int attempt = 0);
+    
+    // attempts to starts the local Node/Express backend
+    // return true if startup was successfully triggered
+    bool startBackendProcess();
+    
+    // sends the actual HTTP request to the backend /api/chat route
+    void sendChatRequest(const QString &message, const QJsonArray &history);
+    
+    // handles the backend response
+    // it reads the JSON reply and adds the assistant message to the UI
+    void handleReply(QNetworkReply *reply);
+    
+    // shows a failure message if the backend cannot start
+    // detail explains what went wrong
+    void failBackendStartup(const QString &detail);
+    
+    // stores a message in the local conversation history
+    // example: appendConversationTurn("user", "I feel overwhelmed");
+    void appendConversationTurn(const QString &role, const QString &text);
+    
+    // builds a JSON array from recent chat history
+    // this is sent to the backend so the assistant has context
+    QJsonArray recentHistoryPayload() const;
+    
+    // scroll the chat area down to the newest message
+    void scrollToBottom();
+    
+    // changes UI state while waiting for a backend response
+    // when busy, the input/send button may be disabled
+    void setBusy(bool busy);
+    
+    
+    // Accessor Functions
+    // return the backend base URL - "http://127.0.0.1:8788"
+    QString backendBaseUrl() const;
+    
+    // return the full chat endpoint - "http://127.0.0.1:8788/api/chat"
+    QString backendUrl() const;
+    
+    // return the health check endpoint - "http://127.0.0.1:8788/health"
+    QString backendHealthUrl() const;
+    
+    // returns the local backend folder path - used when trying to auto-start the backend
+    QString backendDirectory() const;
+    
+    // safely quotes a string for shell commands
+    // this helps when paths contain spaces
+    QString shellQuote(const QString &value) const;
+    
+    // check whether the app is allowed/able to start the backend automatically
+    // for example, it may check if the backend folder exists.
+    bool canAutoStartBackend() const;
+    
+    // Members variables
+    QNetworkAccessManager *m_network;   // network manager used to send HTTP requests
+    QProcess              *m_backendProcess; // represents the local backend process if the app starts it
+    QScrollArea           *m_scroll; // the scrollable area containing chat messages
+    QWidget               *m_messagesWidget; // container widget that hold all mes
+    QVBoxLayout           *m_messagesLayout;
+    QLineEdit             *m_input;
+    QPushButton           *m_sendBtn;
+    QLabel                *m_statusLbl;
+    QVector<ChatTurn>       m_conversation;
+    bool                   m_waitingForReply;
+    bool                   m_backendStartAttempted;
+    QString                m_backendLastOutput;
+};
+
+#endif // ASSISTANTCHAT_H

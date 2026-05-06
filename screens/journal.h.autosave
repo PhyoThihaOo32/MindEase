@@ -1,0 +1,123 @@
+/*
+
+This class controls the Journal Page:
+User writes entry
+-> saveEntry() -> JournalStorage saves .txt file
+-> refreshEntryList()
+-> m_allEntries updated
+-> applyFilter()
+-> buildEntryCards()
+ 
+*/
+
+#ifndef JOURNAL_H // start the include guard - complier skips this file if it gets included again
+#define JOURNAL_H
+
+#include "core/screen.h" // include custom Screen base class
+#include "models/journalentry.h" // include the JournalEntry model class - the Journal page use JournalEntry objects to represent saved reflections
+#include "storage/journalstorage.h" // include JournalStorage ( which handles saving, loading, deleting and exporting journal entries)
+#include <QComboBox> // includes dropdown widget support - used for the period/date filter
+#include <QLabel> // includes label widget support - used for text labels like title, date, status and section headings
+#include <QLineEdit> // includes single-line input widget - used for the entry title and search box
+#include <QTextEdit> // includes multi-line text editor - used for writing the journal body
+#include <QVBoxLayout> // include vertical layout - used to stack entry cards or widgets vertically
+#include <QVector> // includes Qt's dynamic array container - used to store multiple JournalEntry objects
+
+
+// declares a class named Journal - it interits from Scren class
+class Journal : public Screen {
+    Q_OBJECT
+
+public:
+    
+    // constructor - creates the Journal screen
+    // explicit keyword - prevent conversion
+    explicit Journal(QWidget *parent = nullptr);
+    
+    // polymorphism: override Screen::screenId() - this page ID's is "journal"
+    QString screenId() const override { return "journal"; }
+    
+    // polymorphism: overrides screen::onActivated()
+    // runs every time the Journal scren becomes visible
+    // this is useful because the jornal should reload saved entries when opened
+    void onActivated() override;
+    
+    // polymorphism: overrides the theme hook - this lets the journal page update its custome inline styles when switching light/dark mode
+    void onThemeChanged(bool dark) override;
+    
+    
+    // private Qt slot section - these functions can be connected to Qt signals like button clicks or text changes
+private slots:
+    
+    // save the current journal entry - reads from m_titleEdit, m_editor, then use m_storage
+    void saveEntry();
+    
+    // clears the journal writing area - clears the tile and body text fields
+    void clearEditor();
+    
+    // applies live search and data filtering - filter m_allEntries using m_serachEdit, m_periodFilter
+    void applyFilter();        
+
+private:
+    // reloads journal entries from disk
+    // loads from disk -> m_allEntries -> applyFilter()
+    void refreshEntryList();
+    
+    // updates the date label shown in the composer area
+    void refreshDateLabel();
+    
+    // deletes a journal entry at a given file path
+    void deleteEntryAtPath(const QString &path);
+    
+    // shows a status message to the user
+    void showStatus(const QString &msg, bool ok = true);
+
+    // builds the visible past-reflection cards - its receiveds the filtered list of entries
+    void buildEntryCards(const QVector<JournalEntry> &entries);
+
+    // Feature 6: export
+    
+    // starts the export process for one journal entry - it may ask the user whether to export as PDF or text
+    void exportEntry(const JournalEntry &entry);
+    
+    // exports one journal entry as a PDF
+    void exportAsPdf(const JournalEntry &entry);
+    
+    // exports one jorunal entry as a plain text file
+    void exportAsText(const JournalEntry &entry);
+    
+    // builds an HTML version of the journal entry
+    // used for PDF export because Qt can render HTML to PDF
+    // const means this function does not modify the Journal object
+    QString buildHtmlExport(const JournalEntry &entry) const;
+
+    // Composer
+    QLineEdit    *m_titleEdit       = nullptr;  // input field for the journal entry title
+    QTextEdit    *m_editor          = nullptr;  // multi_line text editor where the user writes the journal body
+    QLabel       *m_dateLbl         = nullptr;  // label that shows today's date or the entry data
+    QLabel       *m_statusLbl       = nullptr;  // label that shows message like - entry saved - could not save entry - entry deleted
+
+    // Past-reflections panel
+    QWidget      *m_entriesHost     = nullptr;  // container widget for past journal entries
+    QVBoxLayout  *m_entriesLayout   = nullptr;  // layout inside m_entriesHost
+
+    // Feature 4: search / filter widgets + cached list
+    QLineEdit    *m_searchEdit      = nullptr;  // search input for filtering past journal entries
+    QComboBox    *m_periodFilter    = nullptr;  // dropdown for filtering entries by time period
+    QVector<JournalEntry> m_allEntries;         // cached list of all loaded journal entries
+
+    // Feature 5: theme-aware widgets (needed because inline setStyleSheet
+    // has higher specificity than the app-level stylesheet).
+    bool          m_dark            = false;    // stores whether dark theme is currently active
+    QLabel       *m_eyebrowLbl      = nullptr;  // small label 
+    QLabel       *m_titleLbl        = nullptr;  // main title label for the 
+    QLabel       *m_subLbl          = nullptr;
+    QLabel       *m_pastLbl         = nullptr;
+    QFrame       *m_composerCard    = nullptr;
+    QFrame       *m_composerDivider = nullptr;
+    QLabel       *m_shortcutHint    = nullptr;
+
+    JournalStorage m_storage;
+};
+
+#endif // JOURNAL_H

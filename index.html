@@ -24,7 +24,6 @@
     <a href="#app-preview">App Preview</a>
     <a href="#resources">BMCC Resources</a>
     <a href="#toolkit">Wellness Toolkit</a>
-    <a href="#assistant">AI Assistant</a>
     <a href="#journal">My Journal</a>
     <a href="#project">Project</a>
   </div>
@@ -41,7 +40,6 @@
   <a href="#app-preview" onclick="closeMobileNav()">App Preview</a>
   <a href="#resources"   onclick="closeMobileNav()">BMCC Resources</a>
   <a href="#toolkit"     onclick="closeMobileNav()">Wellness Toolkit</a>
-  <a href="#assistant"   onclick="closeMobileNav()">AI Assistant</a>
   <a href="#journal"     onclick="closeMobileNav()">My Journal</a>
   <a href="#project"     onclick="closeMobileNav()">Project</a>
 </nav>
@@ -56,7 +54,7 @@
   </h1>
   <p class="hero-body">
     MindEase helps BMCC students find campus resources, take small self-care steps,
-    engage calming tools, connect with an AI wellness assistant, and write positive
+    engage calming tools, and write positive
     future plans. This site presents the deployed project clearly, without extra filler.
   </p>
 
@@ -71,7 +69,6 @@
   <div class="hero-buttons">
     <a href="#resources" class="btn-hero btn-primary">Explore BMCC Resources</a>
     <a href="#toolkit"   class="btn-hero btn-outline">Open Wellness Toolkit</a>
-    <a href="#assistant" class="btn-hero btn-outline">Try AI Assistant</a>
     <a href="#journal"   class="btn-hero btn-outline">Start Journaling</a>
   </div>
 
@@ -89,7 +86,7 @@
       <div class="hero-stat-label">OOP Pillars</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-number" data-count="6">0</div>
+      <div class="hero-stat-number" data-count="5">0</div>
       <div class="hero-stat-label">App Screens</div>
     </div>
   </div>
@@ -101,10 +98,10 @@
 <section id="about" class="section">
   <div class="container">
     <div class="eyebrow">What is MindEase?</div>
-    <h2 class="section-title">Five features, one calming space</h2>
+    <h2 class="section-title">Four features, one calming space</h2>
     <p class="section-sub">
       MindEase is a desktop Qt/C++ application built by Phyo Thiha Oo for BMCC students.
-      It combines campus resources, wellness tools, an AI assistant, and a private journal
+      It combines campus resources, wellness tools, and a private journal
       in a single thoughtfully designed application.
     </p>
     <div class="features-grid">
@@ -117,11 +114,6 @@
         <div class="feature-icon"><i data-lucide="brain"></i></div>
         <div class="feature-name">Wellness Toolkit</div>
         <div class="feature-desc">8 themed folders — from mindfulness and sleep to gratitude journaling and music — with practical tools you can use right now.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i data-lucide="sparkles"></i></div>
-        <div class="feature-name">AI Assistant</div>
-        <div class="feature-desc">Powered by OpenAI, the MindEase Assistant answers your wellness questions and guides you to the right campus resources.</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon"><i data-lucide="notebook-pen"></i></div>
@@ -152,7 +144,7 @@
       <div class="feature-card" style="border-left: 4px solid #7aac6e;">
         <div class="feature-icon"><i data-lucide="git-branch"></i></div>
         <div class="feature-name">Inheritance</div>
-        <div class="feature-desc"><code>Home</code>, <code>Journal</code>, <code>Settings</code>, <code>Recommendations</code>, <code>Toolkit</code>, <code>AssistantChat</code> all inherit from the <code>Screen</code> abstract base class.</div>
+        <div class="feature-desc"><code>Home</code>, <code>Journal</code>, <code>Settings</code>, <code>Recommendations</code>, and <code>Toolkit</code> all inherit from the <code>Screen</code> abstract base class.</div>
       </div>
       <div class="feature-card" style="border-left: 4px solid #c8ecc2;">
         <div class="feature-icon"><i data-lucide="shuffle"></i></div>
@@ -184,7 +176,6 @@
       <button class="screen-tab active" onclick="switchScreen('home', this)"><i data-lucide="home"></i> Home</button>
       <button class="screen-tab" onclick="switchScreen('resources', this)"><i data-lucide="book-open"></i> BMCC Resources</button>
       <button class="screen-tab" onclick="switchScreen('toolkit', this)"><i data-lucide="brain"></i> Wellness Toolkit</button>
-      <button class="screen-tab" onclick="switchScreen('assistant', this)"><i data-lucide="sparkles"></i> AI Assistant</button>
       <button class="screen-tab" onclick="switchScreen('journal', this)"><i data-lucide="notebook-pen"></i> My Journal</button>
     </div>
 
@@ -200,14 +191,13 @@
             <div class="qt-nav-item active"><i data-lucide="home"></i> Home</div>
             <div class="qt-nav-item"><i data-lucide="book-open"></i> BMCC Resources</div>
             <div class="qt-nav-item"><i data-lucide="brain"></i> Wellness Toolkit</div>
-            <div class="qt-nav-item"><i data-lucide="sparkles"></i> AI Assistant</div>
             <div class="qt-nav-item"><i data-lucide="notebook-pen"></i> My Journal</div>
             <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
           </div>
           <div class="qt-content" style="position:relative; overflow:hidden;">
             <div style="font-size:12px; font-weight:700; color:var(--green-mid); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;">Welcome to MindEase</div>
             <div class="qt-heading">Your wellness<br>companion at BMCC</div>
-            <div class="qt-sub" style="margin-top:10px; max-width:460px;">A quiet, supportive space where you can find campus resources, explore calming tools, write in your private journal, and connect with an AI wellness guide.</div>
+            <div class="qt-sub" style="margin-top:10px; max-width:460px;">A quiet, supportive space where you can find campus resources, explore calming tools, write in your private journal.</div>
             <div class="qt-action-btns">
               <span class="qt-btn"><i data-lucide="book-open"></i> BMCC Resources</span>
               <span class="qt-btn outline"><i data-lucide="brain"></i> Open Toolkit</span>
@@ -237,7 +227,6 @@
             <div class="qt-nav-item"><i data-lucide="home"></i> Home</div>
             <div class="qt-nav-item active"><i data-lucide="book-open"></i> BMCC Resources</div>
             <div class="qt-nav-item"><i data-lucide="brain"></i> Wellness Toolkit</div>
-            <div class="qt-nav-item"><i data-lucide="sparkles"></i> AI Assistant</div>
             <div class="qt-nav-item"><i data-lucide="notebook-pen"></i> My Journal</div>
             <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
           </div>
@@ -286,7 +275,6 @@
             <div class="qt-nav-item"><i data-lucide="home"></i> Home</div>
             <div class="qt-nav-item"><i data-lucide="book-open"></i> BMCC Resources</div>
             <div class="qt-nav-item active"><i data-lucide="brain"></i> Wellness Toolkit</div>
-            <div class="qt-nav-item"><i data-lucide="sparkles"></i> AI Assistant</div>
             <div class="qt-nav-item"><i data-lucide="notebook-pen"></i> My Journal</div>
             <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
           </div>
@@ -296,53 +284,12 @@
             <div class="qt-folder-grid">
               <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="book-open"></i></div><div class="qt-folder-name">Academic Stress</div></div>
               <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="handshake"></i></div><div class="qt-folder-name">Connection &amp; Community</div></div>
-              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="sparkles"></i></div><div class="qt-folder-name">Empowered Identity</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="shield"></i></div><div class="qt-folder-name">Empowered Identity</div></div>
               <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="pencil"></i></div><div class="qt-folder-name">Gratitude &amp; Journaling</div></div>
               <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="brain"></i></div><div class="qt-folder-name">Mindfulness</div></div>
               <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="music"></i></div><div class="qt-folder-name">Music for Your Mind</div></div>
               <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="salad"></i></div><div class="qt-folder-name">Nutrition &amp; Energy</div></div>
               <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="moon"></i></div><div class="qt-folder-name">Sleep &amp; Relaxation</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ASSISTANT screen mockup -->
-    <div class="screen-panel" id="panel-assistant">
-      <div class="qt-window">
-        <div class="qt-titlebar">
-          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-          <span class="qt-titlename">MindEase — AI Assistant</span>
-        </div>
-        <div class="qt-body">
-          <div class="qt-sidebar">
-            <div class="qt-nav-item"><i data-lucide="home"></i> Home</div>
-            <div class="qt-nav-item"><i data-lucide="book-open"></i> BMCC Resources</div>
-            <div class="qt-nav-item"><i data-lucide="brain"></i> Wellness Toolkit</div>
-            <div class="qt-nav-item active"><i data-lucide="sparkles"></i> AI Assistant</div>
-            <div class="qt-nav-item"><i data-lucide="notebook-pen"></i> My Journal</div>
-            <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
-          </div>
-          <div class="qt-content">
-            <div class="qt-heading" style="margin-bottom:16px;">MindEase Assistant</div>
-            <div class="qt-chat-log">
-              <div class="qt-chat-row">
-                <div class="qt-chat-icon"><i data-lucide="sparkles"></i></div>
-                <div class="qt-chat-bubble">Hi! I'm the MindEase Assistant. How can I help you today?</div>
-              </div>
-              <div class="qt-chat-row user">
-                <div class="qt-chat-icon"><i data-lucide="user"></i></div>
-                <div class="qt-chat-bubble user">I'm feeling overwhelmed with finals stress.</div>
-              </div>
-              <div class="qt-chat-row">
-                <div class="qt-chat-icon"><i data-lucide="sparkles"></i></div>
-                <div class="qt-chat-bubble">I hear you — finals stress is real. Let's break it down together. BMCC's Learning Resource Center offers free tutoring Mon–Thu 10am–6pm at Room S-510. Would you like a study plan?</div>
-              </div>
-            </div>
-            <div class="qt-chat-input-row">
-              <div class="qt-chat-input-fake">Ask about BMCC resources, mental health, study tips…</div>
-              <div class="qt-send-btn">Send</div>
             </div>
           </div>
         </div>
@@ -361,7 +308,6 @@
             <div class="qt-nav-item"><i data-lucide="home"></i> Home</div>
             <div class="qt-nav-item"><i data-lucide="book-open"></i> BMCC Resources</div>
             <div class="qt-nav-item"><i data-lucide="brain"></i> Wellness Toolkit</div>
-            <div class="qt-nav-item"><i data-lucide="sparkles"></i> AI Assistant</div>
             <div class="qt-nav-item active"><i data-lucide="notebook-pen"></i> My Journal</div>
             <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
           </div>
@@ -816,7 +762,7 @@ Staff:  Samantha Ruiz, LCSW — Veterans Affairs Manager</div>
       <!-- Empowered Identity -->
       <div class="topic-card" id="tk-identity">
         <div class="topic-header" onclick="toggleTopic('tk-identity')">
-          <div class="topic-icon" style="background:#fbf4d0;"><i data-lucide="sparkles"></i></div>
+          <div class="topic-icon" style="background:#fbf4d0;"><i data-lucide="shield"></i></div>
           <div class="topic-info"><div class="topic-name">Empowered Identity &amp; Care</div><div class="topic-subtitle">Racial trauma, LGBTQIA+, disability justice, identity support</div></div>
           <div class="topic-arrow">▼</div>
         </div>
@@ -936,72 +882,6 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- ASSISTANT                                                               -->
-<!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section id="assistant" class="section">
-  <div class="container">
-    <div class="eyebrow">MindEase Assistant</div>
-    <h2 class="section-title">Your AI wellness guide, powered by OpenAI</h2>
-    <p class="section-sub">
-      Ask the MindEase Assistant anything about student mental health, BMCC resources,
-      or wellness strategies. It responds with warmth and directs you to the right support.
-    </p>
-
-    <div class="chat-window">
-      <div class="chat-topbar">
-        <div class="chat-avatar"><i data-lucide="sparkles"></i></div>
-        <div>
-          <div class="chat-topname">MindEase Assistant</div>
-          <div class="chat-topstatus">Powered by OpenAI · Here to help</div>
-        </div>
-      </div>
-      <div class="chat-messages" id="chat-messages">
-        <div class="msg bot">
-          <div class="msg-icon"><i data-lucide="sparkles"></i></div>
-          <div class="msg-bubble">Hi! I'm the MindEase Assistant. I'm here to help you find support, explore wellness resources, or just talk through what's on your mind. What can I help you with today?</div>
-        </div>
-        <div class="msg user">
-          <div class="msg-icon"><i data-lucide="user"></i></div>
-          <div class="msg-bubble">I'm really stressed about finals and I don't know where to start.</div>
-        </div>
-        <div class="msg bot">
-          <div class="msg-icon"><i data-lucide="sparkles"></i></div>
-          <div class="msg-bubble">I hear you — finals stress is real, and it makes sense to feel overwhelmed when everything piles up at once. Let's break it down together.<br><br>
-          <strong>A few things that can help right now:</strong><br>
-          • Start with a simple list: what's due and when?<br>
-          • Focus on the next 24 hours only — not the whole semester.<br>
-          • BMCC's <strong>Learning Resource Center</strong> (Room S-510) offers free tutoring Mon–Thu 10am–6pm — no appointment needed.<br>
-          • The <strong>Academic Coaching</strong> office can help you build a study plan: AcademicCoaching@bmcc.cuny.edu<br><br>
-          Would you like help prioritizing your tasks, or would a study break strategy be more useful right now?</div>
-        </div>
-        <div class="msg user">
-          <div class="msg-icon"><i data-lucide="user"></i></div>
-          <div class="msg-bubble">Is there free food on campus? I've been skipping meals.</div>
-        </div>
-        <div class="msg bot">
-          <div class="msg-icon"><i data-lucide="sparkles"></i></div>
-          <div class="msg-bubble">Yes — and please don't skip meals. You deserve to eat, and BMCC makes it easy.<br><br>
-          <strong>Panther Pantry</strong> — free food for any BMCC student, no questions asked.<br>
-          Loc: Room S-230<br>
-          Hours: Mon–Fri 8am–6:30pm · Sat 10am–1pm<br><br>
-          They have non-perishable items, refrigerated food, and frozen meals. Walk in whenever you need — no appointment, no paperwork.<br><br>
-          The <strong>Advocacy &amp; Resource Center</strong> (same location) can also connect you with SNAP food benefits if you qualify. Would you like help with that too?</div>
-        </div>
-      </div>
-      <div class="chat-input-row">
-        <input class="chat-input" id="chat-input" type="text" placeholder="Ask about BMCC resources, mental health, study tips…" />
-        <button class="chat-send" onclick="sendMessage()">Send</button>
-      </div>
-    </div>
-
-    <p style="text-align:center; font-size:12px; color:#9eaa9d; margin-top:16px;">
-      Demo mode — in the real app, responses are generated live by OpenAI.
-      For emergencies, call <strong>988</strong> or BMCC Counseling at <strong>(212) 220-8140</strong>.
-    </p>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════════════════ -->
 <!-- JOURNAL                                                                 -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <section id="journal" class="section" style="background: rgba(237,245,235,0.4);">
@@ -1062,7 +942,9 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
     </p>
     <div class="project-cards">
       <div class="project-card">
-        <div class="project-avatar"><i data-lucide="user-round"></i></div>
+        <div class="project-avatar project-photo">
+          <img src="assets/profile.jpg" alt="Phyo Thiha Oo portrait" />
+        </div>
         <div class="project-name">Phyo Thiha Oo</div>
         <div class="project-role">Student Developer · ID 24492624</div>
       </div>
@@ -1090,8 +972,6 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
         <span class="badge">QStackedWidget</span>
         <span class="badge">QSettings persistence</span>
         <span class="badge">QPrinter / PDF export</span>
-        <span class="badge">OpenAI API</span>
-        <span class="badge">QNetwork</span>
         <span class="badge">QGraphicsDropShadowEffect</span>
         <span class="badge">Signal / Slot architecture</span>
         <span class="badge">Abstract Base Classes</span>

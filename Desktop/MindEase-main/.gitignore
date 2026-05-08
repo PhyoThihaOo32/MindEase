@@ -1,0 +1,16 @@
+.DS_Store
+.env
+.claude/
+.vercel
+.qtcreator/*.user
+*.autosave
+*.o
+Makefile
+.qmake.stash
+moc_*.cpp
+qrc_*.cpp
+*.app/
+build/
+build-*/
+cmake-build-*/
+node_modules/

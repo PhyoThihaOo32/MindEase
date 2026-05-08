@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindEase — CSC211H Honors Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── Scroll progress ────────────────────────────────────────────────────── -->
+<div id="scroll-progress"></div>
+
+<!-- ── Falling Leaves ────────────────────────────────────────────────────── -->
+<div id="leaf-canvas"></div>
+
+<!-- ── Navigation ───────────────────────────────────────────────────────── -->
+<nav id="main-nav">
+  <a href="#hero" class="nav-brand"><i data-lucide="leaf"></i> MindEase</a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#app-preview">App Preview</a>
+    <a href="#resources">BMCC Resources</a>
+    <a href="#toolkit">Wellness Toolkit</a>
+    <a href="#journal">My Journal</a>
+    <a href="#project">Project</a>
+  </div>
+  <a class="nav-crisis" href="tel:988"><i data-lucide="phone-call"></i> Crisis: 988</a>
+  <button id="dark-toggle" onclick="toggleDark()"><i data-lucide="moon"></i> Night</button>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── Mobile nav ────────────────────────────────────────────────────────── -->
+<nav class="mobile-nav" id="mobile-nav">
+  <a href="#about"       onclick="closeMobileNav()">About</a>
+  <a href="#app-preview" onclick="closeMobileNav()">App Preview</a>
+  <a href="#resources"   onclick="closeMobileNav()">BMCC Resources</a>
+  <a href="#toolkit"     onclick="closeMobileNav()">Wellness Toolkit</a>
+  <a href="#journal"     onclick="closeMobileNav()">My Journal</a>
+  <a href="#project"     onclick="closeMobileNav()">Project</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- HERO                                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="hero" class="section">
+  <div class="hero-eyebrow">CSC211H Honors Project · Spring 2026</div>
+  <h1 class="hero-title">
+    MindEase: a calm wellness<br>companion for <span>BMCC</span>
+  </h1>
+  <p class="hero-body">
+    MindEase helps BMCC students find campus resources, take small self-care steps,
+    engage calming tools, and write positive
+    future plans. This site presents the deployed project clearly, without extra filler.
+  </p>
+
+  <div class="student-card" aria-label="Project student information">
+    <div class="student-row"><span>Name</span><strong>Phyo Thiha Oo</strong></div>
+    <div class="student-row"><span>ID</span><strong>24492624</strong></div>
+    <div class="student-row"><span>Course</span><strong>CSC211H Advanced Programming Techniques (Honors)</strong></div>
+    <div class="student-row"><span>Instructor</span><strong>Dr. Azhar</strong></div>
+    <div class="student-row"><span>Semester</span><strong>Spring 2026</strong></div>
+  </div>
+
+  <div class="hero-buttons">
+    <a href="#resources" class="btn-hero btn-primary">Explore BMCC Resources</a>
+    <a href="#toolkit"   class="btn-hero btn-outline">Open Wellness Toolkit</a>
+    <a href="#journal"   class="btn-hero btn-outline">Start Journaling</a>
+  </div>
+
+  <div class="hero-stats" aria-label="Project highlights">
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="5">0</div>
+      <div class="hero-stat-label">Resource Topics</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="8">0</div>
+      <div class="hero-stat-label">Toolkit Folders</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="4">0</div>
+      <div class="hero-stat-label">OOP Pillars</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="5">0</div>
+      <div class="hero-stat-label">App Screens</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- ABOUT                                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="eyebrow">What is MindEase?</div>
+    <h2 class="section-title">Four features, one calming space</h2>
+    <p class="section-sub">
+      MindEase is a desktop Qt/C++ application built by Phyo Thiha Oo for BMCC students.
+      It combines campus resources, wellness tools, and a private journal
+      in a single thoughtfully designed application.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i data-lucide="book-open"></i></div>
+        <div class="feature-name">BMCC Resources</div>
+        <div class="feature-desc">Direct links to tutoring, financial aid, counseling, immigration support, health services, and more — all curated for BMCC students.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i data-lucide="brain"></i></div>
+        <div class="feature-name">Wellness Toolkit</div>
+        <div class="feature-desc">8 themed folders — from mindfulness and sleep to gratitude journaling and music — with practical tools you can use right now.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i data-lucide="notebook-pen"></i></div>
+        <div class="feature-name">Private Journal</div>
+        <div class="feature-desc">Write, save, and search personal journal entries. Export as PDF or plain text. Your reflections stay on your device.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i data-lucide="leaf"></i></div>
+        <div class="feature-name">Calm Design</div>
+        <div class="feature-desc">Gentle falling-leaf animations, a warm natural color palette, and a quiet layout designed to reduce — not add to — your stress.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OOP concepts callout -->
+    <div class="eyebrow">C++ / Qt Architecture</div>
+    <h2 class="section-title" style="font-size:28px;">Built with OOP principles</h2>
+    <p class="section-sub" style="margin-bottom:24px;">
+      MindEase demonstrates all four core object-oriented programming concepts required for CSC211H Honors.
+    </p>
+    <div class="features-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+      <div class="feature-card" style="border-left: 4px solid #4a7a43;">
+        <div class="feature-icon"><i data-lucide="lock"></i></div>
+        <div class="feature-name">Encapsulation</div>
+        <div class="feature-desc"><code>JournalEntry</code>, <code>JournalStorage</code> — private data, clean public interfaces. The <code>Screen</code> base class hides <code>m_title</code> behind a const accessor.</div>
+      </div>
+      <div class="feature-card" style="border-left: 4px solid #7aac6e;">
+        <div class="feature-icon"><i data-lucide="git-branch"></i></div>
+        <div class="feature-name">Inheritance</div>
+        <div class="feature-desc"><code>Home</code>, <code>Journal</code>, <code>Settings</code>, <code>Recommendations</code>, and <code>Toolkit</code> all inherit from the <code>Screen</code> abstract base class.</div>
+      </div>
+      <div class="feature-card" style="border-left: 4px solid #c8ecc2;">
+        <div class="feature-icon"><i data-lucide="shuffle"></i></div>
+        <div class="feature-name">Polymorphism</div>
+        <div class="feature-desc"><code>MainWindow</code> holds <code>QVector&lt;Screen*&gt;</code> and calls <code>onActivated()</code> + <code>onThemeChanged()</code> on each — runtime dispatch without knowing the concrete type.</div>
+      </div>
+      <div class="feature-card" style="border-left: 4px solid #173c2c;">
+        <div class="feature-icon"><i data-lucide="layers"></i></div>
+        <div class="feature-name">Abstraction</div>
+        <div class="feature-desc"><code>Screen</code> declares <code>screenId()</code> as a pure virtual — making it an ABC. <code>Screen</code> cannot be instantiated directly; every screen must supply its own identity.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- APP PREVIEW                                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="app-preview" class="section" style="background: rgba(237,245,235,0.35);">
+  <div class="container">
+    <div class="eyebrow reveal">Qt Desktop Application</div>
+    <h2 class="section-title reveal">See MindEase in action</h2>
+    <p class="section-sub reveal">
+      MindEase is a native Qt/C++ desktop app. Click through each screen below to explore
+      how students navigate the app — the same experience running on macOS and Windows.
+    </p>
+
+    <div class="screen-tabs reveal">
+      <button class="screen-tab active" onclick="switchScreen('home', this)"><i data-lucide="home"></i> Home</button>
+      <button class="screen-tab" onclick="switchScreen('resources', this)"><i data-lucide="book-open"></i> BMCC Resources</button>
+      <button class="screen-tab" onclick="switchScreen('toolkit', this)"><i data-lucide="brain"></i> Wellness Toolkit</button>
+      <button class="screen-tab" onclick="switchScreen('journal', this)"><i data-lucide="notebook-pen"></i> My Journal</button>
+    </div>
+
+    <!-- HOME screen mockup -->
+    <div class="screen-panel active" id="panel-home">
+      <div class="qt-window">
+        <div class="qt-titlebar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <span class="qt-titlename">MindEase — Wellness Companion for BMCC Students</span>
+        </div>
+        <div class="qt-body">
+          <div class="qt-sidebar">
+            <div class="qt-nav-item active"><i data-lucide="home"></i> Home</div>
+            <div class="qt-nav-item"><i data-lucide="book-open"></i> BMCC Resources</div>
+            <div class="qt-nav-item"><i data-lucide="brain"></i> Wellness Toolkit</div>
+            <div class="qt-nav-item"><i data-lucide="notebook-pen"></i> My Journal</div>
+            <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
+          </div>
+          <div class="qt-content" style="position:relative; overflow:hidden;">
+            <div style="font-size:12px; font-weight:700; color:var(--green-mid); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;">Welcome to MindEase</div>
+            <div class="qt-heading">Your wellness<br>companion at BMCC</div>
+            <div class="qt-sub" style="margin-top:10px; max-width:460px;">A quiet, supportive space where you can find campus resources, explore calming tools, write in your private journal.</div>
+            <div class="qt-action-btns">
+              <span class="qt-btn"><i data-lucide="book-open"></i> BMCC Resources</span>
+              <span class="qt-btn outline"><i data-lucide="brain"></i> Open Toolkit</span>
+              <span class="qt-btn outline"><i data-lucide="notebook-pen"></i> Start Journaling</span>
+            </div>
+            <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+              <div style="background:var(--green-pale); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:12px; color:var(--text-light);"><i data-lucide="sprout" style="vertical-align:middle; margin-right:4px;"></i> <strong style="color:var(--green-deep);">Tip of the day</strong><br>Take 3 deep breaths before your next class.</div>
+              <div style="background:var(--green-pale); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:12px; color:var(--text-light);"><i data-lucide="phone-call" style="vertical-align:middle; margin-right:4px;"></i> <strong style="color:#a33a2e;">Crisis line</strong><br>988 · BMCC (212) 220-8140</div>
+            </div>
+            <!-- decorative leaves -->
+            <div class="qt-leaf" style="right:60px; top:40px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+            <div class="qt-leaf" style="right:30px; bottom:60px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESOURCES screen mockup -->
+    <div class="screen-panel" id="panel-resources">
+      <div class="qt-window">
+        <div class="qt-titlebar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <span class="qt-titlename">MindEase — BMCC Resources</span>
+        </div>
+        <div class="qt-body">
+          <div class="qt-sidebar">
+            <div class="qt-nav-item"><i data-lucide="home"></i> Home</div>
+            <div class="qt-nav-item active"><i data-lucide="book-open"></i> BMCC Resources</div>
+            <div class="qt-nav-item"><i data-lucide="brain"></i> Wellness Toolkit</div>
+            <div class="qt-nav-item"><i data-lucide="notebook-pen"></i> My Journal</div>
+            <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
+          </div>
+          <div class="qt-content">
+            <div class="qt-heading">BMCC Resources</div>
+            <div class="qt-sub">What kind of support do you need right now?</div>
+            <div class="qt-topic-row">
+              <div class="qt-topic-icon2" style="background:#dcfff1;"><i data-lucide="book-open"></i></div>
+              <div><div class="qt-topic-name2">Exam &amp; Study Stress</div><div class="qt-topic-sub2">Tutoring, writing help, academic coaching</div></div>
+              <div style="margin-left:auto; font-size:13px; color:var(--green-mid);">›</div>
+            </div>
+            <div class="qt-topic-row">
+              <div class="qt-topic-icon2" style="background:#f4ffb8;"><i data-lucide="coins"></i></div>
+              <div><div class="qt-topic-name2">Finance</div><div class="qt-topic-sub2">Financial aid, emergency funds, free food</div></div>
+              <div style="margin-left:auto; font-size:13px; color:var(--green-mid);">›</div>
+            </div>
+            <div class="qt-topic-row">
+              <div class="qt-topic-icon2" style="background:#dff6ff;"><i data-lucide="globe"></i></div>
+              <div><div class="qt-topic-name2">Immigration</div><div class="qt-topic-sub2">Legal help, DACA, undocumented support</div></div>
+              <div style="margin-left:auto; font-size:13px; color:var(--green-mid);">›</div>
+            </div>
+            <div class="qt-topic-row">
+              <div class="qt-topic-icon2" style="background:#e9fff3;"><i data-lucide="message-circle"></i></div>
+              <div><div class="qt-topic-name2">Relationships &amp; Family</div><div class="qt-topic-sub2">Personal counseling, peer support</div></div>
+              <div style="margin-left:auto; font-size:13px; color:var(--green-mid);">›</div>
+            </div>
+            <div class="qt-topic-row">
+              <div class="qt-topic-icon2" style="background:#e7fbff;"><i data-lucide="heart-pulse"></i></div>
+              <div><div class="qt-topic-name2">Health &amp; Wellness</div><div class="qt-topic-sub2">Medical care, mental health, insurance</div></div>
+              <div style="margin-left:auto; font-size:13px; color:var(--green-mid);">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLKIT screen mockup -->
+    <div class="screen-panel" id="panel-toolkit">
+      <div class="qt-window">
+        <div class="qt-titlebar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <span class="qt-titlename">MindEase — Mental Health Toolkit</span>
+        </div>
+        <div class="qt-body">
+          <div class="qt-sidebar">
+            <div class="qt-nav-item"><i data-lucide="home"></i> Home</div>
+            <div class="qt-nav-item"><i data-lucide="book-open"></i> BMCC Resources</div>
+            <div class="qt-nav-item active"><i data-lucide="brain"></i> Wellness Toolkit</div>
+            <div class="qt-nav-item"><i data-lucide="notebook-pen"></i> My Journal</div>
+            <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
+          </div>
+          <div class="qt-content">
+            <div class="qt-heading">Mental Health Toolkit</div>
+            <div class="qt-sub">A quiet space to pause, reflect, and reset.</div>
+            <div class="qt-folder-grid">
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="book-open"></i></div><div class="qt-folder-name">Academic Stress</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="handshake"></i></div><div class="qt-folder-name">Connection &amp; Community</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="shield"></i></div><div class="qt-folder-name">Empowered Identity</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="pencil"></i></div><div class="qt-folder-name">Gratitude &amp; Journaling</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="brain"></i></div><div class="qt-folder-name">Mindfulness</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="music"></i></div><div class="qt-folder-name">Music for Your Mind</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="salad"></i></div><div class="qt-folder-name">Nutrition &amp; Energy</div></div>
+              <div class="qt-folder"><div class="qt-folder-icon"><i data-lucide="moon"></i></div><div class="qt-folder-name">Sleep &amp; Relaxation</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL screen mockup -->
+    <div class="screen-panel" id="panel-journal">
+      <div class="qt-window">
+        <div class="qt-titlebar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <span class="qt-titlename">MindEase — My Journal</span>
+        </div>
+        <div class="qt-body">
+          <div class="qt-sidebar">
+            <div class="qt-nav-item"><i data-lucide="home"></i> Home</div>
+            <div class="qt-nav-item"><i data-lucide="book-open"></i> BMCC Resources</div>
+            <div class="qt-nav-item"><i data-lucide="brain"></i> Wellness Toolkit</div>
+            <div class="qt-nav-item active"><i data-lucide="notebook-pen"></i> My Journal</div>
+            <div class="qt-nav-item"><i data-lucide="settings"></i> Settings</div>
+          </div>
+          <div class="qt-content">
+            <div class="qt-heading" style="margin-bottom:8px;">My Journal</div>
+            <div class="qt-sub">Private reflections · saved to your device</div>
+            <!-- composer mockup -->
+            <div style="background:var(--green-pale); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:16px;">
+              <div style="font-size:14px; font-weight:700; color:#aab8a8; border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:10px;">Entry title (optional)…</div>
+              <div style="font-size:13px; color:#8fa09a; line-height:1.7;">How are you feeling today? What's on your mind?&#8203;</div>
+              <div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--border); align-items:center;">
+                <div style="font-size:12px; color:var(--text-light);">Today, April 30, 2026</div>
+                <div class="qt-btn" style="padding:7px 18px; font-size:12px;">Save Entry</div>
+              </div>
+            </div>
+            <!-- entries -->
+            <div class="qt-journal-list">
+              <div class="qt-journal-entry">
+                <div class="qt-entry-title">Reflection saved locally</div>
+                <div class="qt-entry-date">Private entry · searchable</div>
+              </div>
+              <div class="qt-journal-entry">
+                <div class="qt-entry-title">Gratitude prompt completed</div>
+                <div class="qt-entry-date">Private entry · export ready</div>
+              </div>
+              <div class="qt-journal-entry">
+                <div class="qt-entry-title">Wellness note added</div>
+                <div class="qt-entry-date">Private entry · saved to device</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- BMCC RESOURCES                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="resources" class="section" style="background: rgba(237,245,235,0.4);">
+  <div class="container">
+    <div class="eyebrow">BMCC Resources</div>
+    <h2 class="section-title">What kind of support do you need right now?</h2>
+    <p class="section-sub">
+      BMCC offers resources that can help you feel supported, connected, and heard.
+      Click any topic below to see full details, locations, hours, and direct links.
+    </p>
+
+    <div class="topic-grid">
+
+      <!-- ── Topic 1: Exam & Study ───────────────────────────────────────── -->
+      <div class="topic-card" id="topic-study">
+        <div class="topic-header" onclick="toggleTopic('topic-study')">
+          <div class="topic-icon" style="background:#dcfff1;"><i data-lucide="book-open"></i></div>
+          <div class="topic-info">
+            <div class="topic-name">Exam &amp; Study Stress</div>
+            <div class="topic-subtitle">Tutoring, writing help, academic coaching</div>
+          </div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="resource-list">
+
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-icon"><i data-lucide="book-open"></i></div>
+                <div class="resource-title">Learning Resource Center — Tutoring</div>
+              </div>
+              <div class="resource-desc">Free peer tutoring for Math, English, Science, Business, and more. Walk-in or book online. No appointment needed.</div>
+              <div class="resource-details">Loc:  199 Chambers St., Room S-510
+    245 Greenwich St., Fiterman Hall Room F-511
+Hours:  In-person (Chambers): Mon–Thu 10am–6pm  |  Fri–Sat 10am–5pm
+    In-person (Fiterman): Mon–Wed 10am–3pm  |  Thu 10am–2pm
+    Remote: Mon–Thu 9am–9pm
+Phone:  (212) 220-1383  |  lrctutoring@bmcc.cuny.edu</div>
+              <div class="resource-tags"><span class="tag">Free</span><span class="tag">Walk-in</span><span class="tag">In-person &amp; Remote</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/students/lrc/in-person-tutoring/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-icon"><i data-lucide="handshake"></i></div>
+                <div class="resource-title">Peer Assisted Learning (PAL)</div>
+              </div>
+              <div class="resource-desc">Small-group study sessions (max 5 students) led by a trained PAL leader. Great for processing difficult course material together.</div>
+              <div class="resource-details">Loc:  199 Chambers St., Room S-510
+Phone:  (212) 220-1383  |  lrctutoring@bmcc.cuny.edu</div>
+              <div class="resource-tags"><span class="tag">Small Group</span><span class="tag">Free</span><span class="tag">Collaborative</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/students/lrc/in-person-tutoring/peer-assisted-learning/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-icon"><i data-lucide="pencil"></i></div>
+                <div class="resource-title">Writing Center</div>
+              </div>
+              <div class="resource-desc">One-on-one help with any writing assignment — essays, research papers, reports, and more. All levels welcome.</div>
+              <div class="resource-details">Loc:  199 Chambers St., Room S-510
+Hours:  Mon–Thu 10am–6pm  |  Sat 10am–3pm  |  Sun: online only
+Phone:  (212) 220-1384  |  writingcenter@bmcc.cuny.edu</div>
+              <div class="resource-tags"><span class="tag">Writing</span><span class="tag">Free</span><span class="tag">In-person &amp; Online</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/students/writing-center/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-icon"><i data-lucide="target"></i></div>
+                <div class="resource-title">Academic Coaching</div>
+              </div>
+              <div class="resource-desc">Personalized one-on-one coaching for study strategies, time management, organization, and test preparation.</div>
+              <div class="resource-details">Loc:  199 Chambers St., Room S-510
+Hours:  Mon–Thu 10am–6pm  |  Fri 10am–5pm
+Email:  AcademicCoaching@bmcc.cuny.edu</div>
+              <div class="resource-tags"><span class="tag">Study Skills</span><span class="tag">Test Prep</span><span class="tag">Free</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/students/lrc/academic-coaching/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-icon"><i data-lucide="monitor"></i></div>
+                <div class="resource-title">Online Tutoring</div>
+              </div>
+              <div class="resource-desc">Join a live remote tutoring session from home. Covers the same subjects as in-person — no commute needed.</div>
+              <div class="resource-details">Phone:  (212) 220-8359  |  onlinetutoring@bmcc.cuny.edu
+Hours:  Mon–Thu 9am–9pm  (extended remote hours)</div>
+              <div class="resource-tags"><span class="tag">Remote</span><span class="tag">Flexible Hours</span><span class="tag">Free</span></div>
+              <div class="resource-links">
+                <a class="res-link" href="https://www.bmcc.cuny.edu/students/lrc/online-tutoring/tutoring-schedule/" target="_blank">Schedule →</a>
+                <a class="res-link" href="https://bmcc.upswing.io/up/dashboard/home" target="_blank">Upswing →</a>
+              </div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-icon"><i data-lucide="wrench"></i></div>
+                <div class="resource-title">Free Software — Digital Education Center</div>
+              </div>
+              <div class="resource-desc">Free BMCC and CUNY digital learning tools: Brightspace, Zoom, Microsoft Office 365, LinkedIn Learning, VoiceThread, and more.</div>
+              <div class="resource-details">Email:  digitaleducation@bmcc.cuny.edu
+Phone:  (212) 220-1243
+Loc:  199 Chambers St, Room S-510a
+Hours:  Monday–Friday 9am–5pm</div>
+              <div class="resource-tags"><span class="tag">Free Software</span><span class="tag">Digital Tools</span></div>
+              <div class="resource-links">
+                <a class="res-link" href="https://brightspace.cuny.edu/d2l/home" target="_blank">Brightspace →</a>
+                <a class="res-link" href="https://www.cuny.edu/about/administration/offices/cis/technology-services/microsoft-office-365-for-education/" target="_blank">Office 365 →</a>
+                <a class="res-link" href="https://www.linkedin.com/learning-login/" target="_blank">LinkedIn Learning →</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Topic 2: Finance ────────────────────────────────────────────── -->
+      <div class="topic-card" id="topic-finance">
+        <div class="topic-header" onclick="toggleTopic('topic-finance')">
+          <div class="topic-icon" style="background:#f4ffb8;"><i data-lucide="coins"></i></div>
+          <div class="topic-info">
+            <div class="topic-name">Finance</div>
+            <div class="topic-subtitle">Financial aid, emergency funds, free food</div>
+          </div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="resource-list">
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="coins"></i></div><div class="resource-title">Financial Aid Office</div></div>
+              <div class="resource-desc">Grants, loans, work-study, and scholarships. Speak with an advisor about your specific situation.</div>
+              <div class="resource-details">Phone:  (212) 220-1430  |  finaid@bmcc.cuny.edu</div>
+              <div class="resource-tags"><span class="tag">Grants</span><span class="tag">Scholarships</span><span class="tag">Work-Study</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/finaid/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="phone-call"></i></div><div class="resource-title">Student Emergency Fund</div></div>
+              <div class="resource-desc">Emergency grants for textbooks, rent, utilities, and urgent needs. Fast and confidential support.</div>
+              <div class="resource-details">Loc:  Room S-230  |  Mon–Fri 8am–6:30pm  |  Sat 10am–1pm
+Phone:  (212) 220-8195</div>
+              <div class="resource-tags"><span class="tag">Emergency</span><span class="tag">Fast Support</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/arc/student-emergency-fund/" target="_blank">Apply →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="apple"></i></div><div class="resource-title">Panther Pantry — Free Food</div></div>
+              <div class="resource-desc">Free food for students facing food insecurity. Walk in, no questions asked — non-perishable, refrigerated, and frozen items available.</div>
+              <div class="resource-details">Loc:  Room S-230  |  Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div>
+              <div class="resource-tags"><span class="tag">Free Food</span><span class="tag">Walk-in</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/arc/panther-pantry/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="landmark"></i></div><div class="resource-title">Advocacy &amp; Resource Center</div></div>
+              <div class="resource-desc">SNAP assistance, tax prep, housing referrals, and financial counseling. Your one-stop student support hub.</div>
+              <div class="resource-details">Loc:  Room S-230  |  Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div>
+              <div class="resource-tags"><span class="tag">SNAP</span><span class="tag">Housing</span><span class="tag">Tax Help</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/arc/" target="_blank">Visit →</a></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Topic 3: Immigration ────────────────────────────────────────── -->
+      <div class="topic-card" id="topic-immigration">
+        <div class="topic-header" onclick="toggleTopic('topic-immigration')">
+          <div class="topic-icon" style="background:#dff6ff;"><i data-lucide="globe"></i></div>
+          <div class="topic-info">
+            <div class="topic-name">Immigration</div>
+            <div class="topic-subtitle">Legal help, DACA, undocumented support</div>
+          </div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="resource-list">
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="globe"></i></div><div class="resource-title">Immigrant Resource Center</div></div>
+              <div class="resource-desc">Confidential support for immigrant and undocumented students of all backgrounds and statuses.</div>
+              <div class="resource-details">Phone:  Albert Lee: (212) 776-6252  |  allee@bmcc.cuny.edu
+Loc:  Room S-230  |  Mon–Fri 8am–6:30pm</div>
+              <div class="resource-tags"><span class="tag">Confidential</span><span class="tag">All Statuses</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/center-for-belonging-and-inclusion/immigrant-resource-center/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="scale"></i></div><div class="resource-title">Free Legal Services — CUNY Citizenship Now!</div></div>
+              <div class="resource-desc">On-site attorneys monthly for DACA renewals, TPS, family petitions, and naturalization. Free and confidential.</div>
+              <div class="resource-details">Loc:  Room S-230</div>
+              <div class="resource-tags"><span class="tag">DACA</span><span class="tag">Legal Aid</span><span class="tag">Free</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/arc/legal-services/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="graduation-cap"></i></div><div class="resource-title">Scholarships for Immigrant Students</div></div>
+              <div class="resource-desc">TheDream.US and other scholarships available regardless of immigration status. Don't miss out on funding you qualify for.</div>
+              <div class="resource-tags"><span class="tag">Scholarships</span><span class="tag">DREAMers</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/immigration/scholarships-and-financial-aid/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="lock"></i></div><div class="resource-title">Know Your Rights at BMCC</div></div>
+              <div class="resource-desc">CUNY will not share your records with immigration enforcement without a court order. Know your protections.</div>
+              <div class="resource-tags"><span class="tag">Privacy</span><span class="tag">Your Rights</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/immigration/" target="_blank">Learn More →</a></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Topic 4: Relationships & Family ────────────────────────────── -->
+      <div class="topic-card" id="topic-relationships">
+        <div class="topic-header" onclick="toggleTopic('topic-relationships')">
+          <div class="topic-icon" style="background:#e9fff3;"><i data-lucide="message-circle"></i></div>
+          <div class="topic-info">
+            <div class="topic-name">Relationships &amp; Family</div>
+            <div class="topic-subtitle">Personal counseling, peer support</div>
+          </div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="resource-list">
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="message-circle"></i></div><div class="resource-title">Personal Counseling — Counseling Center</div></div>
+              <div class="resource-desc">Free, confidential counseling for relationship, family, grief, and personal issues. Telehealth available.</div>
+              <div class="resource-details">Loc:  Room S-343  |  Mon, Tue, Thu 9am–6pm  |  Wed, Fri 9am–5pm
+Phone:  (212) 220-8140  |  counselingcenter@bmcc.cuny.edu</div>
+              <div class="resource-tags"><span class="tag">Free</span><span class="tag">Confidential</span><span class="tag">Telehealth OK</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/counseling-services/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="handshake"></i></div><div class="resource-title">Togetherall — 24/7 Anonymous Peer Support</div></div>
+              <div class="resource-desc">Free anonymous online community where students support each other. Available 24/7 — no appointment needed.</div>
+              <div class="resource-tags"><span class="tag">Anonymous</span><span class="tag">24/7</span><span class="tag">Online</span></div>
+              <div class="resource-links"><a class="res-link" href="https://togetherall.com/en-us/" target="_blank">Join →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="clipboard-list"></i></div><div class="resource-title">Book a Counseling Appointment</div></div>
+              <div class="resource-desc">Schedule in person, by phone, or on Zoom. Same-day crisis support also available.</div>
+              <div class="resource-details">Phone:  (212) 220-8140</div>
+              <div class="resource-tags"><span class="tag">Appointment</span><span class="tag">Crisis</span><span class="tag">Zoom OK</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/request-an-appointment/" target="_blank">Book →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="home"></i></div><div class="resource-title">Community Referrals</div></div>
+              <div class="resource-desc">Referrals to outside help for housing, domestic support, substance use, and legal aid.</div>
+              <div class="resource-tags"><span class="tag">Housing</span><span class="tag">Legal Aid</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/counseling-resources/community-resources/" target="_blank">Visit →</a></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Topic 5: Health & Wellness ─────────────────────────────────── -->
+      <div class="topic-card" id="topic-health" style="grid-column: 1 / -1;">
+        <div class="topic-header" onclick="toggleTopic('topic-health')">
+          <div class="topic-icon" style="background:#e7fbff;"><i data-lucide="heart-pulse"></i></div>
+          <div class="topic-info">
+            <div class="topic-name">Health &amp; Wellness</div>
+            <div class="topic-subtitle">Medical care, mental health, insurance, veterans support</div>
+          </div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="resource-list" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); gap:12px;">
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="heart-pulse"></i></div><div class="resource-title">Health &amp; Wellness Services</div></div>
+              <div class="resource-desc">First aid, medical evaluation, health counseling, and wellness workshops on campus.</div>
+              <div class="resource-details">Loc:  Room N-380, 199 Chambers St.
+Hours:  Mon–Fri 9am–5pm
+Phone:  (212) 220-8256  |  healthservices@bmcc.cuny.edu</div>
+              <div class="resource-tags"><span class="tag">Medical</span><span class="tag">On-campus</span><span class="tag">Free</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/health-services/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="brain"></i></div><div class="resource-title">Mental Health Counseling</div></div>
+              <div class="resource-desc">Short-term counseling, crisis support, and referrals to community providers. Free and confidential.</div>
+              <div class="resource-details">Loc:  Room S-343
+Hours:  Mon, Tue, Thu 9am–6pm  |  Wed, Fri 9am–5pm
+Phone:  (212) 220-8140</div>
+              <div class="resource-tags"><span class="tag">Mental Health</span><span class="tag">Free</span><span class="tag">Crisis</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="dumbbell"></i></div><div class="resource-title">Campus Fitness</div></div>
+              <div class="resource-desc">Fitness Center, Swimming Pool, and Health &amp; Wellness Services — accessible exercise options for every student.</div>
+              <div class="resource-details">Phone:  BMCC Athletics: (212) 220-8260</div>
+              <div class="resource-tags"><span class="tag">Fitness</span><span class="tag">On-campus</span></div>
+              <div class="resource-links">
+                <a class="res-link" href="https://www.bmcc.cuny.edu/students/fitness-center/" target="_blank">Visit →</a>
+                <a class="res-link" href="https://bmccathletics.com/sports/2012/4/2/RecreationSchedule.aspx" target="_blank">Schedule →</a>
+              </div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="award"></i></div><div class="resource-title">Veterans Resource Center</div></div>
+              <div class="resource-desc">Dedicated support for veteran students dealing with stress, PTSD, and mental health challenges. In-person and virtual appointments.</div>
+              <div class="resource-details">Loc:  199 Chambers St., Room S-115M
+Phone:  (212) 220-8035  |  saruiz@bmcc.cuny.edu
+Staff:  Samantha Ruiz, LCSW — Veterans Affairs Manager</div>
+              <div class="resource-tags"><span class="tag">Veterans</span><span class="tag">PTSD</span><span class="tag">Free</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/veterans-resource-center/dealing-with-stress/" target="_blank">Visit →</a></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="phone-call"></i></div><div class="resource-title">Samaritans — 24-Hour Crisis Hotline</div></div>
+              <div class="resource-desc">Free and confidential support if you are feeling stressed, overwhelmed, or suicidal. Available around the clock.</div>
+              <div class="resource-details">Phone:  (212) 673-3000  —  free, confidential, 24 hours</div>
+              <div class="resource-tags"><span class="tag">24/7</span><span class="tag">Free</span><span class="tag">Confidential</span></div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-header"><div class="resource-icon"><i data-lucide="stethoscope"></i></div><div class="resource-title">Health Insurance Enrollment</div></div>
+              <div class="resource-desc">Help enrolling in NY State health insurance — open to all students including international and undocumented.</div>
+              <div class="resource-details">Loc:  Room S-230</div>
+              <div class="resource-tags"><span class="tag">Insurance</span><span class="tag">All Students</span></div>
+              <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/arc/health-insurance/" target="_blank">Visit →</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /topic-grid -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- MENTAL HEALTH TOOLKIT                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="toolkit" class="section">
+  <div class="container">
+    <div class="eyebrow">Mental Health Toolkit</div>
+    <h2 class="section-title">A quiet space to pause, reflect, and reset</h2>
+    <p class="section-sub">
+      Choose a toolkit topic for calming tools, reflection prompts, and supportive practices
+      you can try at your own pace.
+    </p>
+    <div class="topic-grid">
+
+      <!-- Academic Stress -->
+      <div class="topic-card" id="tk-academic">
+        <div class="topic-header" onclick="toggleTopic('tk-academic')">
+          <div class="topic-icon" style="background:#dcfff1;"><i data-lucide="book-open"></i></div>
+          <div class="topic-info"><div class="topic-name">Academic Stress</div><div class="topic-subtitle">Deadlines, studying, tutoring, and staying focused</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">School can feel heavy fast. This section brings together study tools, academic support, and small strategies for handling pressure with more structure and less panic.</div>
+          <div class="resource-list">
+            <div class="resource-card">
+              <div class="tool-item" style="padding:0; border:none;">
+                <div class="tool-icon"><i data-lucide="calendar"></i></div>
+                <div class="tool-body"><div class="tool-title">Weekly Planner</div><div class="tool-desc">Break tasks into manageable chunks so you always know what to prioritize.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/your-mental-health-toolkit/" target="_blank">Open Toolkit →</a></div></div>
+              </div>
+            </div>
+            <div class="resource-card">
+              <div class="tool-item" style="padding:0; border:none;">
+                <div class="tool-icon"><i data-lucide="puzzle"></i></div>
+                <div class="tool-body"><div class="tool-title">Procrastination Worksheet</div><div class="tool-desc">Identify what is holding you back and create actionable steps to move forward.</div><div class="tool-links"><a class="res-link" href="https://freetodolist.com/" target="_blank">Open →</a></div></div>
+              </div>
+            </div>
+            <div class="resource-card">
+              <div class="tool-item" style="padding:0; border:none;">
+                <div class="tool-icon"><i data-lucide="coffee"></i></div>
+                <div class="tool-body"><div class="tool-title">Smart Study Break Ideas</div><div class="tool-desc">• 5-minute refresh: stretch or take a short walk
+• Creative break: doodle or free-write in a journal
+• Snack smart: fruit, nuts, or a protein bar
+• Mindful moment: try a 5-minute guided meditation
+• Social recharge: check in with a friend</div></div>
+              </div>
+            </div>
+            <div class="resource-card">
+              <div class="tool-item" style="padding:0; border:none;">
+                <div class="tool-icon"><i data-lucide="building-2"></i></div>
+                <div class="tool-body"><div class="tool-title">BMCC Academic Support</div><div class="tool-desc">Free tutoring, Writing Center, academic coaching, library quiet spaces.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/learning-assistance/" target="_blank">Visit →</a></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connection & Community -->
+      <div class="topic-card" id="tk-connection">
+        <div class="topic-header" onclick="toggleTopic('tk-connection')">
+          <div class="topic-icon" style="background:#e7fbff;"><i data-lucide="handshake"></i></div>
+          <div class="topic-info"><div class="topic-name">Connection &amp; Community</div><div class="topic-subtitle">Peer support, groups, clubs, and finding belonging</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">You do not have to do college alone. This section is for support groups, workshops, clubs, and community resources that can help you feel more connected.</div>
+          <div class="resource-list">
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="users"></i></div><div class="tool-body"><div class="tool-title">Counseling Groups &amp; Workshops</div><div class="tool-desc">BMCC offers group spaces and workshops to share experiences and practice coping skills.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/groups-and-workshops/groups/" target="_blank">View Groups →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="calendar-days"></i></div><div class="tool-body"><div class="tool-title">Upcoming Wellness Workshops</div><div class="tool-desc">Drop-in workshops on stress management, art-based stress relief, and mindfulness.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/groups-and-workshops/workshops/" target="_blank">View Schedule →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="graduation-cap"></i></div><div class="tool-body"><div class="tool-title">Student Clubs &amp; Activities</div><div class="tool-desc">Join or start a club to meet people who share your interests and build community.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/student-activities/clubs/" target="_blank">Find a Club →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="phone"></i></div><div class="tool-body"><div class="tool-title">NYC Crisis Resources (24/7)</div><div class="tool-desc">Hotlines and texting services for emergency mental health support, available 24/7.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/counseling-resources/nyc-resources/" target="_blank">See Hotlines →</a></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empowered Identity -->
+      <div class="topic-card" id="tk-identity">
+        <div class="topic-header" onclick="toggleTopic('tk-identity')">
+          <div class="topic-icon" style="background:#fbf4d0;"><i data-lucide="shield"></i></div>
+          <div class="topic-info"><div class="topic-name">Empowered Identity &amp; Care</div><div class="topic-subtitle">Racial trauma, LGBTQIA+, disability justice, identity support</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">This section gathers affirming resources for students navigating identity, discrimination, and belonging. Support should make room for every part of who you are.</div>
+          <div class="resource-list">
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="shield"></i></div><div class="tool-body"><div class="tool-title">Racial Trauma Resources</div><div class="tool-desc">Resources for learning, validation, and healing around racial trauma and repeated racism.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/about-bmcc/race-equity-and-inclusion/resources/racial-trauma-resources/" target="_blank">Open →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="flag"></i></div><div class="tool-body"><div class="tool-title">LGBTQIA+ Support &amp; Hotlines</div><div class="tool-desc">Trans Lifeline: (877) 565-8860
+LGBT National Hotline: (888) 843-4564
+Trevor Lifeline: (866) 488-7386</div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="accessibility"></i></div><div class="tool-body"><div class="tool-title">Disability Justice — 10 Principles</div><div class="tool-desc">A framework for understanding disability in relation to race, gender, and other intersecting identities.</div><div class="tool-links"><a class="res-link" href="https://www.sinsinvalid.org/blog/10-principles-of-disability-justice" target="_blank">Read →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="message-circle"></i></div><div class="tool-body"><div class="tool-title">BMCC Counseling — Identity Support</div><div class="tool-desc">Affirming, culturally competent support for all students. Room S-343 · (212) 220-8140</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/counseling-services/" target="_blank">Visit →</a></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gratitude & Journaling -->
+      <div class="topic-card" id="tk-gratitude">
+        <div class="topic-header" onclick="toggleTopic('tk-gratitude')">
+          <div class="topic-icon" style="background:#fbf4d0;"><i data-lucide="pencil"></i></div>
+          <div class="topic-info"><div class="topic-name">Gratitude &amp; Journaling</div><div class="topic-subtitle">Prompts, reflection, and gentle daily writing</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">A few minutes of reflection can help slow racing thoughts and make room for perspective. Gratitude is linked to lower stress, improved sleep, and stronger resilience.</div>
+          <div class="resource-list">
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="microscope"></i></div><div class="tool-body"><div class="tool-title">Why It Works</div><div class="tool-desc">Gratitude and journaling are linked to lower stress, improved sleep, stronger relationships, and greater resilience.</div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="pencil"></i></div><div class="tool-body"><div class="tool-title">Journal Prompts to Try Today</div><div class="tool-desc">1. What are three things that happened today that brought you peace?
+2. What went well this week, even if something else was hard?
+3. What everyday object near you are you grateful for?
+4. Who made a positive difference in your life this month?</div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="calendar"></i></div><div class="tool-body"><div class="tool-title">7-Day Gratitude Challenge</div><div class="tool-desc">A small guided challenge to help you reflect on what is steady, good, or meaningful in your week.</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/counseling/your-mental-health-toolkit/" target="_blank">Open Toolkit →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="book-open"></i></div><div class="tool-body"><div class="tool-title">Recommended Reading</div><div class="tool-desc">The Artist's Way — Julia Cameron
+The Great Book of Journaling — Eric Maisel
+Thanks! — Robert Emmons</div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mindfulness -->
+      <div class="topic-card" id="tk-mindfulness">
+        <div class="topic-header" onclick="toggleTopic('tk-mindfulness')">
+          <div class="topic-icon" style="background:#dcfff1;"><i data-lucide="brain"></i></div>
+          <div class="topic-info"><div class="topic-name">Mindfulness &amp; Meditation</div><div class="topic-subtitle">Breathing, guided meditation, and grounding practices</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">Mindfulness does not need to be perfect or long. Even a short pause can help settle your body and make the next moment feel more manageable.</div>
+          <div class="resource-list">
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="heart"></i></div><div class="tool-body"><div class="tool-title">Lovingkindness Meditation</div><div class="tool-desc">A practical guide with recorded sessions and beginner-friendly support.</div><div class="tool-links"><a class="res-link" href="https://www.elliemillertherapy.com/blog/loving-kindness-meditation-a-complete-guide" target="_blank">Open Guide →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="leaf"></i></div><div class="tool-body"><div class="tool-title">Calm — Free Guided Meditations</div><div class="tool-desc">Open-access guided meditations for stress, anxiety, focus, and sleep.</div><div class="tool-links"><a class="res-link" href="https://www.youtube.com/@calm" target="_blank">Watch on YouTube →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="headphones"></i></div><div class="tool-body"><div class="tool-title">Headspace Meditation Classes</div><div class="tool-desc">Structured meditation classes for stress, sleep, focus, and anxiety.</div><div class="tool-links"><a class="res-link" href="https://www.headspace.com/meditation" target="_blank">Visit →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="play-circle"></i></div><div class="tool-body"><div class="tool-title">Free YouTube Guided Meditation</div><div class="tool-desc">A simple guided meditation that is easy to try even if this is new for you.</div><div class="tool-links"><a class="res-link" href="https://www.youtube.com/watch?v=8x-QmEB4REg" target="_blank">Watch →</a></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Music -->
+      <div class="topic-card" id="tk-music">
+        <div class="topic-header" onclick="toggleTopic('tk-music')">
+          <div class="topic-icon" style="background:#dff6ff;"><i data-lucide="music"></i></div>
+          <div class="topic-info"><div class="topic-name">Music for Your Mind</div><div class="topic-subtitle">Lo-fi, calm music, and playlists for focus or rest</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">The right sound can shift your energy fast. Calming and focus-friendly music resources you can use while studying, resting, or decompressing.</div>
+          <div class="resource-list">
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="moon"></i></div><div class="tool-body"><div class="tool-title">Calming &amp; Sleep Music</div><div class="tool-desc">For winding down, reducing anxiety, or falling asleep with something soft.</div><div class="tool-links"><a class="res-link" href="https://www.youtube.com/watch?v=1ZYbU82GVz4" target="_blank">YouTube: Sleep Music →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="coffee"></i></div><div class="tool-body"><div class="tool-title">Study &amp; Focus Music</div><div class="tool-desc">Background sound for concentration: lo-fi beats, coffee shop ambiance, mellow instrumental.</div><div class="tool-links"><a class="res-link" href="https://www.youtube.com/watch?v=5qap5aO4i9A" target="_blank">YouTube: Lo-Fi →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="music"></i></div><div class="tool-body"><div class="tool-title">Spotify — Peaceful Piano</div><div class="tool-desc">A calm instrumental playlist for studying or slowing down after a long day.</div><div class="tool-links"><a class="res-link" href="https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0" target="_blank">Open Spotify →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="leaf"></i></div><div class="tool-body"><div class="tool-title">Lofi Station</div><div class="tool-desc">A clean, simple lofi music station for studying, relaxing, and staying focused.</div><div class="tool-links"><a class="res-link" href="https://www.lofi.cafe/" target="_blank">Open →</a></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nutrition -->
+      <div class="topic-card" id="tk-nutrition">
+        <div class="topic-header" onclick="toggleTopic('tk-nutrition')">
+          <div class="topic-icon" style="background:#e9fff3;"><i data-lucide="salad"></i></div>
+          <div class="topic-info"><div class="topic-name">Nutrition &amp; Energy</div><div class="topic-subtitle">Food access, campus fitness, and steady energy</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">Food and movement shape energy, mood, and focus. Practical campus resources for nourishment, movement, and everyday energy support.</div>
+          <div class="resource-list">
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="brain"></i></div><div class="tool-body"><div class="tool-title">Food &amp; Your Mind</div><div class="tool-desc">Leafy greens, protein, hydration, and steadier meals can support energy, concentration, and mood balance.</div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="apple"></i></div><div class="tool-body"><div class="tool-title">Panther Pantry (Free, On Campus)</div><div class="tool-desc">Non-perishable, refrigerated, and frozen food for students facing food insecurity.
+Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div class="tool-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/arc/panther-pantry/" target="_blank">Visit →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="tree-pine"></i></div><div class="tool-body"><div class="tool-title">NYC Free Outdoor Fitness</div><div class="tool-desc">Free outdoor fitness classes in NYC parks, adaptive programs, and community exercise options.</div><div class="tool-links"><a class="res-link" href="https://www.nycgovparks.org/programs/recreation/free-fitness-classes" target="_blank">NYC Parks →</a></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sleep -->
+      <div class="topic-card" id="tk-sleep">
+        <div class="topic-header" onclick="toggleTopic('tk-sleep')">
+          <div class="topic-icon" style="background:#e7fbff;"><i data-lucide="moon"></i></div>
+          <div class="topic-info"><div class="topic-name">Sleep &amp; Relaxation</div><div class="topic-subtitle">Better rest, bedtime tools, and winding down</div></div>
+          <div class="topic-arrow">▼</div>
+        </div>
+        <div class="topic-body">
+          <div class="intro-card" style="margin:12px 16px 0; padding:16px 18px;">Rest affects everything: mood, focus, memory, and patience. Practical sleep tools and wind-down ideas that fit student life.</div>
+          <div class="resource-list">
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="alarm-clock"></i></div><div class="tool-body"><div class="tool-title">Sleep Calculator</div><div class="tool-desc">Find a bedtime based on your wake-up time so you can line up fuller sleep cycles.</div><div class="tool-links"><a class="res-link" href="https://sleepeducation.org/healthy-sleep/bedtime-calculator/" target="_blank">Calculate →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="lightbulb"></i></div><div class="tool-body"><div class="tool-title">Tips for Better Sleep</div><div class="tool-desc">• Get daylight early in the day
+• Reduce bright screens before bed
+• Keep meals and sleep times steadier
+• Make the room cool, dark, and quiet</div><div class="tool-links"><a class="res-link" href="https://www.sleepfoundation.org/sleep-hygiene" target="_blank">Sleep Foundation →</a></div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="phone-off"></i></div><div class="tool-body"><div class="tool-title">Stop Doom-Scrolling</div><div class="tool-desc">Blue light and endless scrolling make it harder to fall asleep. Try a phone-free wind-down for 30 minutes before bed.</div></div></div></div>
+            <div class="resource-card"><div class="tool-item" style="padding:0;border:none;"><div class="tool-icon"><i data-lucide="headphones"></i></div><div class="tool-body"><div class="tool-title">Relaxation Audio</div><div class="tool-desc">Rain sounds, white noise, or guided sleep meditations can help quiet a busy mind.</div><div class="tool-links"><a class="res-link" href="https://www.youtube.com/watch?v=1ZYbU82GVz4" target="_blank">YouTube: Sleep Music →</a></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /topic-grid -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- JOURNAL                                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="journal" class="section" style="background: rgba(237,245,235,0.4);">
+  <div class="container">
+    <div class="eyebrow">My Journal</div>
+    <h2 class="section-title">A private space to reflect and grow</h2>
+    <p class="section-sub">
+      Write, save, and revisit personal journal entries. Search by keyword or date range.
+      Export as PDF or plain text. Your entries stay on your device — always private.
+    </p>
+
+    <div class="journal-layout">
+      <!-- Composer -->
+      <div>
+        <div class="journal-composer">
+          <input class="journal-title-input" type="text" id="j-title" placeholder="Entry title (optional)…" />
+          <textarea class="journal-body-input" id="j-body" placeholder="How are you feeling today? What's on your mind?" rows="9" oninput="updateWordCount()"></textarea>
+          <div class="journal-footer">
+            <span class="journal-date" id="j-date"></span>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span class="jword-count" id="j-wc">0 words</span>
+              <span style="font-size:11px; color:#9eaa9d;">Ctrl+S</span>
+              <button class="btn-save" onclick="saveJournalEntry()">Save Entry</button>
+            </div>
+          </div>
+        </div>
+        <p id="j-status" style="font-size:13px; color:#2E7D32; margin-top:10px; min-height:18px;"></p>
+      </div>
+
+      <!-- Past entries -->
+      <div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <div style="font-size:11px; font-weight:700; color:var(--green-mid); letter-spacing:1.8px;">PAST REFLECTIONS</div>
+          <input type="text" id="j-search" placeholder="Search entries…" oninput="filterEntries()"
+            style="border:1px solid var(--border); border-radius:10px; padding:7px 14px;
+                   font-size:13px; color:var(--green-deep); background:#fff; font-family:inherit; outline:none; width:180px;" />
+        </div>
+        <div class="entries-panel" id="entries-panel">
+          <div class="empty-entries">
+            Saved demo entries will appear here during the session.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- PROJECT                                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="project" class="section">
+  <div class="container">
+    <div class="eyebrow">CSC211H · Honors Project</div>
+    <h2 class="section-title" style="text-align:center;">Built as a personal software engineering project</h2>
+    <p class="section-sub" style="text-align:center; margin:0 auto 0;">
+      MindEase was designed and implemented by Phyo Thiha Oo for CSC211H Advanced Programming
+      Techniques (Honors) at Borough of Manhattan Community College under Dr. Azhar.
+    </p>
+    <div class="project-cards">
+      <div class="project-card">
+        <div class="project-avatar project-photo">
+          <img src="assets/profile.jpg" alt="Phyo Thiha Oo portrait" />
+        </div>
+        <div class="project-name">Phyo Thiha Oo</div>
+        <div class="project-role">Student Developer · ID 24492624</div>
+      </div>
+      <div class="project-card">
+        <div class="project-avatar"><i data-lucide="graduation-cap"></i></div>
+        <div class="project-name">CSC211H</div>
+        <div class="project-role">Advanced Programming Techniques (Honors)</div>
+      </div>
+      <div class="project-card">
+        <div class="project-avatar"><i data-lucide="boxes"></i></div>
+        <div class="project-name">Course Concepts</div>
+        <div class="project-role">OOP · File I/O · Qt UI · Modular Design</div>
+      </div>
+      <div class="project-card">
+        <div class="project-avatar"><i data-lucide="shield-check"></i></div>
+        <div class="project-name">Safety Scope</div>
+        <div class="project-role">Student support app, not therapy or emergency care</div>
+      </div>
+    </div>
+
+    <div style="margin-top:56px; text-align:center;">
+      <div class="eyebrow">Tech Stack</div>
+      <div style="margin-top:14px;">
+        <span class="badge">Qt 6.11 / C++17</span>
+        <span class="badge">QStackedWidget</span>
+        <span class="badge">QSettings persistence</span>
+        <span class="badge">QPrinter / PDF export</span>
+        <span class="badge">QGraphicsDropShadowEffect</span>
+        <span class="badge">Signal / Slot architecture</span>
+        <span class="badge">Abstract Base Classes</span>
+        <span class="badge">Runtime Polymorphism</span>
+        <span class="badge">Zen light / night theme</span>
+        <span class="badge">Journal Storage (flat-file)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="crisis-banner">
+    <i data-lucide="phone-call"></i>  If you're in crisis: call <strong>988</strong> (Suicide &amp; Crisis Lifeline) or BMCC Counseling at <strong>(212) 220-8140</strong>
+  </div>
+  <p>© 2026 MindEase · Phyo Thiha Oo · BMCC CSC211H Honors Project</p>
+  <p style="margin-top:4px;">
+    <a href="https://www.bmcc.cuny.edu/student-affairs/counseling/" target="_blank">BMCC Counseling Center</a> ·
+    <a href="https://www.bmcc.cuny.edu/students/lrc/" target="_blank">Learning Resource Center</a> ·
+    <a href="https://www.bmcc.cuny.edu/student-affairs/arc/" target="_blank">Advocacy &amp; Resource Center</a>
+  </p>
+</footer>
+
+<!-- ── Back to top ───────────────────────────────────────────────────────── -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

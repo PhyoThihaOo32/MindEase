@@ -106,11 +106,11 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 // Auto-reveal: section headings, grids, cards
 document.querySelectorAll(
-  '.eyebrow, .section-title, .section-sub, .feature-card, .topic-card, .team-card, .intro-card, .reveal'
+  '.eyebrow, .section-title, .section-sub, .feature-card, .topic-card, .project-card, .intro-card, .reveal'
 ).forEach((el, i) => {
   if (!el.classList.contains('reveal')) el.classList.add('reveal');
   // stagger children inside grids
-  const parent = el.closest('.features-grid, .topic-grid, .team-cards');
+  const parent = el.closest('.features-grid, .topic-grid, .project-cards');
   if (parent) {
     const siblings = parent.querySelectorAll(':scope > *');
     const idx = Array.from(siblings).indexOf(el);
@@ -232,6 +232,8 @@ function saveJournalEntry() {
     <div class="entry-date">${dateStr}</div>`;
 
   const panel = document.getElementById('entries-panel');
+  const empty = panel.querySelector('.empty-entries');
+  if (empty) empty.remove();
   panel.insertBefore(card, panel.firstChild);
   // animate in
   card.style.opacity = '0'; card.style.transform = 'translateY(-10px)';

@@ -34,7 +34,7 @@ i[data-lucide] svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-l
 .topic-icon i[data-lucide] svg { width:22px; height:22px; }
 .resource-icon i[data-lucide] svg { width:16px; height:16px; }
 .tool-icon i[data-lucide] svg { width:20px; height:20px; }
-.team-avatar i[data-lucide] svg { width:28px; height:28px; stroke-width:1.5; }
+.project-avatar i[data-lucide] svg { width:28px; height:28px; stroke-width:1.5; }
 .msg-icon i[data-lucide] svg { width:18px; height:18px; }
 .qt-chat-icon i[data-lucide] svg { width:16px; height:16px; }
 .screen-tab i[data-lucide] svg { width:14px; height:14px; }
@@ -151,7 +151,57 @@ nav {
 .hero-body {
   font-size: 18px; color: var(--slate);
   max-width: 560px; line-height: 1.75;
-  margin-bottom: 44px;
+  margin-bottom: 28px;
+}
+.student-card {
+  width: min(100%, 620px);
+  background: rgba(255,255,255,0.76);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 18px 22px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+.student-row {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(199,216,193,0.55);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.student-row:last-child { border-bottom: none; }
+.student-row span {
+  color: var(--green-mid);
+  font-weight: 800;
+}
+.student-row strong {
+  color: var(--green-deep);
+  font-weight: 800;
+}
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 56px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.hero-stat { text-align: center; min-width: 120px; }
+.hero-stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--green-deep);
+}
+.hero-stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
 }
 .hero-buttons {
   display: flex; gap: 14px; flex-wrap: wrap;
@@ -447,31 +497,41 @@ nav {
 .entry-title { font-size: 16px; font-weight: 800; color: var(--green-deep); margin-bottom: 5px; }
 .entry-excerpt { font-size: 13px; color: #4f6255; line-height: 1.6; margin-bottom: 10px; }
 .entry-date { font-size: 12px; font-weight: 600; color: #71856f; }
+.empty-entries {
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  padding: 28px 22px;
+  color: var(--text-light);
+  background: rgba(255,255,255,0.55);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
 
-/* ── Team section ─────────────────────────────────────────────────────── */
-#team { text-align: center; }
-.team-cards {
+/* ── Project section ──────────────────────────────────────────────────── */
+#project { text-align: center; }
+.project-cards {
   display: flex; gap: 20px;
   justify-content: center; flex-wrap: wrap;
   margin-top: 40px;
 }
-.team-card {
+.project-card {
   background: rgba(255,255,255,0.82);
   border: 1px solid var(--border);
   border-radius: 18px; padding: 28px 24px;
   box-shadow: var(--shadow); width: 180px;
   transition: transform 0.2s;
 }
-.team-card:hover { transform: translateY(-3px); }
-.team-avatar {
+.project-card:hover { transform: translateY(-3px); }
+.project-avatar {
   width: 60px; height: 60px;
   background: linear-gradient(135deg, var(--green-pale), #ddf0d5);
   border-radius: 50%; margin: 0 auto 14px;
   display: flex; align-items: center; justify-content: center;
   font-size: 26px;
 }
-.team-name { font-size: 14px; font-weight: 700; color: var(--green-deep); }
-.team-role { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+.project-name { font-size: 14px; font-weight: 700; color: var(--green-deep); }
+.project-role { font-size: 11px; color: var(--text-light); margin-top: 4px; }
 
 /* ── Screenshot/mockup showcase ───────────────────────────────────────── */
 .mockup-strip {
@@ -540,6 +600,8 @@ footer a:hover { text-decoration: underline; }
   .section-title { font-size: 30px; }
   nav { padding: 12px 20px; gap: 12px; }
   .nav-links { display: none; }
+  .student-row { grid-template-columns: 1fr; gap: 2px; }
+  .hero-stats { gap: 22px; }
 }
 
 /* ── Scroll progress bar ─────────────────────────────────────────────── */
@@ -583,10 +645,12 @@ body.dark {
 body.dark nav { background: rgba(10,20,12,0.96); border-color: rgba(45,69,53,0.5); }
 body.dark .mobile-nav { background: rgba(10,20,12,0.97); border-color: rgba(45,69,53,0.4); }
 body.dark .feature-card, body.dark .topic-card, body.dark .resource-card,
-body.dark .entry-card, body.dark .journal-composer, body.dark .team-card,
-body.dark .chat-window, body.dark .intro-card, body.dark .qt-window {
+body.dark .entry-card, body.dark .journal-composer, body.dark .project-card,
+body.dark .chat-window, body.dark .intro-card, body.dark .qt-window,
+body.dark .student-card {
   background: rgba(20,38,24,0.88); border-color: #2d4535;
 }
+body.dark .empty-entries { background: rgba(20,38,24,0.55); border-color: #2d4535; }
 body.dark .chat-topbar { background: #0d1e10; }
 body.dark .chat-input { background: #0f1a12; color: #b8d4b0; border-color: #2d4535; }
 body.dark .journal-title-input, body.dark .journal-body-input { color: #b8d4b0; }

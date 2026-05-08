@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MindEase — Wellness Companion for BMCC Students</title>
+  <title>MindEase — CSC211H Honors Project</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
@@ -26,7 +26,7 @@
     <a href="#toolkit">Wellness Toolkit</a>
     <a href="#assistant">AI Assistant</a>
     <a href="#journal">My Journal</a>
-    <a href="#team">Team</a>
+    <a href="#project">Project</a>
   </div>
   <a class="nav-crisis" href="tel:988"><i data-lucide="phone-call"></i> Crisis: 988</a>
   <button id="dark-toggle" onclick="toggleDark()"><i data-lucide="moon"></i> Night</button>
@@ -43,22 +43,31 @@
   <a href="#toolkit"     onclick="closeMobileNav()">Wellness Toolkit</a>
   <a href="#assistant"   onclick="closeMobileNav()">AI Assistant</a>
   <a href="#journal"     onclick="closeMobileNav()">My Journal</a>
-  <a href="#team"        onclick="closeMobileNav()">Team</a>
+  <a href="#project"     onclick="closeMobileNav()">Project</a>
 </nav>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <!-- HERO                                                                    -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <section id="hero" class="section">
-  <div class="hero-eyebrow">YangonDevs · BMCC CSC211H Honors Project · Spring 2026</div>
+  <div class="hero-eyebrow">CSC211H Honors Project · Spring 2026</div>
   <h1 class="hero-title">
-    Your calm wellness<br>companion at <span>BMCC</span>
+    MindEase: a calm wellness<br>companion for <span>BMCC</span>
   </h1>
   <p class="hero-body">
     MindEase helps BMCC students find campus resources, take small self-care steps,
     engage calming tools, connect with an AI wellness assistant, and write positive
-    future plans — all in one quiet, supportive space.
+    future plans. This site presents the deployed project clearly, without extra filler.
   </p>
+
+  <div class="student-card" aria-label="Project student information">
+    <div class="student-row"><span>Name</span><strong>Phyo Thiha Oo</strong></div>
+    <div class="student-row"><span>ID</span><strong>24492624</strong></div>
+    <div class="student-row"><span>Course</span><strong>CSC211H Advanced Programming Techniques (Honors)</strong></div>
+    <div class="student-row"><span>Instructor</span><strong>Dr. Azhar</strong></div>
+    <div class="student-row"><span>Semester</span><strong>Spring 2026</strong></div>
+  </div>
+
   <div class="hero-buttons">
     <a href="#resources" class="btn-hero btn-primary">Explore BMCC Resources</a>
     <a href="#toolkit"   class="btn-hero btn-outline">Open Wellness Toolkit</a>
@@ -66,23 +75,22 @@
     <a href="#journal"   class="btn-hero btn-outline">Start Journaling</a>
   </div>
 
-  <!-- Impact stats -->
-  <div style="display:flex; gap:32px; margin-top:56px; flex-wrap:wrap; justify-content:center;">
-    <div style="text-align:center;">
-      <div style="font-family:'Playfair Display',serif; font-size:42px; font-weight:800; color:var(--green-deep);" data-count="5">0</div>
-      <div style="font-size:12px; font-weight:700; color:var(--text-light); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px;">Resource Topics</div>
+  <div class="hero-stats" aria-label="Project highlights">
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="5">0</div>
+      <div class="hero-stat-label">Resource Topics</div>
     </div>
-    <div style="text-align:center;">
-      <div style="font-family:'Playfair Display',serif; font-size:42px; font-weight:800; color:var(--green-deep);" data-count="8">0</div>
-      <div style="font-size:12px; font-weight:700; color:var(--text-light); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px;">Toolkit Folders</div>
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="8">0</div>
+      <div class="hero-stat-label">Toolkit Folders</div>
     </div>
-    <div style="text-align:center;">
-      <div style="font-family:'Playfair Display',serif; font-size:42px; font-weight:800; color:var(--green-deep);" data-count="4">0</div>
-      <div style="font-size:12px; font-weight:700; color:var(--text-light); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px;">OOP Pillars</div>
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="4">0</div>
+      <div class="hero-stat-label">OOP Pillars</div>
     </div>
-    <div style="text-align:center;">
-      <div style="font-family:'Playfair Display',serif; font-size:42px; font-weight:800; color:var(--green-deep);" data-count="6">0</div>
-      <div style="font-size:12px; font-weight:700; color:var(--text-light); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px;">App Screens</div>
+    <div class="hero-stat">
+      <div class="hero-stat-number" data-count="6">0</div>
+      <div class="hero-stat-label">App Screens</div>
     </div>
   </div>
 </section>
@@ -95,7 +103,7 @@
     <div class="eyebrow">What is MindEase?</div>
     <h2 class="section-title">Five features, one calming space</h2>
     <p class="section-sub">
-      MindEase is a desktop Qt/C++ application built by YangonDevs for BMCC students.
+      MindEase is a desktop Qt/C++ application built by Phyo Thiha Oo for BMCC students.
       It combines campus resources, wellness tools, an AI assistant, and a private journal
       in a single thoughtfully designed application.
     </p>
@@ -119,11 +127,6 @@
         <div class="feature-icon"><i data-lucide="notebook-pen"></i></div>
         <div class="feature-name">Private Journal</div>
         <div class="feature-desc">Write, save, and search personal journal entries. Export as PDF or plain text. Your reflections stay on your device.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i data-lucide="settings"></i></div>
-        <div class="feature-name">Settings</div>
-        <div class="feature-desc">Light or Zen Night theme, adjustable font size, custom journal folder — preferences saved persistently across sessions.</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon"><i data-lucide="leaf"></i></div>
@@ -377,16 +380,16 @@
             <!-- entries -->
             <div class="qt-journal-list">
               <div class="qt-journal-entry">
-                <div class="qt-entry-title">A heavy day, but I made it</div>
-                <div class="qt-entry-date">Apr 28, 2026 · 9:42 PM</div>
+                <div class="qt-entry-title">Reflection saved locally</div>
+                <div class="qt-entry-date">Private entry · searchable</div>
               </div>
               <div class="qt-journal-entry">
-                <div class="qt-entry-title">Grateful for small things</div>
-                <div class="qt-entry-date">Apr 25, 2026 · 7:15 PM</div>
+                <div class="qt-entry-title">Gratitude prompt completed</div>
+                <div class="qt-entry-date">Private entry · export ready</div>
               </div>
               <div class="qt-journal-entry">
-                <div class="qt-entry-title">The breathing exercise actually worked</div>
-                <div class="qt-entry-date">Apr 22, 2026 · 10:30 PM</div>
+                <div class="qt-entry-title">Wellness note added</div>
+                <div class="qt-entry-date">Private entry · saved to device</div>
               </div>
             </div>
           </div>
@@ -729,21 +732,6 @@ Staff:  Samantha Ruiz, LCSW — Veterans Affairs Manager</div>
               <div class="resource-tags"><span class="tag">Insurance</span><span class="tag">All Students</span></div>
               <div class="resource-links"><a class="res-link" href="https://www.bmcc.cuny.edu/student-affairs/arc/health-insurance/" target="_blank">Visit →</a></div>
             </div>
-
-            <div class="resource-card">
-              <div class="resource-header"><div class="resource-icon"><i data-lucide="shield"></i></div><div class="resource-title">National Center for PTSD</div></div>
-              <div class="resource-desc">Information and resources from the U.S. Department of Veterans' Affairs for veterans and their families dealing with PTSD.</div>
-              <div class="resource-tags"><span class="tag">Veterans</span><span class="tag">PTSD</span><span class="tag">U.S. VA</span></div>
-              <div class="resource-links"><a class="res-link" href="https://www.ptsd.va.gov/" target="_blank">Visit →</a></div>
-            </div>
-
-            <div class="resource-card">
-              <div class="resource-header"><div class="resource-icon"><i data-lucide="shield-check"></i></div><div class="resource-title">Combat Stress Recovery — Wounded Warrior Project</div></div>
-              <div class="resource-desc">Support program specifically designed to help veterans recover from combat stress and related mental health challenges.</div>
-              <div class="resource-tags"><span class="tag">Veterans</span><span class="tag">Combat Stress</span></div>
-              <div class="resource-links"><a class="res-link" href="https://www.woundedwarriorproject.org/programs/mental-wellness" target="_blank">Visit →</a></div>
-            </div>
-
           </div>
         </div>
       </div>
@@ -983,7 +971,7 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
           • Start with a simple list: what's due and when?<br>
           • Focus on the next 24 hours only — not the whole semester.<br>
           • BMCC's <strong>Learning Resource Center</strong> (Room S-510) offers free tutoring Mon–Thu 10am–6pm — no appointment needed.<br>
-          • The <strong>Academic Coaching</strong> team can help you build a study plan: AcademicCoaching@bmcc.cuny.edu<br><br>
+          • The <strong>Academic Coaching</strong> office can help you build a study plan: AcademicCoaching@bmcc.cuny.edu<br><br>
           Would you like help prioritizing your tasks, or would a study break strategy be more useful right now?</div>
         </div>
         <div class="msg user">
@@ -1052,26 +1040,8 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
                    font-size:13px; color:var(--green-deep); background:#fff; font-family:inherit; outline:none; width:180px;" />
         </div>
         <div class="entries-panel" id="entries-panel">
-          <!-- Sample entries (pre-loaded) -->
-          <div class="entry-card" data-text="today was overwhelming but I made it through the tutoring session">
-            <div class="entry-title">A heavy day, but I made it</div>
-            <div class="entry-excerpt">Today was overwhelming. Three assignments due, barely slept. But I went to the LRC tutoring session and something clicked in Calculus. Small win...</div>
-            <div class="entry-date">Apr 28, 2026 · 9:42 PM</div>
-          </div>
-          <div class="entry-card" data-text="grateful for the panther pantry free food helped me focus">
-            <div class="entry-title">Grateful for small things</div>
-            <div class="entry-excerpt">I visited the Panther Pantry today. I was embarrassed at first, but the people there were so kind. Came home, made a proper meal, and studied for 3 hours...</div>
-            <div class="entry-date">Apr 25, 2026 · 7:15 PM</div>
-          </div>
-          <div class="entry-card" data-text="mindfulness meditation helped me sleep better breathing exercise">
-            <div class="entry-title">The breathing exercise actually worked</div>
-            <div class="entry-excerpt">Tried the 4-7-8 breathing technique from the Mindfulness folder before bed. Fell asleep faster than I have in weeks. Writing this down so I remember to do it again...</div>
-            <div class="entry-date">Apr 22, 2026 · 10:30 PM</div>
-          </div>
-          <div class="entry-card" data-text="counseling appointment talked about relationships family stress">
-            <div class="entry-title">After my counseling session</div>
-            <div class="entry-excerpt">Had my first counseling appointment at Room S-343. I was nervous but the counselor was so understanding. We talked about setting boundaries with family during exam season...</div>
-            <div class="entry-date">Apr 18, 2026 · 5:00 PM</div>
+          <div class="empty-entries">
+            Saved demo entries will appear here during the session.
           </div>
         </div>
       </div>
@@ -1080,21 +1050,37 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- TEAM                                                                    -->
+<!-- PROJECT                                                                 -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section id="team" class="section">
+<section id="project" class="section">
   <div class="container">
-    <div class="eyebrow">YangonDevs · BMCC Spring 2026</div>
-    <h2 class="section-title" style="text-align:center;">Meet the team</h2>
+    <div class="eyebrow">CSC211H · Honors Project</div>
+    <h2 class="section-title" style="text-align:center;">Built as a personal software engineering project</h2>
     <p class="section-sub" style="text-align:center; margin:0 auto 0;">
-      MindEase was built by YangonDevs for CSC211H Advanced Programming Techniques (Honors)
-      at Borough of Manhattan Community College.
+      MindEase was designed and implemented by Phyo Thiha Oo for CSC211H Advanced Programming
+      Techniques (Honors) at Borough of Manhattan Community College under Dr. Azhar.
     </p>
-    <div class="team-cards">
-      <div class="team-card"><div class="team-avatar"><i data-lucide="code-2"></i></div><div class="team-name">Phyo Thiha Oo</div><div class="team-role">Lead Developer</div></div>
-      <div class="team-card"><div class="team-avatar"><i data-lucide="pen-tool"></i></div><div class="team-name">Kyawt Kyawt Htun</div><div class="team-role">UI Design</div></div>
-      <div class="team-card"><div class="team-avatar"><i data-lucide="terminal"></i></div><div class="team-name">Zin Min Wai</div><div class="team-role">Backend / OOP</div></div>
-      <div class="team-card"><div class="team-avatar"><i data-lucide="bar-chart-2"></i></div><div class="team-name">Thet Oo Maung</div><div class="team-role">Research &amp; Data</div></div>
+    <div class="project-cards">
+      <div class="project-card">
+        <div class="project-avatar"><i data-lucide="user-round"></i></div>
+        <div class="project-name">Phyo Thiha Oo</div>
+        <div class="project-role">Student Developer · ID 24492624</div>
+      </div>
+      <div class="project-card">
+        <div class="project-avatar"><i data-lucide="graduation-cap"></i></div>
+        <div class="project-name">CSC211H</div>
+        <div class="project-role">Advanced Programming Techniques (Honors)</div>
+      </div>
+      <div class="project-card">
+        <div class="project-avatar"><i data-lucide="boxes"></i></div>
+        <div class="project-name">Course Concepts</div>
+        <div class="project-role">OOP · File I/O · Qt UI · Modular Design</div>
+      </div>
+      <div class="project-card">
+        <div class="project-avatar"><i data-lucide="shield-check"></i></div>
+        <div class="project-name">Safety Scope</div>
+        <div class="project-role">Student support app, not therapy or emergency care</div>
+      </div>
     </div>
 
     <div style="margin-top:56px; text-align:center;">
@@ -1110,7 +1096,7 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
         <span class="badge">Signal / Slot architecture</span>
         <span class="badge">Abstract Base Classes</span>
         <span class="badge">Runtime Polymorphism</span>
-        <span class="badge">QSettings · dark/light theme</span>
+        <span class="badge">Zen light / night theme</span>
         <span class="badge">Journal Storage (flat-file)</span>
       </div>
     </div>
@@ -1124,7 +1110,7 @@ Loc: Room S-230  Hours: Mon–Fri 8am–6:30pm  |  Sat 10am–1pm</div><div clas
   <div class="crisis-banner">
     <i data-lucide="phone-call"></i>  If you're in crisis: call <strong>988</strong> (Suicide &amp; Crisis Lifeline) or BMCC Counseling at <strong>(212) 220-8140</strong>
   </div>
-  <p>© 2026 MindEase · YangonDevs · BMCC CSC211H Honors Project</p>
+  <p>© 2026 MindEase · Phyo Thiha Oo · BMCC CSC211H Honors Project</p>
   <p style="margin-top:4px;">
     <a href="https://www.bmcc.cuny.edu/student-affairs/counseling/" target="_blank">BMCC Counseling Center</a> ·
     <a href="https://www.bmcc.cuny.edu/students/lrc/" target="_blank">Learning Resource Center</a> ·
